@@ -207,12 +207,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  dropView1: {
-    gap: height * 0.05,
+    gap: height * 0.06,
   },
   dropdown: {
-    margin: 10,
+    marginVertical: 10,
     height: 35,
     width: width * 0.38,
     borderColor: 'gray',
@@ -245,9 +243,9 @@ const styles = StyleSheet.create({
   ///
   companyContainer: {
     flexDirection: 'row',
+    justifyContent: "space-between",
     alignItems: 'center',
     paddingVertical: height * 0.03,
-    paddingHorizontal: width* 0.02,
     gap: width * 0.06,
   },
   companyTextView: {

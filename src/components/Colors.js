@@ -3,7 +3,7 @@ const Colors = {
     white: "#FAFAF9",
     white2: "rgba(243, 243, 243, 1)",
     black: "#000",
-    black2: "rgba(10, 10, 10, 1)",
+    black2: "rgba(56, 56, 56, 1)",
     black3: "rgba(0, 0, 0, 0.4)",
     blue: "blue",
     red: "#FF0000",

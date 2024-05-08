@@ -176,7 +176,7 @@ const MyBookings = () => {
           <TouchableOpacity onPress={handleButtonPress}>
             <Text style={styles.track}>
               {currentStatus == 0
-                ? 'Booked'
+                ? 'Details'
                 : currentStatus == 1
                 ? 'Track'
                 : currentStatus == 2
@@ -339,13 +339,14 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   type: {
-    color: Colors.black2,
+    color: Colors.shadow,
     fontSize: 13,
-    fontWeight: '500',
   },
   value: {
     color: Colors.shadow,
+    color: Colors.black2,
     fontSize: 13,
+    fontWeight: '500',
   },
   line: {
     marginVertical: height * 0.02,
@@ -361,7 +362,7 @@ const styles = StyleSheet.create({
   },
   help: {
     color: Colors.black2,
-    backgroundColor: Colors.black3,
+    backgroundColor: Colors.steel,
     paddingHorizontal: width * 0.08,
     paddingVertical: height * 0.008,
     borderRadius: width * 0.01,
@@ -422,7 +423,7 @@ const styles = StyleSheet.create({
     color: Colors.black,
     fontSize: 18,
     fontWeight: '500',
-    backgroundColor: Colors.black3,
+    backgroundColor: Colors.steel,
     paddingHorizontal: width * 0.1,
     paddingVertical: height * 0.01,
     borderRadius: width * 0.015,

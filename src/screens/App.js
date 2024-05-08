@@ -28,7 +28,7 @@ const AppNavigation = () => {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 700);
+    }, 3000);
   }, [isLoggedIn]);
 
   return (

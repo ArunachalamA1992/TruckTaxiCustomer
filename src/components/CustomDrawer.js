@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   content: {
     color: Colors.black2,
     padding: width * 0.05,
-    gap: width * 0.05,
+    gap: width * 0.08,
   },
   contents: {
     display: 'flex',

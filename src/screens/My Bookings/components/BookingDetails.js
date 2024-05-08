@@ -6,9 +6,9 @@ import Colors from '../../../components/Colors';
 const BookingDetails = () => {
   return (
     <View>
-      <View style={styles.model}>
-        <View style={styles.modelView}>
-          <View>
+      <View style={styles.modal}>
+        <View style={styles.modalView}>
+          <View style={styles.modalView2}>
             <Text style={styles.type}>Pickup Time :</Text>
             <Text style={styles.type}>Vehicle :</Text>
             <Text style={styles.type}>Vehicle Type:</Text>
@@ -20,7 +20,7 @@ const BookingDetails = () => {
             <Text style={styles.type}>Drop :</Text>
             <Text style={styles.type}>Payment type :</Text>
           </View>
-          <View>
+          <View style={styles.modalView2}>
             <Text style={styles.value}>29/10/2023-16:52</Text>
             <Text style={styles.value}>407</Text>
             <Text style={styles.value}>Closed Type</Text>
@@ -43,35 +43,40 @@ export default BookingDetails;
 const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
-    model:{
+    modal:{
         backgroundColor: Colors.white,
         alignItems: "center",
         justifyContent: "center",
         padding: width* 0.06,
         
         margin: width* 0.1,
-        marginTop: height* 0.14,
+        marginTop: height* 0.22,
         borderRadius: width* 0.04,
       },
-      modelHeaderView: {
-        alignSelf: "flex-end",
-        paddingBottom: width* 0.04,
-        gap: width* 0.4,
-      },
-      modelHeader: {
-        color: Colors.black2,
-      },
-      modelView: {
+      // modelHeaderView: {
+      //   alignSelf: "flex-end",
+      //   paddingBottom: width* 0.04,
+      //   gap: width* 0.4,
+      // },
+      // modelHeader: {
+      //   color: Colors.black2,
+      // },
+      modalView: {
         flexDirection: "row",
+        padding: width* 0.04,
+        gap: height* 0.01,
+      },
+      modalView2: {
+        gap: height* 0.01,
       },
       type: {
+        color: Colors.shadow,
+        fontSize: 14,
+      },
+      value: {
         color: Colors.black2,
         fontSize: 14,
         fontWeight: "500",
-      },
-      value: {
-        color: Colors.shadow,
-        fontSize: 14,
         textAlign: "right",
       },
 });

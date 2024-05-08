@@ -72,7 +72,7 @@ const Track = () => {
           </TouchableOpacity>
           </View>
           <View style={styles.modelView}>
-            <View>
+            <View style={styles.modalView2}>
               <Text style={styles.type}>Pickup Time :</Text>
               <Text style={styles.type}>Vehicle :</Text>
               <Text style={styles.type}>Vehicle Type:</Text>
@@ -84,7 +84,7 @@ const Track = () => {
               <Text style={styles.type}>Drop :</Text>
               <Text style={styles.type}>Payment type :</Text>
             </View>
-            <View>
+            <View style={styles.modalView2}>
               <Text style={styles.value}>29/10/2023-16:52</Text>
               <Text style={styles.value}>407</Text>
               <Text style={styles.value}>Closed Type</Text>
@@ -201,9 +201,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     alignItems: "center",
     justifyContent: "center",
-    padding: width* 0.06,
+    padding: width* 0.08,
     margin: width* 0.1,
-    marginTop: height* 0.14,
+    marginTop: height* 0.16,
     borderRadius: width* 0.04,
   },
   modelHeaderView: {
@@ -216,6 +216,9 @@ const styles = StyleSheet.create({
   },
   modelView: {
     flexDirection: "row",
+  },
+  modalView2: {
+    gap: height* 0.01,
   },
   type: {
     color: Colors.black2,

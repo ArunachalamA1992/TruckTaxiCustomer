@@ -118,13 +118,14 @@ const styles = StyleSheet.create({
     gap: height* 0.012,
   },
   type: {
+    color: Colors.shadow,
+    fontSize: 14,
+    
+  },
+  value: {
     color: Colors.black2,
     fontSize: 14,
     fontWeight: "500",
-  },
-  value: {
-    color: Colors.shadow,
-    fontSize: 14,
     textAlign: "right",
   },
   inputView: {

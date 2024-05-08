@@ -73,11 +73,11 @@ const styles = StyleSheet.create({
   message: {
     alignSelf: "flex-start",
     fontSize: 14,
-    color: Colors.primaryColor,
+    color: Colors.black,
   },
   time: {
     alignSelf: "flex-end",
     fontSize: 11,
-    color: Colors.black2,
+    color: Colors.black3,
   },
 })

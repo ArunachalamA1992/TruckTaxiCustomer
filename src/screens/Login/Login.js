@@ -130,11 +130,16 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
-      {load && (
-        <View style={styles.loader}>
-          <ActivityIndicator size="large" color={Colors.primaryColor} />
+        <Modal
+        visible={load}
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modal}>
+        <View style={styles.load}>
+          <ActivityIndicator size="large" color={Colors.white} />
         </View>
-      )}
+        </View>
+        </Modal>
       <Image
         style={styles.image}
         source={require('../../asset/image/Login.png')}
@@ -214,7 +219,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: Colors.black,
-    fontSize: 12,
+    fontSize: 14,
   },
   inputView: {
     width: width * 0.85,
@@ -268,7 +273,7 @@ const styles = StyleSheet.create({
   },
   verifyText: {
     color: Colors.black2,
-    fontSize: 12,
+    fontSize: 14,
   },
   verify: {
     backgroundColor: Colors.primaryColor,
@@ -282,4 +287,9 @@ const styles = StyleSheet.create({
   resendOTP: {
     color: Colors.primaryColor,
   },
+  load: {
+    flex: 1,
+    justifyContent: "center",
+    alignSelf: "center",
+  }
 });

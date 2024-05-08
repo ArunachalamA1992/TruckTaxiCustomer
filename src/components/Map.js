@@ -121,7 +121,7 @@ useEffect(() => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={styles.container}>
       <MapView
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
@@ -194,6 +194,9 @@ export default Map;
 const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   map: {
     width: width * 1,
     height: height * 0.58,
