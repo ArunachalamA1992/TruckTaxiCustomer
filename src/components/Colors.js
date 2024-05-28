@@ -15,6 +15,7 @@ const Colors = {
     darkPurple: "rgba(54, 0, 80, 1)",
     secondaryColor: "",
     litePrimaryBg: "rgba(145, 0, 169, 0.2)",
+    litePrimaryBg2: "rgba(145, 0, 169, 0.45)",
     lightGreen: "rgba(26, 223, 1, 1)",
     Green: "rgba(23, 173, 3, 1)",
 }

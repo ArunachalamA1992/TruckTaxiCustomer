@@ -4,6 +4,7 @@ export const login = data => ({
     type: LOGIN,
     playload: {
         // userId: data.userId,
+        token: data.token,
         mobileNumber: data.mobileNumber,
     }
 })

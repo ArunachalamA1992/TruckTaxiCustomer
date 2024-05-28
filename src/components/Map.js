@@ -1,14 +1,17 @@
 import {
   Dimensions,
   FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
   PermissionsAndroid,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import {useNavigation} from '@react-navigation/native';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
@@ -20,24 +23,54 @@ import Colors from './Colors';
 
 const Map = () => {
   const navigation = useNavigation();
+  const autocompleteRef = useRef(null);
+  const [location,setLocation] = useState();
   const [origin, setOrigin] = useState({latitude: 11.0168, longitude: 76.9558});
   const [Destination, setDestination] = useState({
-    latitude: 11.6643,
-    longitude: 78.146,
+    latitude: 10.9579614,
+    longitude: 76.95407449999999,
   });
   const [newPosition, setNewPosition] = useState({
-    latitude: 11.6643,
-    longitude: 78.146,
+    latitude: origin.latitude,
+    longitude: origin.longitude,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [originSelected, setOriginSelected] = useState(false);
+  const [destinationSelected, setDestinationSelected] = useState(false);
+  const [description, setDescription] = useState("");
+  const [pickupDescription, setPickupDescription] = useState("");
+  const [dropDescription, setDropDescription] = useState("");
 
-  const locations = [{id: 'autocomplete', type: 'autocomplete'}];
+  useEffect(() => {
+    requestPermission();
+  }, []);
 
-useEffect(() => {
-  requestPermission();
-}, [])
+  useEffect(() => {
+    const onKeyboardDidShow = e => {
+      setKeyboardHeight(e.endCoordinates.height - 200);
+      // console.log(e.endCoordinates.height + 50);
+    };
 
+    const onKeyboardDidHide = () => {
+      setKeyboardHeight(0);
+    };
+
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      onKeyboardDidShow,
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      onKeyboardDidHide,
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const requestPermission = async () => {
     try {
@@ -46,12 +79,12 @@ useEffect(() => {
         {
           title: 'Example App',
           message: 'Example App access to your location',
-        }
+        },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       } else {
-        console.log("Location permission denied");
-        alert("Location permission denied");
+        console.log('Location permission denied');
+        alert('Location permission denied');
       }
     } catch (err) {
       console.warn(err);
@@ -69,123 +102,149 @@ useEffect(() => {
     });
   };
 
-  const renderItem = ({item}) => {
-    console.log(item.type);
-    if (item.type === 'autocomplete') {
-      return (
-        <View>
-          <GooglePlacesAutocomplete
-            placeholder="Search......"
-            textInputProps={{
-              placeholderTextColor: Colors.black2, // Example color
-            }}
-            predefinedPlacesAlwaysVisible={true}
-            fetchDetails={true}
-            query={{
-              key: 'AIzaSyCHG0z-YiBV0lvFh34eAq64b4srxe5RSoM',
-              language: 'en',
-            }}
-            styles={{
-              textInputContainer: {
-                backgroundColor: Colors.white,
-                borderWidth: 1,
-                borderColor: 'black',
-                borderRadius: 6,
-              },
-              textInput: {
-                height: 38,
-                color: Colors.Green,
-                fontSize: 16,
-                backgroundColor: Colors.white,
-              },
-              predefinedPlacesDescription: {
-                color: Colors.Green,
-              },
-              poweredContainer: {
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                borderBottomRightRadius: 5,
-                borderBottomLeftRadius: 5,
-                borderColor: Colors.Green,
-                borderTopWidth: 0.5,
-              },
-            }}
-            onPress={(data, details = null) => {
-              console.log(data, details);
-              setNewPosition();
-            }}
-          />
-        </View>
-      );
+  const selectPickup = () => {
+    if (location) {
+      setOrigin(location)
+      setOriginSelected(true)
+      setPickupDescription(description)
+      setNewPosition({
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      })
+    //clear the TextInput
+    if (autocompleteRef.current) {
+      autocompleteRef.current.setAddressText('');
     }
-  };
+    } else {
+      console.warn("select location")
+    }
+  }
+
+  const selectDrop = () => {
+    if (location) {
+    setDestination(location)
+    setDestinationSelected(true)
+    setDropDescription(description)
+    setNewPosition({
+      latitude: location.latitude,
+      longitude: location.longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    })
+    //clear the TextInput
+    if (autocompleteRef.current) {
+      autocompleteRef.current.setAddressText('');
+    }
+  } else {
+    console.warn("select location")
+  }
+  }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <MapView
-        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-        style={styles.map}
-        region={newPosition}
-        showsUserLocation={true}
-        followsUserLocation={true}
-        showsMyLocationButton={true}>
-        <Marker
-          draggable
-          coordinate={newPosition}
-          title={'I am here'}
-          description={'This is my current location'}
-        />
-        <MapViewDirections
-          origin={origin}
-          destination={Destination}
-          apikey={'AIzaSyAGbxLrxGIFLkfaGze-660NY6RrITMkeR0'}
-          strokeWidth={3}
-          strokeColor="hotpink"
-        />
-      </MapView>
-      <View style={styles.inputContainer}>
-        <Text style={styles.headerText}>Pickup & drop Location</Text>
-        <FlatList
-          data={locations}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          scrollEnabled={false}
-        />
-        <View style={styles.inputContainer1}>
-          <View style={styles.inputContainer2}>
-            <View style={styles.inputContainer3}>
-              <Icon name="location-dot" size={25} color={Colors.red} />
-              <View>
-                <Text style={styles.locationText}>Pickup Location</Text>
-                <Text style={styles.location}>Gandhipuram</Text>
-              </View>
-            </View>
-            <TouchableOpacity onPress={() => getCurrentLocation()}>
-              <Text style={styles.select}>Not selected</Text>
-            </TouchableOpacity>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}>
+      <View style={[styles.container, {paddingBottom: keyboardHeight}]}>
+        <MapView
+          provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+          style={styles.map}
+          region={newPosition}
+          showsUserLocation={true}
+          followsUserLocation={true}
+          showsMyLocationButton={true}>
+          <Marker
+            draggable
+            coordinate={origin}
+            title={'I am here'}
+            description={'This is my current location'}
+          />
+          <Marker
+            draggable
+            coordinate={Destination}
+            title={'I am here'}
+            description={'This is my current location'}
+          />
+          {destinationSelected &&
+          <MapViewDirections
+            origin={origin}
+            destination={Destination}
+            apikey={'AIzaSyAOl88J2TyN1uxEENd8sjtYNq8Xa2nW4rk'}
+            strokeWidth={10}
+            strokeColor={Colors.litePrimaryBg2}
+          />}
+        </MapView>
+        <View style={styles.inputContainer}>
+          <Text style={styles.headerText}>Pickup & drop Location</Text>
+          <View
+            style={styles.autocompleteView}>
+            <GooglePlacesAutocomplete
+              ref={autocompleteRef}
+              styles={styles.autocomplete}
+              textInputProps={{
+                placeholderTextColor: Colors.black3, // Example color
+              }}
+              placeholder="Search......"
+              predefinedPlacesAlwaysVisible={true}
+              fetchDetails={true}
+              query={{
+                key: 'AIzaSyAOl88J2TyN1uxEENd8sjtYNq8Xa2nW4rk',
+                language: 'en',
+                components: 'country:In',
+                location: '11.0168,76.9558', // Latitude and longitude for Coimbatore
+                radius: 800 // radius around Coimbatore
+              }}
+              onPress={(data, details) => {
+                console.log( data.description, details.geometry.location,'===========',details.formatted_address,);
+                const newLoc = {
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng
+                }
+                setLocation(newLoc)
+                setDescription(data.description)
+              }}
+            />
           </View>
-          <View style={styles.line} />
-          <View style={styles.inputContainer2}>
-            <View style={styles.inputContainer3}>
-              <Icon name="location-arrow" size={25} color={Colors.red} />
-              <View>
-                <Text style={styles.locationText}>Drop Location</Text>
-                <Text style={styles.location}>Salem</Text>
+
+          <View style={styles.inputContainer1}>
+            <View style={styles.inputContainer2}>
+              <View style={styles.inputContainer3}>
+                <Icon name="location-dot" size={25} color={originSelected ? Colors.Green : Colors.red} />
+                <View>
+                  <Text style={[styles.locationText, originSelected && {color: Colors.Green}]}>Pickup Location</Text>
+                  <Text style={[styles.location, originSelected && {color: Colors.Green}]}>{pickupDescription}</Text>
+                </View>
               </View>
+              <TouchableOpacity onPress={selectPickup}>
+                <Text style={[styles.select, originSelected && {color: Colors.Green}]}>{originSelected ? "selected" : "Not selected"}</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity>
-              <Text style={styles.select}>Not selected</Text>
-            </TouchableOpacity>
+            <View style={styles.line} />
+            <View style={styles.inputContainer2}>
+              <View style={styles.inputContainer3}>
+                <Icon name="location-arrow" size={25} color={destinationSelected ? Colors.Green : Colors.red} />
+                <View>
+                  <Text style={[styles.locationText, destinationSelected && {color: Colors.Green}]}>Drop Location</Text>
+                  <Text style={[styles.location, destinationSelected && {color: Colors.Green}]}>{dropDescription}</Text>
+                </View>
+              </View>
+              <TouchableOpacity onPress={selectDrop}>
+                <Text style={[styles.select, destinationSelected && {color: Colors.Green}]}>{destinationSelected ? "selected" : "Not selected"}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+          <TouchableOpacity
+          style={styles.next}
+          onPress={() => navigation.navigate('Book a Pickup',{pickup: {position: origin,Description: pickupDescription},drop: {position: Destination,Description: dropDescription}})}>
+          <Text style={styles.nextText}>Confirm Location</Text>
+          <Icon2 name="arrow-circle-right" size={25} color="#fff" />
+        </TouchableOpacity>
         </View>
+        
       </View>
-      <TouchableOpacity
-        style={styles.next}
-        onPress={() => navigation.navigate("Book a Pickup")}>
-        <Text style={styles.nextText}>Confirm Location</Text>
-        <Icon2 name="arrow-circle-right" size={25} color="#fff" />
-      </TouchableOpacity>
-    </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -195,15 +254,17 @@ const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
+    paddingBottom: 20,
   },
   map: {
+    flex: 1,
     width: width * 1,
     height: height * 0.58,
   },
   inputContainer: {
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
     backgroundColor: Colors.white,
     paddingHorizontal: width * 0.06,
     paddingVertical: height * 0.0,
@@ -211,12 +272,43 @@ const styles = StyleSheet.create({
   headerText: {
     color: Colors.black,
     padding: width * 0.02,
+    paddingBottom: height * 0.06,
     fontWeight: 'bold',
   },
-  autocomplete: {
-    color: Colors.black2,
-    textDecorationColor: Colors.black,
+  ///////////
+  autocompleteView: {
+    position: 'absolute',
+    right: 20,
+    top: height * 0.05,
+    width: width * 0.9,
+    zIndex: 99,
   },
+  autocomplete: {
+    textInputContainer: {
+      backgroundColor: Colors.white,
+      borderWidth: 1,
+      borderColor: 'black',
+      borderRadius: 6,
+    },
+    textInput: {
+      height: 38,
+      color: Colors.black,
+      fontSize: 16,
+      backgroundColor: Colors.white,
+    },
+    predefinedPlacesDescription: {
+      color: Colors.black,
+    },
+    poweredContainer: {
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      borderBottomRightRadius: 5,
+      borderBottomLeftRadius: 5,
+      borderColor: Colors.Green,
+      borderTopWidth: 0.5,
+    },
+  },
+  /////////
   inputContainer1: {
     borderWidth: 1,
     borderColor: 'black',
@@ -242,6 +334,7 @@ const styles = StyleSheet.create({
     color: Colors.red,
   },
   location: {
+    width: width* 0.5,
     color: 'red',
     fontWeight: 'bold',
   },
@@ -263,7 +356,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: height * 0.012,
     gap: width * 0.04,
-    marginTop: height * 0.023,
+    marginVertical: height * 0.028,
+    borderRadius: 5,
   },
   nextText: {
     fontSize: 20,

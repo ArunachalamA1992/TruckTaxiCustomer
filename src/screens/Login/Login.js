@@ -10,14 +10,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Colors from '../../components/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import OTPTextInput from 'react-native-otp-textinput';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {login} from '../../storage/actions';
 import Snackbar from 'react-native-snackbar';
+import {getHash, startOtpListener, useOtpVerify} from 'react-native-otp-verify';
+import {login} from '../../storage/actions';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -29,15 +30,21 @@ const Login = () => {
   const [OTP, setOTP] = useState('');
   let otpInput = useRef(null);
 
+  useEffect(() => {
+    getOtp();
+  }, []);
+
   const handleLogin = async () => {
+    const formattedNo = '+91' + mobileNumber;
     if (mobileNumber.length == 10) {
+      console.log('xxxxxxxxxxxxxxxxxxx', formattedNo);
       setLoad(true);
       setInvalidNo(false);
 
       const requestOptions = {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({mobileno: mobileNumber}),
+        body: JSON.stringify({mobileno: formattedNo}),
         redirect: 'follow',
       };
 
@@ -63,7 +70,23 @@ const Login = () => {
     }
   };
 
+  const getOtp = () => {
+    getHash()
+      .then(hash => {
+        console.log('===oooooo=======', hash);
+      })
+      .catch(console.log);
+
+    startOtpListener(message => {
+      // extract the otp using regex e.g. the below regex extracts 4 digit otp from message
+      const otp = /(\d{4})/g.exec(message)[1];
+      setOTP(otp);
+    });
+    //return () => removeListener();
+  };
+
   const verifyOTP = async () => {
+    const formattedNo = '+91' + mobileNumber;
     console.log(OTP);
     try {
       requestOptions = {
@@ -72,7 +95,7 @@ const Login = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          mobileno: mobileNumber,
+          mobileno: formattedNo,
           OTP: OTP,
         }),
       };
@@ -82,7 +105,8 @@ const Login = () => {
       );
       const result = await response.json();
       if (response.status === 200) {
-        if (result.newuser) {
+        console.log(result.newuser);
+        if (result.newuser == true) {
           Snackbar.show({
             text: 'Logged In',
             duration: Snackbar.LENGTH_SHORT,
@@ -91,10 +115,10 @@ const Login = () => {
           });
           dispatch(
             login({
+              token: result.token,
               mobileNumber: mobileNumber,
             }),
           );
-          // navigation.navigate('AppDrawer');
           console.log('NewUSer', result, result.newuser);
         } else {
           console.log('oldUSer', result, result.newuser);
@@ -107,12 +131,13 @@ const Login = () => {
               },
             },
           );
-          const profileData = await profileResponse.json();
           dispatch(
             login({
+              token: result.token,
               mobileNumber: mobileNumber,
             }),
           );
+          const profileData = await profileResponse.json();
           console.log('loginScreen', profileData);
         }
       } else {
@@ -130,16 +155,16 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
-        <Modal
+      <Modal
         visible={load}
         transparent={true}
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modal}>
-        <View style={styles.load}>
-          <ActivityIndicator size="large" color={Colors.white} />
+          <View style={styles.load}>
+            <ActivityIndicator size="large" color={Colors.white} />
+          </View>
         </View>
-        </View>
-        </Modal>
+      </Modal>
       <Image
         style={styles.image}
         source={require('../../asset/image/Login.png')}
@@ -289,7 +314,7 @@ const styles = StyleSheet.create({
   },
   load: {
     flex: 1,
-    justifyContent: "center",
-    alignSelf: "center",
-  }
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
 });

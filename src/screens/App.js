@@ -80,7 +80,7 @@ const Bookings = () => {
 const Drawer = createDrawerNavigator();
 const AppDrawer = () => {
   return (
-    <Drawer.Navigator drawerContent={props => <CustomDrawer {...props} />}>
+    <Drawer.Navigator drawerContent={props => <CustomDrawer {...props} />} >
       <Drawer.Screen name="Book a Pickup" component={Home} />
       <Drawer.Screen name="Account" component={Account} />
       <Drawer.Screen name="Bookings" component={Bookings} options={{headerShown: false}}/>

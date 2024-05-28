@@ -2,6 +2,7 @@ import {LOGIN, SIGNOUT, UPDATEPROFILE} from './constants';
 
 initialState = {
   isLoggedIn: false,
+  token: "",
   userName: '',
   mobileNumber: '',
   profileImage: '',
@@ -18,7 +19,8 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         isLoggedIn: true,
-        mobileNumber: action.mobileNumber,
+        token: action.playload.token,
+        mobileNumber: action.playload.mobileNumber,
       };
     case SIGNOUT:
       return {
@@ -36,14 +38,14 @@ export const reducer = (state = initialState, action) => {
     case UPDATEPROFILE:
       return {
         ...state,
-        userName: action.userName,
-        mobileNumber: action.mobileNumber,
-        profileImage: action.profileImage,
-        address: action.address,
-        cityCode: action.cityCode,
-        companyName: action.companyName,
-        GSTNumber: action.GSTNumber,
-        companyAddress: action.companyAddress,
+        userName: action.playload.userName,
+        mobileNumber: action.playload.mobileNumber,
+        profileImage: action.playload.profileImage,
+        address: action.playload.address,
+        cityCode: action.playload.cityCode,
+        companyName: action.playload.companyName,
+        GSTNumber: action.playload.GSTNumber,
+        companyAddress: action.playload.companyAddress,
       };
     default:
       return state;

@@ -22,7 +22,7 @@ import StarRating from 'react-native-star-rating-widget';
 const MyBookings = () => {
   const navigation = useNavigation();
   const [model, setModel] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState(0);
+  const [currentStatus, setCurrentStatus] = useState(1);
   const [detailsModal, setDetailsModal] = useState(false);
   const [paymentView, setPaymentView] = useState(false);
   const [reviewModal, setReviewModal] = useState(false);

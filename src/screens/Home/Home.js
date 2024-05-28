@@ -10,25 +10,35 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useLayoutEffect, useState, version} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useLayoutEffect, useState, version} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import DatePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
 import {Dropdown} from 'react-native-element-dropdown';
+import { useSelector } from 'react-redux';
 
 const Home = () => {
   const navigation = useNavigation();
+  const token = useSelector(state => state.token);
+  const mobileNumber = useSelector(state => state.mobileNumber)
+
   const [date, setDate] = useState(new Date());
   const [dateSelected, setDateSelected] = useState(false);
   const [open, setOpen] = useState(false);
+  const [VehicleData, setVehicleData] = useState([]);
+  const [goods, setGoods] = useState([]);
+  const [fareList, setFareList] = useState([]);
   const [goodsName, setGoodsName] = useState(null);
   const [FareType, setFareType] = useState(null);
   const [noVehicles, setNoVehicles] = useState(null);
   const [atlerNumber, setAlterNUmber] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [locationView, setLocation] = useState(false);
+  const route = useRoute();
+  const locations = route.params;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -74,34 +84,96 @@ const Home = () => {
     });
   }, []);
 
-  const VehicleData = [
-    {
-      name: 'Tata ace',
-      weight: 500,
-      img: require("../../asset/image/tata_ace_white_bg.png"),
-    },
-    {
-      name: 'Bolero',
-      weight: 500,
-      img: require("../../asset/image/Bolero149.png"),
-    },
-    {
-      name: '407',
-      weight: 500,
-      img: require("../../asset/image/407.png"),
-    },
-    {
-      name: 'Eicher',
-      weight: 500,
-      img: require("../../asset/image/eicher-trucks-trucks.png"),
-    },
-  ];
+  useEffect(() => {
+    getVehicleData();
+    getGoodsTypes();
+    getFareList();
+  }, []);
 
-  const goods = [
-    {label: 'Carton Box', value: '1'},
-    {label: 'Wood', value: '2'},
-    {label: 'Steel', value: '3'},
-  ];
+  const getVehicleData = async () => {
+    const myHeaders = new Headers();
+    myHeaders.append(
+      'Authorization',
+      `Bearer ${token}`,
+    );
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+
+    const response = await fetch(
+      'https://trucktaxi.co.in/api/customer/getvehicletypes?cityid=CBE001',
+      requestOptions,
+    );
+    const result = await response.json();
+    setVehicleData(result.data);
+  };
+
+  const getGoodsTypes = async () => {
+    try {
+      const response = await fetch(
+        'https://trucktaxi.co.in/api/customer/getgoodstypes',
+        {
+          method: 'GET',
+          headers: {
+            Authorization:
+              `Bearer ${token}`,
+          },
+          redirect: 'follow',
+        },
+      );
+      const result = await response.json();
+      setGoods(result.data);
+    } catch (error) {
+      console.error('Error fetching goods types:', error);
+    }
+  };
+
+  const getFareList = async () => {
+
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        Authorization:
+          `Bearer ${token}`,
+      },
+    };
+    const response = await fetch('https://trucktaxi.co.in/api/customer/gettriptypes', requestOptions)
+    const result = await response.json()
+    setFareList(result.data)
+    console.log("_+___+_+_+_+_+_+_+_",fareList)
+  };
+
+  // const VehicleData = [
+  //   {
+  //     name: 'Tata ace',
+  //     weight: 500,
+  //     img: require("../../asset/image/tata_ace_white_bg.png"),
+  //   },
+  //   {
+  //     name: 'Bolero',
+  //     weight: 500,
+  //     img: require("../../asset/image/Bolero149.png"),
+  //   },
+  //   {
+  //     name: '407',
+  //     weight: 500,
+  //     img: require("../../asset/image/407.png"),
+  //   },
+  //   {
+  //     name: 'Eicher',
+  //     weight: 500,
+  //     img: require("../../asset/image/eicher-trucks-trucks.png"),
+  //   },
+  // ];
+
+  // const goods = [
+  //   {label: 'Carton Box', value: '1'},
+  //   {label: 'Wood', value: '2'},
+  //   {label: 'Steel', value: '3'},
+  // ];
 
   const fare = [
     {label: 'Item 1', value: '1'},
@@ -141,26 +213,27 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           renderItem={({item, index}) => {
             const isFocused = selectedVehicle
-              ? item.name == selectedVehicle.name
+              ? item.vehicletype == selectedVehicle.vehicletype
               : false;
 
             return (
               <TouchableOpacity
-                activeOpacity={1}
+                activeOpacity={4}
                 style={[
                   styles.vehicle,
                   isFocused
                     ? {
-                      overflow:"hidden",
-                      borderRadius: 5,
-                      padding: width * 0.01,
+                        overflow: 'hidden',
+                        borderWidthColor: Colors.white2,
+                        borderRadius: 5,
+                        padding: width * 0.01,
                         shadowColor: '#000',
                         shadowOffset: {
                           width: 0,
                           height: 4,
                         },
                         shadowOpacity: 0.0,
-                        shadowRadius: 1.12,
+                        shadowRadius: 1,
 
                         elevation: 4,
                       }
@@ -168,19 +241,20 @@ const Home = () => {
                 ]}
                 key={index}
                 onPress={() => setSelectedVehicle(item)}>
-                <View style={[
-                  isFocused
-                    ? {
-                      padding: width* 0.01,
-                      overflow:"hidden",
-                        borderWidth: 3,
-                        borderRadius: 5,
-                        borderColor: Colors.primaryColor,
-                      }
-                    : null,
-                ]}>
-                <Image style={styles.vehicleImg} source={item.img} />
-                <Text style={styles.vehicleName}>{item.name}</Text>
+                <View
+                  style={[
+                    isFocused
+                      ? {
+                          padding: width * 0.01,
+                          overflow: 'hidden',
+                          borderWidth: 3,
+                          borderRadius: 5,
+                          borderColor: Colors.primaryColor,
+                        }
+                      : null,
+                  ]}>
+                  <Image style={styles.vehicleImg} source={{uri: item.url}} />
+                  <Text style={styles.vehicleName}>{item.vehicletype}</Text>
                 </View>
               </TouchableOpacity>
             );
@@ -188,7 +262,9 @@ const Home = () => {
         />
         <View style={styles.typeView}>
           <Text style={styles.h3}>Vehicle Type: </Text>
-            <Text style={styles.vehicleName}>{selectedVehicle ? selectedVehicle.name : "select Vehicle"}</Text>
+          <Text style={styles.vehicleName}>
+            {selectedVehicle ? selectedVehicle.vehicletype : 'select Vehicle'}
+          </Text>
         </View>
 
         <View style={styles.line} />
@@ -225,9 +301,20 @@ const Home = () => {
             <Text style={styles.h3}>Pickup Location:</Text>
             <Text style={styles.h3}>Drop Location:</Text>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Map')}>
-            <Text style={styles.location}>Choose Location</Text>
-          </TouchableOpacity>
+          {locations ? (
+            <View style={styles.locationInnerView}>
+              <Text style={styles.locationText}>
+                {locations.pickup.Description}pp
+              </Text>
+              <Text style={styles.locationText}>
+                {locations.drop.Description}
+              </Text>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={() => navigation.navigate('Map')}>
+              <Text style={styles.location}>Choose Location</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <View style={styles.line} />
         <View style={styles.dropView}>
@@ -247,12 +334,13 @@ const Home = () => {
               iconColor={Colors.white}
               data={goods}
               maxHeight={200}
-              labelField="label"
-              valueField="label"
+              labelField="goodsname"
+              valueField="goodsname"
               placeholder="Select item"
               value={goodsName}
               onChange={item => {
                 setGoodsName(item.label);
+                console.log(item);
               }}
             />
             <Dropdown
@@ -263,10 +351,10 @@ const Home = () => {
               selectedTextStyle={styles.selectedTextStyle}
               iconStyle={styles.iconStyle}
               iconColor={Colors.white}
-              data={fare}
+              data={fareList}
               maxHeight={200}
-              labelField="label"
-              valueField="label"
+              labelField="name"
+              valueField="name"
               placeholder="Select item"
               value={FareType}
               onChange={item => {
@@ -305,6 +393,7 @@ const Home = () => {
             placeholderTextColor={Colors.black3}
             keyboardType="phone-pad"
             onChangeText={text => setAlterNUmber(text)}
+            maxLength={10}
           />
         </View>
       </ScrollView>
@@ -335,13 +424,13 @@ const styles = StyleSheet.create({
   vehicle: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: width* 0.025,
-    
+    padding: width * 0.025,
+    borderWidth: 0.2,
+    borderRadius: 3,
+    borderWidthColor: Colors.black2,
     marginHorizontal: width * 0.02,
     marginVertical: width * 0.03,
     overflow: 'hidden',
-
-    elevation: 0.5,
   },
   vehicleImg: {
     width: width * 0.23,
@@ -351,8 +440,9 @@ const styles = StyleSheet.create({
   },
   vehicleName: {
     color: Colors.black,
-    fontWeight: "500",
+    fontWeight: '500',
     fontSize: 14,
+    textAlign: 'center',
   },
   vehicleNo: {
     color: Colors.black2,
@@ -403,8 +493,18 @@ const styles = StyleSheet.create({
     color: Colors.white,
     backgroundColor: Colors.primaryColor,
     padding: width * 0.025,
-    paddingHorizontal: width* 0.085,
+    paddingHorizontal: width * 0.085,
     borderRadius: 5,
+  },
+  locationInnerView: {
+    marginTop: height * 0.03,
+    gap: height * 0.03,
+  },
+  locationText: {
+    width: width * 0.5,
+    maxHeight: height * 0.02,
+    color: Colors.black,
+    overflow: 'hidden',
   },
   h2: {
     color: Colors.black2,
@@ -419,8 +519,8 @@ const styles = StyleSheet.create({
     gap: height * 0.04,
   },
   dropdown: {
-    margin: height* 0.008,
-    height: height* 0.05,
+    margin: height * 0.008,
+    height: height * 0.05,
     width: width * 0.48,
     borderColor: 'gray',
     borderWidth: 1,
@@ -440,7 +540,8 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     color: Colors.black,
     fontSize: 16,
-    marginLeft: width * 0.04,
+    marginLeft: width * 0.02,
+    lineHeight: 30,
   },
   iconStyle: {
     width: 20,

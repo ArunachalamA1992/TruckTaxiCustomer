@@ -16,7 +16,7 @@ const Track = () => {
   });
 
   return (
-    <View>
+    <View style={styles.container}>
       <MapView
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
@@ -110,6 +110,10 @@ export default Track
 const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.white2
+  },
   map: {
     width: width * 1,
     height: height * 0.64,
@@ -121,7 +125,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     padding: width* 0.04,
-    paddingBottom: width* 0,
+    paddingBottom: height* 0.02,
     borderTopRightRadius: width* 0.06,
     borderTopLeftRadius: width* 0.06,
     gap: width* 0.06,
