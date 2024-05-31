@@ -66,7 +66,7 @@ const CustomDrawer = () => {
       Id: 7,
       name: 'Privacy & Conditions',
       image: require('../asset/image/document.png'),
-      navigate: 'Privacy & Conditions',
+      navigate: 'PrivacyandConditions',
     },
   ];
 

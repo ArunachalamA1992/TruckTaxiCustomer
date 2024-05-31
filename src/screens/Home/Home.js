@@ -18,12 +18,12 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
 import {Dropdown} from 'react-native-element-dropdown';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 const Home = () => {
   const navigation = useNavigation();
   const token = useSelector(state => state.token);
-  const mobileNumber = useSelector(state => state.mobileNumber)
+  const mobileNumber = useSelector(state => state.mobileNumber);
 
   const [date, setDate] = useState(new Date());
   const [dateSelected, setDateSelected] = useState(false);
@@ -85,17 +85,14 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    getVehicleData();
-    getGoodsTypes();
-    getFareList();
+      getVehicleData();
+      getGoodsTypes();
+      getFareList();
   }, []);
 
   const getVehicleData = async () => {
     const myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      `Bearer ${token}`,
-    );
+    myHeaders.append('Authorization', `Bearer ${token}`);
 
     const requestOptions = {
       method: 'GET',
@@ -108,7 +105,8 @@ const Home = () => {
       requestOptions,
     );
     const result = await response.json();
-    setVehicleData(result.data);
+    const data = result.data
+    setVehicleData(data);
   };
 
   const getGoodsTypes = async () => {
@@ -118,8 +116,7 @@ const Home = () => {
         {
           method: 'GET',
           headers: {
-            Authorization:
-              `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           redirect: 'follow',
         },
@@ -132,18 +129,19 @@ const Home = () => {
   };
 
   const getFareList = async () => {
-
     const requestOptions = {
       method: 'GET',
       headers: {
-        Authorization:
-          `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     };
-    const response = await fetch('https://trucktaxi.co.in/api/customer/gettriptypes', requestOptions)
-    const result = await response.json()
-    setFareList(result.data)
-    console.log("_+___+_+_+_+_+_+_+_",fareList)
+    const response = await fetch(
+      'https://trucktaxi.co.in/api/customer/gettriptypes',
+      requestOptions,
+    );
+    const result = await response.json();
+    setFareList(result.data);
+    console.log('_+___+_+_+_+_+_+_+_', fareList);
   };
 
   // const VehicleData = [
@@ -175,15 +173,15 @@ const Home = () => {
   //   {label: 'Steel', value: '3'},
   // ];
 
-  const fare = [
-    {label: 'Item 1', value: '1'},
-    {label: 'Item 2', value: '2'},
-    {label: 'Item 3', value: '3'},
-    {label: 'Item 4', value: '2'},
-    {label: 'Item 5', value: '3'},
-    {label: 'Item 6', value: '2'},
-    {label: 'Item 7', value: '3'},
-  ];
+  // const fare = [
+  //   {label: 'Item 1', value: '1'},
+  //   {label: 'Item 2', value: '2'},
+  //   {label: 'Item 3', value: '3'},
+  //   {label: 'Item 4', value: '2'},
+  //   {label: 'Item 5', value: '3'},
+  //   {label: 'Item 6', value: '2'},
+  //   {label: 'Item 7', value: '3'},
+  // ];
 
   const vehicle = [
     {label: '1', value: '1'},
@@ -339,7 +337,7 @@ const Home = () => {
               placeholder="Select item"
               value={goodsName}
               onChange={item => {
-                setGoodsName(item.label);
+                setGoodsName(item.goodsname);
                 console.log(item);
               }}
             />
@@ -358,7 +356,7 @@ const Home = () => {
               placeholder="Select item"
               value={FareType}
               onChange={item => {
-                setFareType(item.label);
+                setFareType(item.name);
               }}
             />
             <Dropdown
@@ -502,7 +500,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     width: width * 0.5,
-    maxHeight: height * 0.02,
+    maxHeight: height * 0.026,
     color: Colors.black,
     overflow: 'hidden',
   },

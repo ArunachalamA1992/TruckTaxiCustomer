@@ -19,6 +19,9 @@ import Login from './Login/Login';
 import {Provider, useSelector} from 'react-redux';
 import {store} from '../storage/store';
 import WelcomeScreen from './WelcomeScreen/WelcomeScreen';
+import Register from './Register/Register';
+import PrivacyandPolicy from './Privacy&Conditions/PrivacyandConditions';
+import PrivacyandConditions from './Privacy&Conditions/PrivacyandConditions';
 
 const Stack = createNativeStackNavigator();
 const AppNavigation = () => {
@@ -59,6 +62,11 @@ const AppNavigation = () => {
                 name="Login"
                 component={Login}
                 options={{headerShown: false}}
+              />
+               <Stack.Screen
+                name="Register"
+                component={Register}
+                options={{headerShown: false}}
               /></>
             )}
           </>
@@ -88,6 +96,7 @@ const AppDrawer = () => {
       <Drawer.Screen name="Chat" component={Chat} />
       <Drawer.Screen name="Contact Us" component={ContactUs} />
       <Drawer.Screen name="BookingSummary" component={BookingSummary} />
+      <Drawer.Screen name="PrivacyandConditions" component={PrivacyandConditions} />
       {/* <Drawer.Screen
         name="Track"
         component={Track}

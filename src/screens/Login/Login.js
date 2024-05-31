@@ -113,12 +113,7 @@ const Login = () => {
             textColor: Colors.white,
             backgroundColor: Colors.black,
           });
-          dispatch(
-            login({
-              token: result.token,
-              mobileNumber: mobileNumber,
-            }),
-          );
+          navigation.navigate("Register",{mobileNumber: mobileNumber, token: result.token})
           console.log('NewUSer', result, result.newuser);
         } else {
           console.log('oldUSer', result, result.newuser);
@@ -131,14 +126,16 @@ const Login = () => {
               },
             },
           );
-          dispatch(
-            login({
-              token: result.token,
-              mobileNumber: mobileNumber,
-            }),
-          );
+          // dispatch(
+          //   login({
+          //     token: result.token,
+          //     mobileNumber: mobileNumber,
+          //   }),
+          // );
+          navigation.navigate("Register",{mobileNumber: mobileNumber,token: result.token})
           const profileData = await profileResponse.json();
           console.log('loginScreen', profileData);
+          console.log(result)
         }
       } else {
         Snackbar.show({

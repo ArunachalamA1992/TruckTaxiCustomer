@@ -11,71 +11,30 @@ import {
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Icon1 from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import {Dropdown} from 'react-native-element-dropdown';
 import Colors from '../../components/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import Snackbar from 'react-native-snackbar';
-import {login, update} from '../../storage/actions';
+import { login } from '../../storage/actions';
 
-const Accounts = () => {
+const Register = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const dispatch = useDispatch();
-  const state = useSelector(state => state);
-  const token = useSelector(state => state.token);
-  const currentName = useSelector(state => state.userName);
-  const currentAddress = useSelector(state => state.address);
-  const mobileNumber = useSelector(state => state.mobileNumber);
-  const currentCode = useSelector(state => state.cityCode);
-  const currentCustomerType = useSelector(state => state.customerType);
-  const currentCompanyName = useSelector(state => state.companyName);
-  const currentGstNumber = useSelector(state => state.GSTNumber);
-  const currentCompanyAddress = useSelector(state => state.companyAddress);
-
-  const [name, setName] = useState(currentName);
+  const {mobileNumber, token} = route.params;
+  console.log(token,mobileNumber)
+  const [name, setName] = useState('');
   const [phone, setPhone] = useState(mobileNumber);
-  const [address, setAddress] = useState(currentAddress);
-  const [code, setCode] = useState(currentCode);
+  const [address, setAddress] = useState('');
+  const [code, setCode] = useState('');
   const [cityCode, setCityCode] = useState([]);
-  const [customerType, setCustomerType] = useState(currentCustomerType);
-  const [companyName, setCompanyName] = useState(currentCompanyName);
-  const [gstNumber, setGstNumber] = useState(currentGstNumber);
-  const [companyAddress, setCompanyAddress] = useState(currentCompanyAddress);
+  const [customerType, setCustomerType] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [gstNumber, setGstNumber] = useState('');
+  const [companyAddress, setCompanyAddress] = useState('');
 
-  console.log(state, 'numbrrrrr', mobileNumber);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <TouchableOpacity
-          style={{marginLeft: width * 0.04}}
-          onPress={() => navigation.toggleDrawer()}>
-          <Icon name="reorder" size={25} color="#000" />
-        </TouchableOpacity>
-      ),
-      headerTitle: () => (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 5,
-          }}>
-          <Text style={{color: 'black', fontSize: 18}}>Update Profile</Text>
-          <Icon1 name="edit" size={20} color="#000" />
-        </View>
-      ),
-      headerRight: () => (
-        <TouchableOpacity
-          style={{marginRight: width * 0.04}}
-          onPress={() => navigation.navigate('Book a Pickup')}>
-          <Icon2 name="home" size={25} color={Colors.primaryColor} />
-        </TouchableOpacity>
-      ),
-    });
-  }, []);
+  // const token = useSelector(state => state.token);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getCityCode();
@@ -110,8 +69,13 @@ const Accounts = () => {
   };
 
   const handleUpdate = async () => {
-    console.log(name, mobileNumber, address, code, name);
-    if (name == '' || phone == '' || address == '' || customerType == '') {
+    console.log(code)
+    if (
+      name == '' ||
+      phone == '' ||
+      address == '' ||
+      customerType == ''
+    ) {
       Snackbar.show({
         text: 'Fill all the Fields',
         duration: Snackbar.LENGTH_SHORT,
@@ -126,12 +90,12 @@ const Accounts = () => {
       myHeaders.append('Authorization', `Bearer ${token}`);
 
       const raw = JSON.stringify({
-        cityid: code,
-        mobileno: formattedNo,
         name: name,
+        mobileno: formattedNo,
         address: address,
-        language: 'English',
+        cityid: code,
         customertype: customerType,
+        language: 'English',
         gst: gstNumber,
         companyname: companyName,
         companyaddress: companyAddress,
@@ -152,20 +116,19 @@ const Accounts = () => {
       console.log(result);
 
       Snackbar.show({
-        text: 'Updated',
+        text: 'Logged In',
         duration: Snackbar.LENGTH_SHORT,
         textColor: Colors.white,
         backgroundColor: Colors.primaryColor,
       });
       dispatch(
-        update({
+        login({
           token: token,
           userName: name,
           mobileNumber: mobileNumber,
           profileImage: '',
           address: address,
           cityCode: code,
-          customerType: customerType,
           companyName: companyName,
           GSTNumber: gstNumber,
           companyAddress: companyAddress,
@@ -174,23 +137,9 @@ const Accounts = () => {
     }
   };
 
-  const getProfileDetails = async () => {
-    const formattedNo = "+91"+mobileNumber
-    const response = await fetch(
-      `https://trucktaxi.co.in/api/customer/getprofiledetails?mobileno=${formattedNo}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    const result = await response.json();
-    console.log(result.data)
-  };
-
   return (
     <ScrollView style={styles.container} keyboardDismissMode="on-drag">
+      <Text style={styles.signup}>Signup</Text>
       <View style={styles.detailsView}>
         <Text style={styles.text}>Name:</Text>
         <View style={styles.inputView}>
@@ -200,7 +149,6 @@ const Accounts = () => {
             placeholder="User Name..."
             maxLength={30}
             placeholderTextColor={Colors.black3}
-            value={name}
             onChangeText={text => setName(text)}
           />
         </View>
@@ -212,12 +160,8 @@ const Accounts = () => {
           <Text style={styles.text}>+91</Text>
           <TextInput
             style={styles.input}
-            placeholder="Phone Number..."
-            keyboardType="phone-pad"
-            maxLength={10}
-            value={phone}
-            placeholderTextColor={Colors.black3}
-            onChangeText={text => setPhone(text)}
+            value={mobileNumber}
+            editable={false}
           />
         </View>
       </View>
@@ -230,7 +174,6 @@ const Accounts = () => {
             placeholder="Address..."
             placeholderTextColor={Colors.black3}
             maxLength={50}
-            value={address}
             onChangeText={text => setAddress(text)}
           />
         </View>
@@ -291,33 +234,30 @@ const Accounts = () => {
               placeholder="Company Name..."
               placeholderTextColor={Colors.black3}
               onChangeText={text => setCompanyName(text)}
-              value={companyName}
             />
             <TextInput
               style={styles.input2}
               placeholder="GST Number..."
               placeholderTextColor={Colors.black3}
               onChangeText={text => setGstNumber(text)}
-              value={gstNumber}
             />
             <TextInput
               style={styles.input2}
               placeholder="Company Address..."
               placeholderTextColor={Colors.black3}
               onChangeText={text => setCompanyAddress(text)}
-              value={companyAddress}
             />
           </View>
         </View>
       ) : null}
       <TouchableOpacity onPress={() => handleUpdate()}>
-        <Text style={styles.save}>Update</Text>
+        <Text style={styles.save}>Login</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 };
 
-export default Accounts;
+export default Register;
 
 const {width, height} = Dimensions.get('screen');
 
@@ -430,3 +370,4 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.01,
   },
 });
+

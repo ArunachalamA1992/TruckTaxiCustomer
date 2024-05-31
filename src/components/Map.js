@@ -20,6 +20,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Colors from './Colors';
+import Snackbar from 'react-native-snackbar';
 
 const Map = () => {
   const navigation = useNavigation();
@@ -42,6 +43,8 @@ const Map = () => {
   const [description, setDescription] = useState("");
   const [pickupDescription, setPickupDescription] = useState("");
   const [dropDescription, setDropDescription] = useState("");
+  const [distance, setDistance] = useState("");
+  const [duration, setDuration] = useState("");
 
   useEffect(() => {
     requestPermission();
@@ -55,6 +58,7 @@ const Map = () => {
 
     const onKeyboardDidHide = () => {
       setKeyboardHeight(0);
+
     };
 
     const keyboardDidShowListener = Keyboard.addListener(
@@ -118,7 +122,12 @@ const Map = () => {
       autocompleteRef.current.setAddressText('');
     }
     } else {
-      console.warn("select location")
+      Snackbar.show({
+        text: 'Pick the Location',
+        duration: Snackbar.LENGTH_SHORT,
+        textColor: Colors.red,
+        backgroundColor: Colors.black,
+      });
     }
   }
 
@@ -138,7 +147,12 @@ const Map = () => {
       autocompleteRef.current.setAddressText('');
     }
   } else {
-    console.warn("select location")
+    Snackbar.show({
+      text: 'Pick the Location',
+      duration: Snackbar.LENGTH_SHORT,
+      textColor: Colors.red,
+      backgroundColor: Colors.black,
+    });
   }
   }
 
@@ -174,6 +188,11 @@ const Map = () => {
             apikey={'AIzaSyAOl88J2TyN1uxEENd8sjtYNq8Xa2nW4rk'}
             strokeWidth={10}
             strokeColor={Colors.litePrimaryBg2}
+            onReady={result => {
+              setDistance(result.distance);
+              setDuration(result.duration);
+              console.log("distance:", result.distance, "duration:",Math.ceil(result.duration));
+          }}
           />}
         </MapView>
         <View style={styles.inputContainer}>
@@ -207,7 +226,10 @@ const Map = () => {
               }}
             />
           </View>
-
+          <View style={styles.DDView}>
+          <Text style={styles.DDText}>Distance: {distance}</Text>
+          <Text style={styles.DDText}>Duration: {Math.ceil(duration)}</Text>
+          </View>
           <View style={styles.inputContainer1}>
             <View style={styles.inputContainer2}>
               <View style={styles.inputContainer3}>
@@ -309,11 +331,21 @@ const styles = StyleSheet.create({
     },
   },
   /////////
+  DDView: {
+    marginTop: height* 0.03,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: width* 0.1,
+  },
+  DDText: {
+    fontSize: 14,
+    color: Colors.black,
+  },
   inputContainer1: {
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 6,
-    marginTop: height * 0.042,
+    marginTop: height * 0.02,
     marginBottom: height * 0.002,
   },
   inputContainer2: {
