@@ -8,16 +8,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/Entypo';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 import Colors from '../../components/Colors';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Snackbar from 'react-native-snackbar';
-import {login, update} from '../../storage/actions';
+import { login, update } from '../../storage/actions';
 
 const Accounts = () => {
   const navigation = useNavigation();
@@ -46,44 +46,44 @@ const Accounts = () => {
 
   console.log(state, 'numbrrrrr', mobileNumber);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <TouchableOpacity
-          style={{marginLeft: width * 0.04}}
-          onPress={() => navigation.toggleDrawer()}>
-          <Icon name="reorder" size={25} color="#000" />
-        </TouchableOpacity>
-      ),
-      headerTitle: () => (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 5,
-          }}>
-          <Text style={{color: 'black', fontSize: 18}}>Update Profile</Text>
-          <Icon1 name="edit" size={20} color="#000" />
-        </View>
-      ),
-      headerRight: () => (
-        <TouchableOpacity
-          style={{marginRight: width * 0.04}}
-          onPress={() => navigation.navigate('Bookings')}>
-          <Icon2 name="home" size={25} color={Colors.primaryColor} />
-        </TouchableOpacity>
-      ),
-    });
-  }, []);
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerLeft: () => (
+  //       <TouchableOpacity
+  //         style={{marginLeft: width * 0.04}}
+  //         onPress={() => navigation.toggleDrawer()}>
+  //         <Icon name="reorder" size={25} color="#000" />
+  //       </TouchableOpacity>
+  //     ),
+  //     headerTitle: () => (
+  //       <View
+  //         style={{
+  //           flexDirection: 'row',
+  //           justifyContent: 'center',
+  //           alignItems: 'center',
+  //           gap: 5,
+  //         }}>
+  //         <Text style={{color: 'black', fontSize: 18}}>Update Profile</Text>
+  //         <Icon1 name="edit" size={20} color="#000" />
+  //       </View>
+  //     ),
+  //     headerRight: () => (
+  //       <TouchableOpacity
+  //         style={{marginRight: width * 0.04}}
+  //         onPress={() => navigation.navigate('Bookings')}>
+  //         <Icon2 name="home" size={25} color={Colors.primaryColor} />
+  //       </TouchableOpacity>
+  //     ),
+  //   });
+  // }, []);
 
   useEffect(() => {
     getCityCode();
   }, []);
 
   const customerTypes = [
-    {label: 'General', value: '1'},
-    {label: 'Business', value: '2'},
+    { label: 'General', value: '1' },
+    { label: 'Business', value: '2' },
   ];
 
   const getCityCode = async () => {
@@ -175,7 +175,7 @@ const Accounts = () => {
   };
 
   const getProfileDetails = async () => {
-    const formattedNo = "+91"+mobileNumber
+    const formattedNo = "+91" + mobileNumber
     const response = await fetch(
       `https://trucktaxi.co.in/api/customer/getprofiledetails?mobileno=${formattedNo}`,
       {
@@ -319,7 +319,7 @@ const Accounts = () => {
 
 export default Accounts;
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {

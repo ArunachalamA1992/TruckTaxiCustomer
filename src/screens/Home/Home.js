@@ -12,28 +12,30 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useLayoutEffect, useState, version} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import React, { useEffect, useLayoutEffect, useState, version } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import DatePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
-import {Dropdown} from 'react-native-element-dropdown';
-import {useSelector} from 'react-redux';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {selectDestination, selectOrigin} from '../../Slice/navSlice';
+import { Dropdown } from 'react-native-element-dropdown';
+import { useSelector } from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { selectDestination, selectOrigin } from '../../Slice/navSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 
-import {BottomSheet} from 'react-native-btr';
-import {Iconviewcomponent} from '../../components/Icontag';
+import { BottomSheet } from 'react-native-btr';
+import { Iconviewcomponent } from '../../components/Icontag';
 
 let scr_height = Dimensions.get('window').height;
 
-const Home = ({navigation}) => {
+const Home = ({ navigation, route }) => {
+  const locations = route.params;
   const token = useSelector(state => state.token);
   const mobileNumber = useSelector(state => state.mobileNumber);
+  // console.log("mobileNumber ================ : ", mobileNumber);
 
   const [date, setDate] = useState(new Date());
   const [dateSelected, setDateSelected] = useState(false);
@@ -51,15 +53,14 @@ const Home = ({navigation}) => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectVehicleName, setSelectVehicleName] = useState('');
   const [selectVehicleid, setselectVehicleId] = useState('');
-  const route = useRoute();
-  const locations = route.params;
   const [salebottomSheetVisible, setSaleBottomSheetVisible] = useState(false);
   const [bottomData, setBottomData] = useState('');
   const [selectGoodsName, setSelectGoodsName] = useState('Select Good Type');
   const [selectGoodsid, setSelectGoodsId] = useState('');
   const [selectFareName, setSelectFareName] = useState('Select Fare Type');
   const [selectFareid, setSelectFareId] = useState('');
-
+  const [customerid, setCustomerid] = useState('');
+  const [loading, setLoading] = useState(false);
   const [selectPackage, setSelectPackage] = useState({});
 
   const [selectIntercity, setSelectIntercity] = useState({});
@@ -71,12 +72,15 @@ const Home = ({navigation}) => {
     fetchCustomerDetails();
   }, [token]);
 
+
+
+
   const fetchCustomerDetails = async () => {
     try {
       const myHeaders = new Headers();
       myHeaders.append(
         'x-access-token',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1EMTIzIiwicm9sZSI6MSwiaWF0IjoxNTk3MjIxMzA1LCJleHAiOjE1OTczMDc3MDV9.Tj0B6Jh1EQySEtJvMFcxM5e4w0rNTDMKN1eqPze8sLk',
+        'Bearer ' + token,
       );
       myHeaders.append('Authorization', 'Bearer ' + token);
 
@@ -85,21 +89,23 @@ const Home = ({navigation}) => {
         headers: myHeaders,
         redirect: 'follow',
       };
-
       fetch(
         `https://trucktaxi.co.in/api/customer/getprofiledetails?mobileno=+91${mobileNumber}`,
         requestOptions,
       )
         .then(response => response.json())
         .then(result => {
+          console.log("Profile ================ : ", result);
           AsyncStorage.setItem('customerID', JSON.stringify(result?.data?.[0]?.customerid));
+          AsyncStorage.setItem('cityid', JSON.stringify(result?.data?.[0]?.cityid));
+          // setCustomerid(result?.data?.[0]?.customerid);
         })
         .catch(error => console.error(error));
     } catch (error) {
       console.error('Error fetching customer details:', error);
     }
   };
-  
+
   useEffect(() => {
     AsyncStorage.getItem('userdata').then(userdata => {
       AsyncStorage.getItem('userToken').then(value => {
@@ -164,7 +170,7 @@ const Home = ({navigation}) => {
     navigation.setOptions({
       headerLeft: () => (
         <TouchableOpacity
-          style={{marginLeft: width * 0.04}}
+          style={{ marginLeft: 0 }}
           onPress={() => navigation.toggleDrawer()}>
           <Icon name="reorder" size={25} color="#000" />
         </TouchableOpacity>
@@ -177,13 +183,13 @@ const Home = ({navigation}) => {
             alignItems: 'center',
             gap: 5,
           }}>
-          <Text style={{color: 'black', fontSize: 18}}>Bookings</Text>
-          <Icon2 name="truck" size={20} color="#000" />
+          <Text style={{ color: 'black', fontSize: 18, paddingHorizontal: 10 }}>Bookings</Text>
+          {/* <Icon2 name="truck" size={20} color="#000" /> */}
         </View>
       ),
       headerRight: () => (
         <TouchableOpacity
-          style={{marginRight: width * 0.04}}
+          style={{ marginRight: width * 0.04 }}
           onPress={() => navigation.navigate('Notifications')}>
           <Text
             style={{
@@ -266,11 +272,11 @@ const Home = ({navigation}) => {
   };
 
   const vehicle = [
-    {label: '1', value: '1'},
-    {label: '2', value: '2'},
-    {label: '3', value: '3'},
-    {label: '4', value: '4'},
-    {label: '5', value: '5'},
+    { label: '1', value: '1' },
+    { label: '2', value: '2' },
+    { label: '3', value: '3' },
+    { label: '4', value: '4' },
+    { label: '5', value: '5' },
   ];
 
   const options = {
@@ -294,35 +300,35 @@ const Home = ({navigation}) => {
   };
   console.log(
     'Vehicle ==== : ' +
-      selectVehicleid +
-      '\n' +
-      'Goods ========= :' +
-      '\n' +
-      selectGoodsid +
-      '\n' +
-      'Fare Type ========= :' +
-      selectFareid +
-      '\n' +
-      'Package Type ==========:' +
-      selectPackage,
+    selectVehicleid +
     '\n' +
-      'Intercity Fare ==========:' +
-      selectIntercity +
-      '\n' +
-      'Night Fare ==========:' +
-      selectNight +
-      '\n' +
-      'No.of. vehcile ==========:' +
-      noVehicles +
-      '\n' +
-      'Pickup n Drop location ==========:' +
-      locations +
-      '\n' +
-      // 'Drop location ==========:' + locations.drop.Description + '\n' +
-      'Mobile no =========== :' +
-      atlerNumber,
+    'Goods ========= :' +
+    '\n' +
+    selectGoodsid +
+    '\n' +
+    'Fare Type ========= :' +
+    selectFareid +
+    '\n' +
+    'Package Type ==========:' +
+    selectPackage,
+    '\n' +
+    'Intercity Fare ==========:' +
+    selectIntercity +
+    '\n' +
+    'Night Fare ==========:' +
+    selectNight +
+    '\n' +
+    'No.of. vehcile ==========:' +
+    noVehicles +
+    '\n' +
+    'Pickup n Drop location ==========:' +
+    locations +
+    '\n' +
+    // 'Drop location ==========:' + locations.drop.Description + '\n' +
+    'Mobile no =========== :' +
+    atlerNumber,
   );
-
+  console.log('locations', locations)
   const nextButtonClick = () => {
     try {
       let datetosend = moment(date, 'DD/MM/YYYY hh:mm A').format('DD/MM/YYYY');
@@ -451,7 +457,7 @@ const Home = ({navigation}) => {
                     Icontag={'AntDesign'}
                     iconname={'closecircleo'}
                     icon_size={24}
-                    iconstyle={{color: Colors.primaryColor, marginRight: 10}}
+                    iconstyle={{ color: Colors.primaryColor, marginRight: 10 }}
                   />
                 </TouchableOpacity>
               </View>
@@ -467,9 +473,9 @@ const Home = ({navigation}) => {
                   <FlatList
                     data={goods}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       return (
-                        <View style={{width: '100%'}}>
+                        <View style={{ width: '100%' }}>
                           <TouchableOpacity
                             onPress={() => selectedGoods(item, index)}
                             style={{
@@ -505,7 +511,7 @@ const Home = ({navigation}) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{width: '100%'}}
+                    style={{ width: '100%' }}
                   />
                 ) : null}
 
@@ -513,9 +519,9 @@ const Home = ({navigation}) => {
                   <FlatList
                     data={fareList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       return (
-                        <View style={{width: '100%'}}>
+                        <View style={{ width: '100%' }}>
                           <TouchableOpacity
                             onPress={() => selectFareItem(item, index)}
                             style={{
@@ -551,7 +557,7 @@ const Home = ({navigation}) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{width: '100%'}}
+                    style={{ width: '100%' }}
                   />
                 ) : null}
 
@@ -559,9 +565,9 @@ const Home = ({navigation}) => {
                   <FlatList
                     data={packageList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       return (
-                        <View style={{width: '100%'}}>
+                        <View style={{ width: '100%' }}>
                           <TouchableOpacity
                             onPress={() => selectPackageItem(item, index)}
                             style={{
@@ -664,7 +670,7 @@ const Home = ({navigation}) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{width: '100%'}}
+                    style={{ width: '100%' }}
                   />
                 ) : null}
 
@@ -672,9 +678,9 @@ const Home = ({navigation}) => {
                   <FlatList
                     data={interCityList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       return (
-                        <View style={{width: '100%'}}>
+                        <View style={{ width: '100%' }}>
                           <TouchableOpacity
                             onPress={() => selectIntercityItem(item, index)}
                             style={{
@@ -777,7 +783,7 @@ const Home = ({navigation}) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{width: '100%'}}
+                    style={{ width: '100%' }}
                   />
                 ) : null}
 
@@ -785,10 +791,10 @@ const Home = ({navigation}) => {
                   <FlatList
                     data={nightList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       // console.log("Night item ========== : ", nightList);
                       return (
-                        <View style={{width: '100%'}}>
+                        <View style={{ width: '100%' }}>
                           <TouchableOpacity
                             onPress={() => selectNightFareItem(item, index)}
                             style={{
@@ -868,7 +874,7 @@ const Home = ({navigation}) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{width: '100%'}}
+                    style={{ width: '100%' }}
                   />
                 ) : null}
               </View>
@@ -938,9 +944,9 @@ const Home = ({navigation}) => {
 
           fetch(
             'https://trucktaxi.co.in/api/customer/getpackages?vehicleid=' +
-              item.id +
-              '&cityid=' +
-              parseddata.cityid,
+            item.id +
+            '&cityid=' +
+            parseddata.cityid,
             requestOptions,
           )
             .then(response => response.json())
@@ -954,9 +960,9 @@ const Home = ({navigation}) => {
 
           fetch(
             'https://trucktaxi.co.in/api/customer/getintercitylist?vehicleid=' +
-              item.id +
-              '&cityid=' +
-              parseddata.cityid,
+            item.id +
+            '&cityid=' +
+            parseddata.cityid,
             requestOptions,
           )
             .then(response => response.json())
@@ -1012,7 +1018,7 @@ const Home = ({navigation}) => {
               alignItems: 'center',
               backgroundColor: Colors.softGrey,
             }}>
-            <View style={{width: '100%', paddingVertical: 10, marginTop: 10}}>
+            <View style={{ width: '100%', paddingVertical: 10, marginTop: 10 }}>
               <Text
                 style={{
                   fontSize: 18,
@@ -1024,12 +1030,12 @@ const Home = ({navigation}) => {
               </Text>
             </View>
             <View
-              style={{width: '100%', alignItems: 'center', paddingVertical: 5}}>
+              style={{ width: '100%', alignItems: 'center', paddingVertical: 5 }}>
               <FlatList
                 data={VehicleData}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                renderItem={({item, index}) => {
+                renderItem={({ item, index }) => {
                   const isFocused = selectedVehicle
                     ? item.vehicletype == selectedVehicle.vehicletype
                     : false;
@@ -1041,20 +1047,20 @@ const Home = ({navigation}) => {
                         styles.vehicle,
                         isFocused
                           ? {
-                              overflow: 'hidden',
-                              borderWidthColor: Colors.white2,
-                              borderRadius: 5,
-                              padding: width * 0.01,
-                              shadowColor: '#000',
-                              shadowOffset: {
-                                width: 0,
-                                height: 4,
-                              },
-                              shadowOpacity: 0.0,
-                              shadowRadius: 1,
+                            overflow: 'hidden',
+                            borderWidthColor: Colors.white2,
+                            borderRadius: 5,
+                            padding: width * 0.01,
+                            shadowColor: '#000',
+                            shadowOffset: {
+                              width: 0,
+                              height: 4,
+                            },
+                            shadowOpacity: 0.0,
+                            shadowRadius: 1,
 
-                              elevation: 4,
-                            }
+                            elevation: 4,
+                          }
                           : null,
                       ]}
                       key={index}
@@ -1063,17 +1069,17 @@ const Home = ({navigation}) => {
                         style={[
                           isFocused
                             ? {
-                                padding: width * 0.01,
-                                overflow: 'hidden',
-                                borderWidth: 3,
-                                borderRadius: 5,
-                                borderColor: Colors.primaryColor,
-                              }
+                              padding: width * 0.01,
+                              overflow: 'hidden',
+                              borderWidth: 3,
+                              borderRadius: 5,
+                              borderColor: Colors.primaryColor,
+                            }
                             : null,
                         ]}>
                         <Image
                           style={styles.vehicleImg}
-                          source={{uri: item.url}}
+                          source={{ uri: item.url }}
                         />
                         <Text style={styles.vehicleName}>
                           {item.vehicletype}
@@ -1166,10 +1172,11 @@ const Home = ({navigation}) => {
               {locations ? (
                 <View style={styles.locationInnerView}>
                   <Text style={styles.locationText}>
-                    {locations.pickup.Description}
+                    {/* {locations.pickup} */}
+                    {locations?.pickup?.Description}
                   </Text>
                   <Text style={styles.locationText}>
-                    {locations.drop.Description}
+                    {locations?.drop?.Description}
                   </Text>
                 </View>
               ) : (
@@ -1179,7 +1186,7 @@ const Home = ({navigation}) => {
               )}
             </View>
             <View style={styles.line} />
-            <View style={{width: '95%'}}>
+            <View style={{ width: '95%' }}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -1228,7 +1235,7 @@ const Home = ({navigation}) => {
                     Icontag={'Entypo'}
                     iconname={'chevron-small-down'}
                     icon_size={24}
-                    iconstyle={{color: Colors.black2, marginRight: 10}}
+                    iconstyle={{ color: Colors.black2, marginRight: 10 }}
                   />
                 </TouchableOpacity>
               </View>
@@ -1281,7 +1288,7 @@ const Home = ({navigation}) => {
                     Icontag={'Entypo'}
                     iconname={'chevron-small-down'}
                     icon_size={24}
-                    iconstyle={{color: Colors.black2, marginRight: 10}}
+                    iconstyle={{ color: Colors.black2, marginRight: 10 }}
                   />
                 </TouchableOpacity>
               </View>
@@ -1337,7 +1344,7 @@ const Home = ({navigation}) => {
                       Icontag={'Entypo'}
                       iconname={'chevron-small-down'}
                       icon_size={24}
-                      iconstyle={{color: Colors.black2, marginRight: 10}}
+                      iconstyle={{ color: Colors.black2, marginRight: 10 }}
                     />
                   </TouchableOpacity>
                 </View>
@@ -1394,7 +1401,7 @@ const Home = ({navigation}) => {
                       Icontag={'Entypo'}
                       iconname={'chevron-small-down'}
                       icon_size={24}
-                      iconstyle={{color: Colors.black2, marginRight: 10}}
+                      iconstyle={{ color: Colors.black2, marginRight: 10 }}
                     />
                   </TouchableOpacity>
                 </View>
@@ -1451,7 +1458,7 @@ const Home = ({navigation}) => {
                       Icontag={'Entypo'}
                       iconname={'chevron-small-down'}
                       icon_size={24}
-                      iconstyle={{color: Colors.black2, marginRight: 10}}
+                      iconstyle={{ color: Colors.black2, marginRight: 10 }}
                     />
                   </TouchableOpacity>
                 </View>
@@ -1599,7 +1606,7 @@ const Home = ({navigation}) => {
 
 export default Home;
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {

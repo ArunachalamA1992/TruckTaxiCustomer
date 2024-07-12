@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from './Colors';
 import { useDispatch } from 'react-redux';
@@ -24,7 +24,7 @@ const CustomDrawer = () => {
       Id: 0,
       name: 'Book now',
       image: require('../asset/image/home.png'),
-      navigate: 'Book a Pickup',
+      navigate: 'BookaPickup',
     },
     {
       Id: 1,
@@ -60,7 +60,7 @@ const CustomDrawer = () => {
       Id: 6,
       name: 'Terms & Conditions',
       image: require('../asset/image/copy.png'),
-      navigate: 'Terms & Conditions',
+      navigate: 'TermsandConditions',
     },
     {
       Id: 7,
@@ -96,7 +96,7 @@ const CustomDrawer = () => {
             <Text style={styles.Phone}>1234567890</Text>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate("Account")}>
-          <Icon2 name="edit" size={16} color="#000" />
+            <Icon2 name="edit" size={16} color="#000" />
           </TouchableOpacity>
         </View>
 
@@ -133,7 +133,7 @@ const CustomDrawer = () => {
 
 export default CustomDrawer;
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   },
   logout: {
     color: Colors.white,
-    padding: width* 0.02,
+    padding: width * 0.02,
   },
   logoutIcon: {
     width: width * 0.08,

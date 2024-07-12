@@ -10,15 +10,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Colors from '../../components/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import OTPTextInput from 'react-native-otp-textinput';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
 import Snackbar from 'react-native-snackbar';
-import {getHash, startOtpListener, useOtpVerify} from 'react-native-otp-verify';
-import {login} from '../../storage/actions';
+import { getHash, startOtpListener, useOtpVerify } from 'react-native-otp-verify';
+import { login } from '../../storage/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
@@ -39,8 +39,8 @@ const Login = () => {
 
       const requestOptions = {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({mobileno: formattedNo}),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mobileno: formattedNo }),
         redirect: 'follow',
       };
 
@@ -84,6 +84,7 @@ const Login = () => {
         requestOptions,
       );
       const result = await response.json();
+      console.log("Verify ================ : ", result);
       if (response.status === 200) {
         AsyncStorage.setItem('userToken', JSON.stringify(result.token));
         if (result.newuser == true) {
@@ -98,11 +99,14 @@ const Login = () => {
             token: result.token,
           });
         } else {
-          navigation.navigate('BookaPickup', {
-            mobileNumber: mobileNumber,
-            token: result.token,
-          });
+          navigation.navigate('BookaPickup', { locations: {} });
         }
+        dispatch(
+          login({
+            token: result.token,
+            mobileNumber: mobileNumber,
+          }),
+        );
       } else {
         Snackbar.show({
           text: 'Invalid OTP',
@@ -182,7 +186,7 @@ const Login = () => {
 
 export default Login;
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {

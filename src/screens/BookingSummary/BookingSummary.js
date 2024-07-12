@@ -8,16 +8,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
 import Snackbar from 'react-native-snackbar';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import OTPInput from '../../components/OTPInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BookingSummary = ({route, navigation}) => {
+const BookingSummary = ({ route, navigation }) => {
   const [data] = useState(route.params);
   const token = useSelector(state => state.token);
   console.log('token', token);
@@ -36,7 +36,7 @@ const BookingSummary = ({route, navigation}) => {
     navigation.setOptions({
       headerLeft: () => (
         <TouchableOpacity
-          style={{marginLeft: width * 0.04}}
+          style={{ marginLeft: width * 0.04 }}
           onPress={() => navigation.toggleDrawer()}>
           <Icon name="reorder" size={25} color="#000" />
         </TouchableOpacity>
@@ -49,13 +49,13 @@ const BookingSummary = ({route, navigation}) => {
             alignItems: 'center',
             gap: 5,
           }}>
-          <Text style={{color: 'black', fontSize: 18}}>Book a Pickup</Text>
+          <Text style={{ color: 'black', fontSize: 18 }}>Book a Pickup</Text>
           <Icon2 name="truck" size={20} color="#000" />
         </View>
       ),
       headerRight: () => (
         <TouchableOpacity
-          style={{marginRight: width * 0.04}}
+          style={{ marginRight: width * 0.04 }}
           onPress={() => navigation.navigate('Notifications')}>
           <Text
             style={{
@@ -150,6 +150,7 @@ const BookingSummary = ({route, navigation}) => {
     fetch('https://trucktaxi.co.in/api/customer/booknow', requestOptions)
       .then(response => response.json())
       .then(result => {
+        console.log("confirm booking =================:", result);
         setBookingOTPVisible(true);
         setBookingData(result?.data?.[0]);
         ToastAndroid.show(result?.data?.[0]?.message, ToastAndroid.SHORT);
@@ -172,16 +173,21 @@ const BookingSummary = ({route, navigation}) => {
         body: raw,
         redirect: 'follow',
       };
+      console.log("requestOptions =============== : ", JSON.stringify(requestOptions));
       fetch(
         'https://trucktaxi.co.in/api/customer/verifyTripOTP',
         requestOptions,
       )
         .then(response => response.json())
         .then(result => {
-          console.log('result', result);
-          ToastAndroid.show(result?.message, ToastAndroid.SHORT);
-          setBookingOTPVisible(false);
-          navigation.replace('MyBookings');
+          console.log('result ******************', result);
+          if (result?.status == 200) {
+            ToastAndroid.show(result?.message, ToastAndroid.SHORT);
+            setBookingOTPVisible(false);
+            navigation.replace('MyBookings');
+          } else {
+            ToastAndroid.show(result?.message, ToastAndroid.SHORT);
+          }
         })
         .catch(error => console.error(error));
     } catch (error) {
@@ -215,8 +221,8 @@ const BookingSummary = ({route, navigation}) => {
               {data?.fare == 2
                 ? data?.Packagevalue?.basefare
                 : data?.fare == 3
-                ? data?.intercitytype?.basefare
-                : data?.nighttype?.basefare}
+                  ? data?.intercitytype?.basefare
+                  : data?.nighttype?.basefare}
             </Text>
           )}
           <Text style={styles.value}>{data?.pickup}</Text>
@@ -254,7 +260,7 @@ const BookingSummary = ({route, navigation}) => {
             flex: 1,
             backgroundColor: '#00000050',
           }}>
-          <View style={{flex: 1}} />
+          <View style={{ flex: 1 }} />
           <View
             style={{
               backgroundColor: '#fff',
@@ -286,7 +292,7 @@ const BookingSummary = ({route, navigation}) => {
 
 export default BookingSummary;
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
