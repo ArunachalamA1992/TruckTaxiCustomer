@@ -39,6 +39,7 @@ const Upcoming = ({
   customerid,
 }) => {
   const [bookingData, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setBookingData();
@@ -46,6 +47,7 @@ const Upcoming = ({
 
   const setBookingData = async () => {
     try {
+      setLoading(true);
       const myHeaders = new Headers();
       myHeaders.append('Authorization', 'Bearer ' + token);
 
@@ -62,6 +64,7 @@ const Upcoming = ({
         .then(response => response.json())
         .then(result => {
           setData(result?.data);
+          setLoading(false);
         })
         .catch(error => console.error(error));
     } catch (error) {
@@ -71,91 +74,96 @@ const Upcoming = ({
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.white }}>
-      <FlatList
-        data={bookingData}
-        renderItem={({ item, index }) => {
-          return (
-            <View key={index} style={styles.container}>
-              <View style={styles.container1}>
-                <View style={styles.container2}>
-                  <Text style={styles.type}>ID :</Text>
-                  <Text style={styles.type}>Vehicle :</Text>
-                  <Text style={styles.type}>Goods Details:</Text>
-                  <Text style={styles.type}>Pickup :</Text>
-                  <Text style={styles.type}>Drop :</Text>
+      {!loading ?
+        <FlatList
+          data={bookingData}
+          renderItem={({ item, index }) => {
+            return (
+              <View key={index} style={styles.container}>
+                <View style={styles.container1}>
+                  <View style={styles.container2}>
+                    <Text style={styles.type}>ID :</Text>
+                    <Text style={styles.type}>Vehicle :</Text>
+                    <Text style={styles.type}>Goods Details:</Text>
+                    <Text style={styles.type}>Pickup :</Text>
+                    <Text style={styles.type}>Drop :</Text>
+                  </View>
+                  <View style={styles.container2}>
+                    <Text style={styles.value}>{item?.id}</Text>
+                    <Text style={styles.value}>{item?.vehicletype}</Text>
+                    <Text style={styles.value}>{item?.goods}</Text>
+                    <View style={styles.container3}>
+                      <Icon2
+                        name="location-dot"
+                        size={13}
+                        color="#000"
+                        style={{ marginTop: 10 }}
+                      />
+                      <Text style={styles.value} numberOfLines={1}>
+                        {item?.fromloc}
+                      </Text>
+                    </View>
+                    <View style={styles.container3}>
+                      <Icon2
+                        name="location-dot"
+                        size={13}
+                        color="#000"
+                        style={{ marginTop: 10 }}
+                      />
+                      <Text style={styles.value} numberOfLines={1}>
+                        {item?.toloc}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.container2}>
-                  <Text style={styles.value}>{item?.id}</Text>
-                  <Text style={styles.value}>{item?.vehicletype}</Text>
-                  <Text style={styles.value}>{item?.goods}</Text>
-                  <View style={styles.container3}>
-                    <Icon2
-                      name="location-dot"
-                      size={13}
-                      color="#000"
-                      style={{ marginTop: 10 }}
-                    />
-                    <Text style={styles.value} numberOfLines={1}>
-                      {item?.fromloc}
+                <View style={styles.line} />
+                <Text style={styles.type}>Status:</Text>
+                <StepIndicator
+                  customStyles={customStyles}
+                  currentPosition={currentStatus}
+                  stepCount={4}
+                  labels={labels}
+                />
+                <View style={styles.buttonView}>
+                  <TouchableOpacity onPress={() => setModel(true)}>
+                    <Text style={styles.help}>Need Help ?</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleButtonPress({
+                        from: {
+                          latitude: item?.fromloclat,
+                          longitude: item?.fromloclong,
+                        },
+                        to: {
+                          latitude: item?.toloclat,
+                          longitude: item?.toloclong,
+                        },
+                        item,
+                      });
+                    }}>
+                    <Text style={styles.track}>
+                      {currentStatus == 0
+                        ? 'Details'
+                        : currentStatus == 1
+                          ? 'Track'
+                          : currentStatus == 2
+                            ? 'Pay'
+                            : currentStatus == 3
+                              ? 'Review'
+                              : 'Completed'}
                     </Text>
-                  </View>
-                  <View style={styles.container3}>
-                    <Icon2
-                      name="location-dot"
-                      size={13}
-                      color="#000"
-                      style={{ marginTop: 10 }}
-                    />
-                    <Text style={styles.value} numberOfLines={1}>
-                      {item?.toloc}
-                    </Text>
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </View>
-              <View style={styles.line} />
-              <Text style={styles.type}>Status:</Text>
-              <StepIndicator
-                customStyles={customStyles}
-                currentPosition={currentStatus}
-                stepCount={4}
-                labels={labels}
-              />
-              <View style={styles.buttonView}>
-                <TouchableOpacity onPress={() => setModel(true)}>
-                  <Text style={styles.help}>Need Help ?</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleButtonPress({
-                      from: {
-                        latitude: item?.fromloclat,
-                        longitude: item?.fromloclong,
-                      },
-                      to: {
-                        latitude: item?.toloclat,
-                        longitude: item?.toloclong,
-                      },
-                      item,
-                    });
-                  }}>
-                  <Text style={styles.track}>
-                    {currentStatus == 0
-                      ? 'Details'
-                      : currentStatus == 1
-                        ? 'Track'
-                        : currentStatus == 2
-                          ? 'Pay'
-                          : currentStatus == 3
-                            ? 'Review'
-                            : 'Completed'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          );
-        }}
-        showsVerticalScrollIndicator={false}
-      />
+            );
+          }}
+          showsVerticalScrollIndicator={false}
+        />
+        :
+        <View style={styles.load}>
+          <ActivityIndicator size="large" color={Colors.primaryColor} />
+        </View>}
     </SafeAreaView>
   );
 };
@@ -177,9 +185,11 @@ const Completed = ({
   useEffect(() => {
     setBookingData();
   }, [token]);
+  const [loading, setLoading] = useState(true);
 
   const setBookingData = async () => {
     try {
+      setLoading(true);
       const myHeaders = new Headers();
       myHeaders.append('Authorization', 'Bearer ' + token);
 
@@ -196,6 +206,7 @@ const Completed = ({
         .then(response => response.json())
         .then(result => {
           setData(result?.data);
+          setLoading(false);
         })
         .catch(error => console.error(error));
     } catch (error) {
@@ -205,90 +216,95 @@ const Completed = ({
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.white }}>
-      <FlatList
-        data={bookingData}
-        renderItem={({ item, index }) => {
-          return (
-            <View key={index} style={styles.container}>
-              <View style={styles.container1}>
-                <View style={styles.container2}>
-                  <Text style={styles.type}>ID :</Text>
-                  <Text style={styles.type}>Vehicle :</Text>
-                  <Text style={styles.type}>Goods Details:</Text>
-                  <Text style={styles.type}>Pickup :</Text>
-                  <Text style={styles.type}>Drop :</Text>
+      {!loading ?
+        <FlatList
+          data={bookingData}
+          renderItem={({ item, index }) => {
+            return (
+              <View key={index} style={styles.container}>
+                <View style={styles.container1}>
+                  <View style={styles.container2}>
+                    <Text style={styles.type}>ID :</Text>
+                    <Text style={styles.type}>Vehicle :</Text>
+                    <Text style={styles.type}>Goods Details:</Text>
+                    <Text style={styles.type}>Pickup :</Text>
+                    <Text style={styles.type}>Drop :</Text>
+                  </View>
+                  <View style={styles.container2}>
+                    <Text style={styles.value}>{item?.id}</Text>
+                    <Text style={styles.value}>{item?.vehicletype}</Text>
+                    <Text style={styles.value}>{item?.goods}</Text>
+                    <View style={styles.container3}>
+                      <Icon2
+                        name="location-dot"
+                        size={13}
+                        color="#000"
+                        style={{ marginTop: 10 }}
+                      />
+                      <Text style={styles.value} numberOfLines={1}>
+                        {item?.fromloc}
+                      </Text>
+                    </View>
+                    <View style={styles.container3}>
+                      <Icon2
+                        name="location-dot"
+                        size={13}
+                        color="#000"
+                        style={{ marginTop: 10 }}
+                      />
+                      <Text style={styles.value} numberOfLines={1}>
+                        {item?.toloc}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.container2}>
-                  <Text style={styles.value}>{item?.id}</Text>
-                  <Text style={styles.value}>{item?.vehicletype}</Text>
-                  <Text style={styles.value}>{item?.goods}</Text>
-                  <View style={styles.container3}>
-                    <Icon2
-                      name="location-dot"
-                      size={13}
-                      color="#000"
-                      style={{ marginTop: 10 }}
-                    />
-                    <Text style={styles.value} numberOfLines={1}>
-                      {item?.fromloc}
+                <View style={styles.line} />
+                <Text style={styles.type}>Status:</Text>
+                <StepIndicator
+                  customStyles={customStyles}
+                  currentPosition={currentStatus}
+                  stepCount={4}
+                  labels={labels}
+                />
+                <View style={styles.buttonView}>
+                  <TouchableOpacity onPress={() => setModel(true)}>
+                    <Text style={styles.help}>Need Help ?</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleButtonPress({
+                        from: {
+                          latitude: item?.fromloclat,
+                          longitude: item?.fromloclong,
+                        },
+                        to: {
+                          latitude: item?.toloclat,
+                          longitude: item?.toloclong,
+                        },
+                        item,
+                      });
+                    }}>
+                    <Text style={styles.track}>
+                      {currentStatus == 0
+                        ? 'Details'
+                        : currentStatus == 1
+                          ? 'Track'
+                          : currentStatus == 2
+                            ? 'Pay'
+                            : currentStatus == 3
+                              ? 'Review'
+                              : 'Completed'}
                     </Text>
-                  </View>
-                  <View style={styles.container3}>
-                    <Icon2
-                      name="location-dot"
-                      size={13}
-                      color="#000"
-                      style={{ marginTop: 10 }}
-                    />
-                    <Text style={styles.value} numberOfLines={1}>
-                      {item?.toloc}
-                    </Text>
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </View>
-              <View style={styles.line} />
-              <Text style={styles.type}>Status:</Text>
-              <StepIndicator
-                customStyles={customStyles}
-                currentPosition={currentStatus}
-                stepCount={4}
-                labels={labels}
-              />
-              <View style={styles.buttonView}>
-                <TouchableOpacity onPress={() => setModel(true)}>
-                  <Text style={styles.help}>Need Help ?</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleButtonPress({
-                      from: {
-                        latitude: item?.fromloclat,
-                        longitude: item?.fromloclong,
-                      },
-                      to: {
-                        latitude: item?.toloclat,
-                        longitude: item?.toloclong,
-                      },
-                      item,
-                    });
-                  }}>
-                  <Text style={styles.track}>
-                    {currentStatus == 0
-                      ? 'Details'
-                      : currentStatus == 1
-                        ? 'Track'
-                        : currentStatus == 2
-                          ? 'Pay'
-                          : currentStatus == 3
-                            ? 'Review'
-                            : 'Completed'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          );
-        }}
-      />
+            );
+          }}
+        />
+        :
+        <View style={styles.load}>
+          <ActivityIndicator size="large" color={Colors.primaryColor} />
+        </View>}
     </SafeAreaView>
   );
 };
@@ -366,50 +382,6 @@ const MyBookings = ({ route, navigation }) => {
       console.log('catch in use_Effect mybooking:', error);
     }
   }, []);
-
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerLeft: () => (
-  //       <TouchableOpacity
-  //         style={{marginRight: 15}}
-  //         onPress={() => navigation.toggleDrawer()}>
-  //         <Icon name="reorder" size={25} color="#000" />
-  //       </TouchableOpacity>
-  //     ),
-  //     headerTitle: () => (
-  //       <View
-  //         style={{
-  //           flexDirection: 'row',
-  //           justifyContent: 'center',
-  //           alignItems: 'center',
-  //           gap: 5,
-  //         }}>
-  //         <Text style={{color: 'black', fontSize: 18}}>MY Bookings</Text>
-  //         <OrderIcon name="clipboard-notes" size={20} color="#000" />
-  //       </View>
-  //     ),
-  //     headerRight: () => (
-  //       <TouchableOpacity
-  //         style={{marginRight: width * 0.04}}
-  //         onPress={() => navigation.navigate('Notifications')}>
-  //         <Text
-  //           style={{
-  //             position: 'absolute',
-  //             top: -4,
-  //             right: -4,
-  //             backgroundColor: Colors.red,
-  //             fontSize: 12,
-  //             paddingHorizontal: width * 0.01,
-  //             borderRadius: 25,
-  //             zIndex: 5,
-  //           }}>
-  //           0
-  //         </Text>
-  //         <Icon name="bell" size={23} color={Colors.primaryColor} />
-  //       </TouchableOpacity>
-  //     ),
-  //   });
-  // }, []);
 
   const labels = [
     'Booked',
