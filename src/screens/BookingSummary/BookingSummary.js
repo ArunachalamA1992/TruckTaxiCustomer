@@ -8,19 +8,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
 import Snackbar from 'react-native-snackbar';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import OTPInput from '../../components/OTPInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Enquiry from './Enquiry';
 
-const BookingSummary = ({ route, navigation }) => {
+const {width, height} = Dimensions.get('screen');
+const BookingSummary = ({route, navigation}) => {
   const [data] = useState(route.params);
   const token = useSelector(state => state.token);
-  console.log('token', token);
   const mobileNumber = useSelector(state => state.mobileNumber);
   const cityCode = useSelector(state => state.cityCode);
   const userName = useSelector(state => state.userName);
@@ -30,51 +31,8 @@ const BookingSummary = ({ route, navigation }) => {
   const [bookingData, setBookingData] = useState({});
   const [coupon, setCoupon] = useState('');
   const [customerid, setCustomerID] = useState('');
+  const [enquiryVisible, setEnquiryVisible] = useState(false);
   const inputRef = useRef(null);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <TouchableOpacity
-          style={{ marginLeft: width * 0.04 }}
-          onPress={() => navigation.toggleDrawer()}>
-          <Icon name="reorder" size={25} color="#000" />
-        </TouchableOpacity>
-      ),
-      headerTitle: () => (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 5,
-          }}>
-          <Text style={{ color: 'black', fontSize: 18 }}>Book a Pickup</Text>
-          <Icon2 name="truck" size={20} color="#000" />
-        </View>
-      ),
-      headerRight: () => (
-        <TouchableOpacity
-          style={{ marginRight: width * 0.04 }}
-          onPress={() => navigation.navigate('Notifications')}>
-          <Text
-            style={{
-              position: 'absolute',
-              top: -4,
-              right: -4,
-              backgroundColor: Colors.red,
-              fontSize: 12,
-              paddingHorizontal: width * 0.01,
-              borderRadius: 25,
-              zIndex: 5,
-            }}>
-            1
-          </Text>
-          <Icon name="bell" size={23} color={Colors.primaryColor} />
-        </TouchableOpacity>
-      ),
-    });
-  }, []);
 
   useEffect(() => {
     fetchCustomerDetails();
@@ -102,7 +60,10 @@ const BookingSummary = ({ route, navigation }) => {
         .then(response => response.json())
         .then(result => {
           setCustomerID(result?.data?.[0]?.customerid);
-          AsyncStorage.setItem('customerID', JSON.stringify(result?.data?.[0]?.customerid));
+          AsyncStorage.setItem(
+            'customerID',
+            JSON.stringify(result?.data?.[0]?.customerid),
+          );
         })
         .catch(error => console.error(error));
     } catch (error) {
@@ -173,7 +134,10 @@ const BookingSummary = ({ route, navigation }) => {
         body: raw,
         redirect: 'follow',
       };
-      console.log("requestOptions =============== : ", JSON.stringify(requestOptions));
+      console.log(
+        'requestOptions =============== : ',
+        JSON.stringify(requestOptions),
+      );
       fetch(
         'https://trucktaxi.co.in/api/customer/verifyTripOTP',
         requestOptions,
@@ -221,8 +185,8 @@ const BookingSummary = ({ route, navigation }) => {
               {data?.fare == 2
                 ? data?.Packagevalue?.basefare
                 : data?.fare == 3
-                  ? data?.intercitytype?.basefare
-                  : data?.nighttype?.basefare}
+                ? data?.intercitytype?.basefare
+                : data?.nighttype?.basefare}
             </Text>
           )}
           <Text style={styles.value}>{data?.pickup}</Text>
@@ -239,15 +203,38 @@ const BookingSummary = ({ route, navigation }) => {
             setCoupon(text);
           }}
         />
-        <TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: Colors.primaryColor,
+            borderRadius: 10,
+            padding: 15,
+            width: 100,
+          }}>
           <Text style={styles.applyButton}>Apply</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.confirmView}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setEnquiryVisible(true);
+          }}
+          style={{
+            width: '48%',
+            borderWidth: 1,
+            borderColor: Colors.cloudyGrey,
+            borderRadius: 10,
+            padding: 10,
+          }}>
           <Text style={styles.enquiry}>Enquiry</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => confirmBooking()}>
+        <TouchableOpacity
+          style={{
+            width: '48%',
+            backgroundColor: Colors.primaryColor,
+            borderRadius: 10,
+            padding: 10,
+          }}
+          onPress={() => confirmBooking()}>
           <Text style={styles.confirm}>Confirm Booking</Text>
         </TouchableOpacity>
       </View>
@@ -260,7 +247,7 @@ const BookingSummary = ({ route, navigation }) => {
             flex: 1,
             backgroundColor: '#00000050',
           }}>
-          <View style={{ flex: 1 }} />
+          <View style={{flex: 1}} />
           <View
             style={{
               backgroundColor: '#fff',
@@ -280,39 +267,55 @@ const BookingSummary = ({ route, navigation }) => {
             <TouchableOpacity
               onPress={() => {
                 setVerifyOTP();
+              }}
+              style={{
+                width: '45%',
+                backgroundColor: Colors.primaryColor,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                borderRadius: 10,
               }}>
               <Text style={styles.confirm}>Submit</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
+      <Enquiry
+        visible={enquiryVisible}
+        setVisible={setEnquiryVisible}
+        cityCode={cityCode}
+        mobileNumber={mobileNumber}
+        userName={userName}
+        customerid={customerid}
+        data={data}
+        token={token}
+      />
     </View>
   );
 };
 
 export default BookingSummary;
 
-const { width, height } = Dimensions.get('screen');
-
 const styles = StyleSheet.create({
   container: {
-    padding: width * 0.04,
+    flex: 1,
+    padding: 10,
+    backgroundColor: Colors.white,
   },
   header: {
     color: Colors.black,
     fontSize: 19,
     fontWeight: '500',
-    marginVertical: height * 0.02,
+    marginVertical: 10,
   },
   container2: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: width * 0.04,
-    margin: width * 0.01,
-    borderRadius: width * 0.015,
+    padding: 10,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: Colors.black3,
+    borderColor: Colors.black,
   },
   container3: {
     flex: 1,
@@ -332,24 +335,22 @@ const styles = StyleSheet.create({
   },
   inputView: {
     flexDirection: 'row',
-    marginTop: height * 0.04,
-    gap: width * 0.05,
+    marginTop: 20,
+    gap: 10,
     alignItems: 'center',
   },
   input: {
-    width: width * 0.6,
+    flex: 1,
     color: Colors.black,
     borderWidth: 1,
     borderColor: Colors.black,
-    borderRadius: width * 0.015,
-    paddingHorizontal: width * 0.02,
+    borderRadius: 10,
+    paddingHorizontal: 10,
   },
   applyButton: {
     color: Colors.white,
-    backgroundColor: Colors.primaryColor,
-    paddingHorizontal: width * 0.08,
-    paddingVertical: width * 0.04,
-    borderRadius: width * 0.014,
+    fontSize: 14,
+    textAlign: 'center',
   },
   confirmView: {
     flexDirection: 'row',
@@ -358,18 +359,12 @@ const styles = StyleSheet.create({
   },
   enquiry: {
     color: Colors.black,
-    backgroundColor: Colors.white,
-    borderWidth: 1,
-    borderColor: Colors.cloudyGrey,
-    paddingHorizontal: width * 0.16,
-    paddingVertical: width * 0.04,
-    borderRadius: width * 0.014,
+    fontSize: 14,
+    textAlign: 'center',
   },
   confirm: {
     color: Colors.white,
-    backgroundColor: Colors.primaryColor,
-    paddingHorizontal: width * 0.08,
-    paddingVertical: width * 0.04,
-    borderRadius: width * 0.014,
+    fontSize: 14,
+    textAlign: 'center',
   },
 });

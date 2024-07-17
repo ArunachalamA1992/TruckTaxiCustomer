@@ -13,31 +13,29 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useLayoutEffect, useState, version } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React, {useEffect, useLayoutEffect, useState, version} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import DatePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
-import { Dropdown } from 'react-native-element-dropdown';
-import { useSelector } from 'react-redux';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { selectDestination, selectOrigin } from '../../Slice/navSlice';
+import {Dropdown} from 'react-native-element-dropdown';
+import {useSelector} from 'react-redux';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {selectDestination, selectOrigin} from '../../Slice/navSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 
-import { BottomSheet } from 'react-native-btr';
-import { Iconviewcomponent } from '../../components/Icontag';
+import {BottomSheet} from 'react-native-btr';
+import {Iconviewcomponent} from '../../components/Icontag';
 
 let scr_height = Dimensions.get('window').height;
 
-const Home = ({ navigation, route }) => {
-  const locations = route.params;
+const Home = ({navigation, route}) => {
+  const locations = route?.params?.locations;
   const token = useSelector(state => state.token);
   const mobileNumber = useSelector(state => state.mobileNumber);
-  // console.log("mobileNumber ================ : ", mobileNumber);
-
   const [date, setDate] = useState(new Date());
   const [dateSelected, setDateSelected] = useState(false);
   const [open, setOpen] = useState(false);
@@ -52,7 +50,6 @@ const Home = ({ navigation, route }) => {
   const [noVehicles, setNoVehicles] = useState(null);
   const [atlerNumber, setAlterNUmber] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
-  const [selectVehicleName, setSelectVehicleName] = useState('');
   const [selectVehicleid, setselectVehicleId] = useState('');
   const [salebottomSheetVisible, setSaleBottomSheetVisible] = useState(false);
   const [bottomData, setBottomData] = useState('');
@@ -61,52 +58,60 @@ const Home = ({ navigation, route }) => {
   const [selectFareName, setSelectFareName] = useState('Select Fare Type');
   const [selectFareid, setSelectFareId] = useState('');
   const [customerid, setCustomerid] = useState('');
+  const [cityid, setCityId] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectPackage, setSelectPackage] = useState({});
+  const [selectVehicle, setSelectVehicle] = useState({});
+  const [vehicleTypeVisible, setVehicleTypeVisible] = useState(false);
+  const [vehicleType, setVehicleType] = useState([
+    {
+      id: 1,
+      name: 'open type',
+    },
+    {
+      id: 1,
+      name: 'closed type',
+    },
+  ]);
 
   const [selectIntercity, setSelectIntercity] = useState({});
 
   const [selectNight, setSelectNight] = useState({});
   const [notifyDataLength, setNotifyDataLength] = useState(0);
 
-
   useEffect(() => {
     fetchCustomerDetails();
   }, [token]);
 
-
   useEffect(() => {
     try {
-
       const myHeaders = new Headers();
-      myHeaders.append("Authorization", "Bearer " + token);
+      myHeaders.append('Authorization', 'Bearer ' + token);
       const requestOptions = {
-        method: "GET",
+        method: 'GET',
         headers: myHeaders,
-        redirect: "follow"
+        redirect: 'follow',
       };
       setLoading(true);
-      fetch("https://trucktaxi.co.in/api/customer/getnotifications?customerid=" + customerid, requestOptions)
-        .then((response) => response.json())
-        .then((result) => {
-          console.log("Result data =============== : ", result?.data?.length);
-          setNotifyDataLength(result?.data?.length),
-            setLoading(false)
+      fetch(
+        'https://trucktaxi.co.in/api/customer/getnotifications?customerid=' +
+          customerid,
+        requestOptions,
+      )
+        .then(response => response.json())
+        .then(result => {
+          setNotifyDataLength(result?.data?.length), setLoading(false);
         })
-        .catch((error) => console.error(error));
+        .catch(error => console.error(error));
     } catch (error) {
-      console.log("catch in use_Effect :", error);
+      console.log('catch in use_Effect :', error);
     }
-  }, [])
-
+  }, []);
 
   const fetchCustomerDetails = async () => {
     try {
       const myHeaders = new Headers();
-      myHeaders.append(
-        'x-access-token',
-        'Bearer ' + token,
-      );
+      myHeaders.append('x-access-token', 'Bearer ' + token);
       myHeaders.append('Authorization', 'Bearer ' + token);
 
       const requestOptions = {
@@ -120,9 +125,15 @@ const Home = ({ navigation, route }) => {
       )
         .then(response => response.json())
         .then(result => {
-          console.log("Profile ================ : ", result);
-          AsyncStorage.setItem('customerID', JSON.stringify(result?.data?.[0]?.customerid));
-          AsyncStorage.setItem('cityid', JSON.stringify(result?.data?.[0]?.cityid));
+          AsyncStorage.setItem(
+            'customerID',
+            JSON.stringify(result?.data?.[0]?.customerid),
+          );
+          AsyncStorage.setItem(
+            'cityid',
+            JSON.stringify(result?.data?.[0]?.cityid),
+          );
+          setCityId(result?.data?.[0]?.cityid);
           setCustomerid(result?.data?.[0]?.customerid);
         })
         .catch(error => console.error(error));
@@ -153,7 +164,6 @@ const Home = ({ navigation, route }) => {
               redirect: 'follow',
               body: raw,
             };
-            console.log('sent');
             fetch(
               'https://trucktaxi.co.in/api/customer/updateToken',
               requestOptions,
@@ -194,9 +204,7 @@ const Home = ({ navigation, route }) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity
-          style={{ marginLeft: 0 }}
-          onPress={() => navigation.toggleDrawer()}>
+        <TouchableOpacity style={{}} onPress={() => navigation.toggleDrawer()}>
           <Icon name="reorder" size={25} color="#000" />
         </TouchableOpacity>
       ),
@@ -206,25 +214,34 @@ const Home = ({ navigation, route }) => {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: 5,
+            gap: 10,
           }}>
-          <Text style={{ color: 'black', fontSize: 18, paddingHorizontal: 10 }}>Bookings</Text>
+          <Text style={{color: 'black', fontSize: 18, paddingLeft: 10}}>
+            Book a Pickup
+          </Text>
+          <Iconviewcomponent
+            Icontag={'FontAwesome5'}
+            iconname={'truck'}
+            icon_size={20}
+            iconstyle={{color: Colors.black, marginRight: 10}}
+          />
         </View>
       ),
       headerRight: () => (
         <TouchableOpacity
-          style={{ marginRight: width * 0.04 }}
+          style={{marginRight: 10}}
           onPress={() => navigation.navigate('Notifications')}>
           <Text
             style={{
               position: 'absolute',
-              top: -4,
-              right: -5,
+              zIndex: 1,
+              top: -5,
+              right: 10,
               backgroundColor: Colors.red,
+              borderRadius: 100,
+              padding: 2,
+              color: Colors.white,
               fontSize: 12,
-              paddingHorizontal: width * 0.01,
-              borderRadius: 25,
-              zIndex: 5, color: Colors.white
             }}>
             {notifyDataLength}
           </Text>
@@ -238,28 +255,31 @@ const Home = ({ navigation, route }) => {
     getVehicleData();
     getGoodsTypes();
     getFareList();
-  }, []);
+  }, [token]);
 
   const getVehicleData = async () => {
+    try {
+      setLoading(true);
+      const myHeaders = new Headers();
+      myHeaders.append('Authorization', `Bearer ${token}`);
 
-    setLoading(true);
-    const myHeaders = new Headers();
-    myHeaders.append('Authorization', `Bearer ${token}`);
+      const requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow',
+      };
 
-    const requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow',
-    };
-
-    const response = await fetch(
-      'https://trucktaxi.co.in/api/customer/getvehicletypes?cityid=CBE001',
-      requestOptions,
-    );
-    const result = await response.json();
-    const data = result.data;
-    setVehicleData(data);
-    setLoading(false);
+      const response = await fetch(
+        'https://trucktaxi.co.in/api/customer/getvehicletypes?cityid=CBE001',
+        requestOptions,
+      );
+      const result = await response.json();
+      const data = result.data;
+      setVehicleData(data);
+      setLoading(false);
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   const getGoodsTypes = async () => {
@@ -298,11 +318,11 @@ const Home = ({ navigation, route }) => {
   };
 
   const vehicle = [
-    { label: '1', value: '1' },
-    { label: '2', value: '2' },
-    { label: '3', value: '3' },
-    { label: '4', value: '4' },
-    { label: '5', value: '5' },
+    {label: '1', value: '1'},
+    {label: '2', value: '2'},
+    {label: '3', value: '3'},
+    {label: '4', value: '4'},
+    {label: '5', value: '5'},
   ];
 
   const options = {
@@ -319,7 +339,6 @@ const Home = ({ navigation, route }) => {
     try {
       setSelectedVehicle(item);
       setselectVehicleId(item.id);
-      setSelectVehicleName(item.vehicletype);
     } catch (error) {
       console.log('catch in selectVehicle_Type : ', error);
     }
@@ -365,12 +384,14 @@ const Home = ({ navigation, route }) => {
 
   function sale_toggleBottomView(item) {
     try {
+      console.log('item', item);
       setBottomData(item);
       setSaleBottomSheetVisible(!salebottomSheetVisible);
     } catch (error) {
       console.log('Catch in Ads sale_toggleBottomView :', error);
     }
   }
+  console.log('bottomData', bottomData);
 
   function sale_BottomSheetmenu() {
     try {
@@ -450,7 +471,7 @@ const Home = ({ navigation, route }) => {
                     Icontag={'AntDesign'}
                     iconname={'closecircleo'}
                     icon_size={24}
-                    iconstyle={{ color: Colors.primaryColor, marginRight: 10 }}
+                    iconstyle={{color: Colors.primaryColor, marginRight: 10}}
                   />
                 </TouchableOpacity>
               </View>
@@ -466,9 +487,9 @@ const Home = ({ navigation, route }) => {
                   <FlatList
                     data={goods}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
-                        <View style={{ width: '100%' }}>
+                        <View style={{width: '100%'}}>
                           <TouchableOpacity
                             onPress={() => selectedGoods(item, index)}
                             style={{
@@ -504,7 +525,7 @@ const Home = ({ navigation, route }) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                   />
                 ) : null}
 
@@ -512,9 +533,9 @@ const Home = ({ navigation, route }) => {
                   <FlatList
                     data={fareList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
-                        <View style={{ width: '100%' }}>
+                        <View style={{width: '100%'}}>
                           <TouchableOpacity
                             onPress={() => selectFareItem(item, index)}
                             style={{
@@ -550,7 +571,7 @@ const Home = ({ navigation, route }) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                   />
                 ) : null}
 
@@ -558,9 +579,9 @@ const Home = ({ navigation, route }) => {
                   <FlatList
                     data={packageList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
-                        <View style={{ width: '100%' }}>
+                        <View style={{width: '100%'}}>
                           <TouchableOpacity
                             onPress={() => selectPackageItem(item, index)}
                             style={{
@@ -591,7 +612,7 @@ const Home = ({ navigation, route }) => {
                                 style={{
                                   textAlign: 'center',
                                   fontSize: 12,
-                                  color: Colors.black2,
+                                  color: Colors.black,
                                   letterSpacing: 0.5,
                                 }}>
                                 Base Fare
@@ -618,7 +639,7 @@ const Home = ({ navigation, route }) => {
                                 style={{
                                   textAlign: 'center',
                                   fontSize: 12,
-                                  color: Colors.black2,
+                                  color: Colors.black,
                                   letterSpacing: 0.5,
                                 }}>
                                 Package
@@ -645,7 +666,7 @@ const Home = ({ navigation, route }) => {
                                 style={{
                                   textAlign: 'center',
                                   fontSize: 12,
-                                  color: Colors.black2,
+                                  color: Colors.black,
                                   letterSpacing: 0.5,
                                 }}>
                                 Base km
@@ -663,7 +684,7 @@ const Home = ({ navigation, route }) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                   />
                 ) : null}
 
@@ -671,9 +692,9 @@ const Home = ({ navigation, route }) => {
                   <FlatList
                     data={interCityList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
-                        <View style={{ width: '100%' }}>
+                        <View style={{width: '100%'}}>
                           <TouchableOpacity
                             onPress={() => selectIntercityItem(item, index)}
                             style={{
@@ -704,7 +725,7 @@ const Home = ({ navigation, route }) => {
                                 style={{
                                   textAlign: 'center',
                                   fontSize: 12,
-                                  color: Colors.black2,
+                                  color: Colors.black,
                                   letterSpacing: 0.5,
                                 }}>
                                 Base Km
@@ -731,7 +752,7 @@ const Home = ({ navigation, route }) => {
                                 style={{
                                   textAlign: 'center',
                                   fontSize: 12,
-                                  color: Colors.black2,
+                                  color: Colors.black,
                                   letterSpacing: 0.5,
                                 }}>
                                 Base Fare
@@ -758,7 +779,7 @@ const Home = ({ navigation, route }) => {
                                 style={{
                                   textAlign: 'center',
                                   fontSize: 12,
-                                  color: Colors.black2,
+                                  color: Colors.black,
                                   letterSpacing: 0.5,
                                 }}>
                                 Base Minute
@@ -776,7 +797,7 @@ const Home = ({ navigation, route }) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                   />
                 ) : null}
 
@@ -784,9 +805,9 @@ const Home = ({ navigation, route }) => {
                   <FlatList
                     data={nightList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
-                        <View style={{ width: '100%' }}>
+                        <View style={{width: '100%'}}>
                           <TouchableOpacity
                             onPress={() => selectNightFareItem(item, index)}
                             style={{
@@ -817,7 +838,7 @@ const Home = ({ navigation, route }) => {
                                 style={{
                                   textAlign: 'center',
                                   fontSize: 12,
-                                  color: Colors.black2,
+                                  color: Colors.black,
                                   letterSpacing: 0.5,
                                 }}>
                                 Package
@@ -844,7 +865,7 @@ const Home = ({ navigation, route }) => {
                                 style={{
                                   textAlign: 'center',
                                   fontSize: 12,
-                                  color: Colors.black2,
+                                  color: Colors.black,
                                   letterSpacing: 0.5,
                                 }}>
                                 Base Fare
@@ -862,7 +883,7 @@ const Home = ({ navigation, route }) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                   />
                 ) : null}
               </View>
@@ -913,76 +934,78 @@ const Home = ({ navigation, route }) => {
   }
 
   async function selectFareItem(item, index) {
+    console.log('item----------------', item.id);
     try {
       setSelectFareName(item.name);
       setSelectFareId(item.id);
       setSaleBottomSheetVisible(false);
+      console.log(`item-ksxd----------`);
+      // await AsyncStorage.getItem('userdata').then(async userdata => {
+      //   const parseddata = JSON.parse(userdata);
+      //   console.log('parseddata.cityid', parseddata.cityid);
+      await AsyncStorage.getItem('userToken').then(token => {
+        // console.log("parseddata", parseddata);
+        var myHeaders = new Headers();
+        myHeaders.append('Authorization', `Bearer ${JSON.parse(token)}`);
+        var requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow',
+        };
 
-      await AsyncStorage.getItem('userdata').then(async userdata => {
-        const parseddata = JSON.parse(userdata);
-        await AsyncStorage.getItem('userToken').then(token => {
-          // console.log("parseddata", parseddata);
-          var myHeaders = new Headers();
-          myHeaders.append('Authorization', `Bearer ${JSON.parse(token)}`);
-          var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow',
-          };
-
-          fetch(
-            'https://trucktaxi.co.in/api/customer/getpackages?vehicleid=' +
+        fetch(
+          'https://trucktaxi.co.in/api/customer/getpackages?vehicleid=' +
             item.id +
             '&cityid=' +
-            parseddata.cityid,
-            requestOptions,
-          )
-            .then(response => response.json())
-            .then(result => {
-              // console.log("Packge List =============:", result)
-              // setshowLoading(false)
-              setPackageList(result.data);
-              // loadpackage()
-            })
-            .catch(error => console.log('error', error));
+            cityid,
+          requestOptions,
+        )
+          .then(response => response.json())
+          .then(result => {
+            console.log('Packge List =============:', result);
+            // setshowLoading(false)
+            setPackageList(result.data);
+            // loadpackage()
+          })
+          .catch(error => console.log('error', error));
 
-          fetch(
-            'https://trucktaxi.co.in/api/customer/getintercitylist?vehicleid=' +
+        fetch(
+          'https://trucktaxi.co.in/api/customer/getintercitylist?vehicleid=' +
             item.id +
             '&cityid=' +
-            parseddata.cityid,
-            requestOptions,
-          )
-            .then(response => response.json())
-            .then(result => {
-              // console.log("Intercity List =============:", result)
-              // setshowLoading(false)
-              setIntercityList(result.data);
-              // loadpackage()
-            })
-            .catch(error => console.log('error', error));
+            cityid,
+          requestOptions,
+        )
+          .then(response => response.json())
+          .then(result => {
+            // console.log("Intercity List =============:", result)
+            // setshowLoading(false)
+            setIntercityList(result.data);
+            // loadpackage()
+          })
+          .catch(error => console.log('error', error));
 
-          // fetch("https://trucktaxi.co.in/api/customer/getnightfare?vehicleid=" + item.id + "&cityid=" + parseddata.cityid, requestOptions)
-          //   .then(response => response.json())
-          //   .then(result => {
-          //     console.log("Night List =============:", result)
-          //     // setshowLoading(false)
-          //     setNightList(result?.data)
-          //     // loadpackage()
-          //   })
-          //   .catch(error => console.log('error', error));
+        // fetch("https://trucktaxi.co.in/api/customer/getnightfare?vehicleid=" + item.id + "&cityid=" + parseddata.cityid, requestOptions)
+        //   .then(response => response.json())
+        //   .then(result => {
+        //     console.log("Night List =============:", result)
+        //     // setshowLoading(false)
+        //     setNightList(result?.data)
+        //     // loadpackage()
+        //   })
+        //   .catch(error => console.log('error', error));
 
-          // console.log("Night =============:", item.id + "   " + parseddata.cityid)
+        // console.log("Night =============:", item.id + "   " + parseddata.cityid)
 
-          fetch(
-            'https://trucktaxi.co.in/api/customer/getnightfare?vehicleid=1&cityid=CBE001',
-            requestOptions,
-          )
-            .then(response => response.json())
-            .then(result => setNightList(result?.data))
-            .catch(error => console.error('catch in night fare:', error));
-        });
+        fetch(
+          'https://trucktaxi.co.in/api/customer/getnightfare?vehicleid=1&cityid=CBE001',
+          requestOptions,
+        )
+          .then(response => response.json())
+          .then(result => setNightList(result?.data))
+          .catch(error => console.error('catch in night fare:', error));
       });
+      // });
     } catch (error) {
       console.log('catch in Home_interior select_City :', error);
     }
@@ -990,520 +1013,582 @@ const Home = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor={Colors.primary} barStyle={'dark-content'} />
-      {!loading ?
+      <StatusBar
+        backgroundColor={Colors.primaryColor}
+        barStyle={'light-content'}
+      />
+      {!loading ? (
         <View
           style={{
             flex: 1,
             alignItems: 'center',
-            backgroundColor: Colors.softGrey,
+            backgroundColor: Colors.white,
+            padding: 10,
           }}>
           <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={{width: '100%', marginTop: 10}}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: '500',
+                }}>
+                Choose Your Vehicle
+              </Text>
+            </View>
             <View
               style={{
-                width: '95%',
-                height: '100%',
+                width: '100%',
                 alignItems: 'center',
-                backgroundColor: Colors.softGrey,
+                paddingVertical: 5,
               }}>
-              <View style={{ width: '100%', paddingVertical: 10, marginTop: 10 }}>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: Colors.black,
-                    fontWeight: '500',
-                    letterSpacing: 0.5,
-                  }}>
-                  Choose Your Vehicle
-                </Text>
-              </View>
-              <View
-                style={{ width: '100%', alignItems: 'center', paddingVertical: 5 }}>
-                <FlatList
-                  data={VehicleData}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  renderItem={({ item, index }) => {
-                    const isFocused = selectedVehicle
-                      ? item.vehicletype == selectedVehicle.vehicletype
-                      : false;
+              <FlatList
+                data={VehicleData}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={({item, index}) => {
+                  const isFocused = selectedVehicle
+                    ? item.vehicletype == selectedVehicle.vehicletype
+                    : false;
 
-                    return (
-                      <TouchableOpacity
-                        activeOpacity={4}
-                        style={[
-                          styles.vehicle,
-                          isFocused
-                            ? {
-                              overflow: 'hidden',
-                              borderWidthColor: Colors.white2,
-                              borderRadius: 5,
-                              padding: width * 0.01,
-                              shadowColor: '#000',
-                              shadowOffset: {
-                                width: 0,
-                                height: 4,
-                              },
-                              shadowOpacity: 0.0,
-                              shadowRadius: 1,
-
-                              elevation: 4,
-                            }
-                            : null,
-                        ]}
-                        key={index}
-                        onPress={() => selectVehicleType(item)}>
-                        <View
-                          style={[
-                            isFocused
-                              ? {
-                                padding: width * 0.01,
-                                overflow: 'hidden',
-                                borderWidth: 3,
-                                borderRadius: 5,
-                                borderColor: Colors.primaryColor,
-                              }
-                              : null,
-                          ]}>
-                          <Image
-                            style={styles.vehicleImg}
-                            source={{ uri: item.url }}
-                          />
-                          <Text style={styles.vehicleName}>
-                            {item.vehicletype}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    );
-                  }}
-                />
-              </View>
+                  return (
+                    <TouchableOpacity
+                      activeOpacity={4}
+                      style={{
+                        ...styles.vehicle,
+                        overflow: 'hidden',
+                        borderColor: isFocused
+                          ? Colors.primaryColor
+                          : Colors.white,
+                        borderWidth: isFocused ? 5 : 0,
+                        borderRadius: 5,
+                        padding: 10,
+                      }}
+                      key={index}
+                      onPress={() => selectVehicleType(item)}>
+                      <Image
+                        style={styles.vehicleImg}
+                        source={{uri: item.url}}
+                      />
+                      <Text style={styles.vehicleName}>{item.vehicletype}</Text>
+                      <Text style={styles.vehicleName}>
+                        {item.loadcapacity}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+            {selectedVehicle != null && (
               <View style={styles.typeView}>
                 <Text
                   style={{
                     fontSize: 14,
-                    color: Colors.black2,
-                    letterSpacing: 0.5,
-                  }}>
-                  Vehicle Type *:{' '}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
                     color: Colors.black,
-                    paddingHorizontal: 5,
-                    fontWeight: '500',
-                    letterSpacing: 0.5,
                   }}>
-                  {selectVehicleName
-                    ? selectVehicleName
-                    : 'Please Select Vehicle'}
+                  Vehicle Type:{' '}
                 </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setVehicleTypeVisible(true);
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: Colors.black,
+                      paddingHorizontal: 5,
+                      textTransform: 'uppercase',
+                      fontWeight: '500',
+                    }}>
+                    {selectVehicle?.name != undefined
+                      ? selectVehicle?.name
+                      : 'Please Select Vehicle'}
+                  </Text>
+                </TouchableOpacity>
+                <Modal
+                  visible={vehicleTypeVisible}
+                  transparent
+                  animationType="slide">
+                  <View
+                    style={{
+                      backgroundColor: Colors.transparantBlack,
+                      flex: 1,
+                    }}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: Colors.white,
+                      // flex: 1,
+                      borderTopLeftRadius: 10,
+                      borderTopRightRadius: 10,
+                      padding: 10,
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: Colors.black,
+                        paddingHorizontal: 5,
+                        fontWeight: '500',
+                        marginVertical: 10,
+                      }}>
+                      Select Your Vehicle Type
+                    </Text>
+                    {vehicleType?.map((item, index) => {
+                      return (
+                        <TouchableOpacity
+                          key={index}
+                          onPress={() => {
+                            setSelectVehicle(item);
+                            setVehicleTypeVisible(false);
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: Colors.black,
+                              paddingHorizontal: 5,
+                              fontWeight: '500',
+                              textAlign: 'center',
+                              textTransform: 'uppercase',
+                              marginVertical: 10,
+                            }}>
+                            {item?.name}
+                          </Text>
+                          <View
+                            style={{
+                              height: 1,
+                              backgroundColor: Colors.cloudyGrey,
+                            }}
+                          />
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </Modal>
               </View>
+            )}
 
-              <View style={styles.line} />
+            <View style={styles.line} />
 
-              <View style={styles.dateView}>
+            <View style={styles.dateView}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: Colors.black,
+                  letterSpacing: 0.5,
+                }}>
+                Date & Time *:
+              </Text>
+              <TouchableOpacity
+                style={styles.selectDate}
+                onPress={() => setOpen(true)}>
+                <Icon name="calendar" size={15} color="#000" />
+                {dateSelected ? (
+                  <Text style={styles.h3}>
+                    {date.toLocaleDateString('en-US', options).toString()}
+                  </Text>
+                ) : (
+                  <Text style={styles.h3}>Select Date</Text>
+                )}
+              </TouchableOpacity>
+              <DatePicker
+                modal
+                open={open}
+                date={date}
+                onConfirm={date => {
+                  setOpen(false);
+                  setDate(date);
+                  setDateSelected(true);
+                }}
+                onCancel={() => {
+                  setOpen(false);
+                }}
+              />
+            </View>
+            <View style={styles.locationView}>
+              <View style={styles.locationTextView}>
                 <Text
                   style={{
                     fontSize: 14,
-                    color: Colors.black2,
-                    letterSpacing: 0.5,
+                    color: Colors.black,
                   }}>
-                  Date & Time *:
+                  Pickup Location *:
                 </Text>
-                <TouchableOpacity
-                  style={styles.selectDate}
-                  onPress={() => setOpen(true)}>
-                  <Icon name="calendar" size={15} color="#000" />
-                  {dateSelected ? (
-                    <Text style={styles.h3}>
-                      {date.toLocaleDateString('en-US', options).toString()}
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: Colors.black,
+                  }}>
+                  Drop Location *:
+                </Text>
+              </View>
+              {locations?.pickup?.Description != undefined ? (
+                <View style={styles.locationInnerView}>
+                  <View style={{}}>
+                    <Text style={styles.locationText} numberOfLines={1}>
+                      {locations?.pickup?.Description}
                     </Text>
-                  ) : (
-                    <Text style={styles.h3}>Select Date</Text>
-                  )}
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('Map')}>
+                      <Text
+                        style={{
+                          color: Colors.primaryColor,
+                          fontSize: 14,
+                          fontWeight: 'bold',
+                        }}
+                        numberOfLines={1}>
+                        Edit
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View>
+                    <Text style={styles.locationText} numberOfLines={1}>
+                      {locations?.drop?.Description}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('Map')}>
+                      <Text
+                        style={{
+                          color: Colors.primaryColor,
+                          fontSize: 14,
+                          fontWeight: 'bold',
+                        }}>
+                        Edit
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : (
+                <TouchableOpacity onPress={() => navigation.navigate('Map')}>
+                  <Text style={styles.location}>Choose Location</Text>
                 </TouchableOpacity>
-                <DatePicker
-                  modal
-                  open={open}
-                  date={date}
-                  onConfirm={date => {
-                    setOpen(false);
-                    setDate(date);
-                    setDateSelected(true);
-                  }}
-                  onCancel={() => {
-                    setOpen(false);
+              )}
+            </View>
+            <View style={styles.line} />
+            <View style={{width: '95%'}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 10,
+                }}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: Colors.black,
+                    }}>
+                    Goods Name *:
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => sale_toggleBottomView('Goods')}
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    height: 45,
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    backgroundColor: Colors.white2,
+                    borderWidth: 1,
+                    borderColor: Colors.black,
+                    borderRadius: 5,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: Colors.black,
+                    }}
+                    numberOfLines={1}>
+                    {selectGoodsName}
+                  </Text>
+                  <Iconviewcomponent
+                    Icontag={'Ionicons'}
+                    iconname={'chevron-down-circle'}
+                    icon_size={24}
+                    iconstyle={{color: Colors.black, marginRight: 10}}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 10,
+                }}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: Colors.black,
+                      letterSpacing: 0.5,
+                    }}>
+                    Fare Type *:
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => sale_toggleBottomView('Fare')}
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    height: 45,
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    backgroundColor: Colors.white2,
+                    borderWidth: 1,
+                    borderColor: Colors.black,
+                    borderRadius: 5,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: Colors.black,
+                    }}
+                    numberOfLines={1}>
+                    {selectFareName}
+                  </Text>
+                  <Iconviewcomponent
+                    Icontag={'Ionicons'}
+                    iconname={'chevron-down-circle'}
+                    icon_size={24}
+                    iconstyle={{color: Colors.black, marginRight: 10}}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {selectFareName == 'Package Fare' ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingVertical: 10,
+                  }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'flex-start',
+                      alignItems: 'flex-start',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: Colors.black,
+                        letterSpacing: 0.5,
+                      }}>
+                      Package Type *:
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => sale_toggleBottomView('Package')}
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      height: 45,
+                      justifyContent: 'space-around',
+                      alignItems: 'center',
+                      backgroundColor: Colors.white2,
+                      borderWidth: 1,
+                      borderColor: Colors.black,
+                      borderRadius: 5,
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: Colors.black,
+                        letterSpacing: 0.5,
+                        paddingHorizontal: 5,
+                      }}
+                      numberOfLines={1}>
+                      {selectPackage?.package != undefined
+                        ? selectPackage?.package
+                        : 'Select Package Name'}
+                    </Text>
+                    <Iconviewcomponent
+                      Icontag={'Ionicons'}
+                      iconname={'chevron-down-circle'}
+                      icon_size={24}
+                      iconstyle={{color: Colors.black, marginRight: 10}}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+
+              {selectFareName == 'Intercity Fare' ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingVertical: 10,
+                  }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'flex-start',
+                      alignItems: 'flex-start',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: Colors.black,
+                        letterSpacing: 0.5,
+                      }}>
+                      Intercity Fare *:
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => sale_toggleBottomView('Intercity')}
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      height: 45,
+                      justifyContent: 'space-around',
+                      alignItems: 'center',
+                      backgroundColor: Colors.white2,
+                      borderWidth: 1,
+                      borderColor: Colors.black,
+                      borderRadius: 5,
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: Colors.black,
+                        paddingHorizontal: 5,
+                      }}
+                      numberOfLines={1}>
+                      {selectIntercity?.basefare != undefined
+                        ? selectIntercity?.basefare
+                        : 'Select InterCity Type'}
+                    </Text>
+                    <Iconviewcomponent
+                      Icontag={'Ionicons'}
+                      iconname={'chevron-down-circle'}
+                      icon_size={24}
+                      iconstyle={{color: Colors.black, marginRight: 10}}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+
+              {selectFareName == 'Night Fare' ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingVertical: 10,
+                  }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'flex-start',
+                      alignItems: 'flex-start',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: Colors.black,
+                        letterSpacing: 0.5,
+                      }}>
+                      Night Fare *:
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => sale_toggleBottomView('Night')}
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      height: 45,
+                      justifyContent: 'space-around',
+                      alignItems: 'center',
+                      backgroundColor: Colors.white2,
+                      borderWidth: 1,
+                      borderColor: Colors.black,
+                      borderRadius: 5,
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: Colors.black,
+                        letterSpacing: 0.5,
+                        paddingHorizontal: 5,
+                      }}
+                      numberOfLines={1}>
+                      {selectNight?.basefare != undefined
+                        ? selectNight?.basefare
+                        : 'Select Night Fare'}
+                    </Text>
+                    <Iconviewcomponent
+                      Icontag={'Ionicons'}
+                      iconname={'chevron-down-circle'}
+                      icon_size={24}
+                      iconstyle={{color: Colors.black, marginRight: 10}}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 10,
+                }}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: Colors.black,
+                      letterSpacing: 0.5,
+                    }}>
+                    No.of Vehicles *:
+                  </Text>
+                </View>
+                {/* <TouchableOpacity onPress={() => sale_toggleBottomView("Vehicle")} style={{ flex: 1, flexDirection: 'row', height: 45, justifyContent: 'space-around', alignItems: 'center', backgroundColor: Colors.white2, borderWidth: 1, borderColor: Colors.black, borderRadius: 5 }}>
+                  <Text style={{ fontSize: 14, color: Colors.black, letterSpacing: 0.5, paddingHorizontal: 5 }} numberOfLines={1}>Number of Vehicles</Text>
+                  <Iconviewcomponent
+                        Icontag={'Ionicons'}
+                        iconname={'chevron-down-circle'}
+                    icon_size={24}
+                    iconstyle={{ color: Colors.black, marginRight: 10 }}
+                  />
+                </TouchableOpacity> */}
+                <Dropdown
+                  style={styles.dropdown}
+                  containerStyle={styles.dropContainer}
+                  itemTextStyle={styles.dropTextStyle}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  iconStyle={styles.iconStyle}
+                  iconColor={Colors.white}
+                  data={vehicle}
+                  maxHeight={200}
+                  labelField="label"
+                  valueField="label"
+                  placeholder="Select item"
+                  value={noVehicles}
+                  onChange={item => {
+                    setNoVehicles(item.label);
                   }}
                 />
               </View>
-              <View style={styles.locationView}>
-                <View style={styles.locationTextView}>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: Colors.black2,
-                      letterSpacing: 0.5,
-                    }}>
-                    Pickup Location *:
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: Colors.black2,
-                      letterSpacing: 0.5,
-                    }}>
-                    Drop Location *:
-                  </Text>
-                </View>
-                {locations ? (
-                  <View style={styles.locationInnerView}>
-                    <Text style={styles.locationText}>
-                      {locations?.pickup?.Description}
-                    </Text>
-                    <Text style={styles.locationText}>
-                      {locations?.drop?.Description}
-                    </Text>
-                  </View>
-                ) : (
-                  <TouchableOpacity onPress={() => navigation.navigate('Map')}>
-                    <Text style={styles.location}>Choose Location</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-              <View style={styles.line} />
-              <View style={{ width: '95%' }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    paddingVertical: 10,
-                  }}>
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'flex-start',
-                      alignItems: 'flex-start',
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: Colors.black2,
-                        letterSpacing: 0.5,
-                      }}>
-                      Goods Name *:
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => sale_toggleBottomView('Goods')}
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      height: 45,
-                      justifyContent: 'space-around',
-                      alignItems: 'center',
-                      backgroundColor: Colors.white2,
-                      borderWidth: 1,
-                      borderColor: Colors.primaryColor,
-                      borderRadius: 5,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: Colors.black2,
-                        letterSpacing: 0.5,
-                        paddingHorizontal: 5,
-                      }}
-                      numberOfLines={1}>
-                      {selectGoodsName}
-                    </Text>
-                    <Iconviewcomponent
-                      Icontag={'Entypo'}
-                      iconname={'chevron-small-down'}
-                      icon_size={24}
-                      iconstyle={{ color: Colors.black2, marginRight: 10 }}
-                    />
-                  </TouchableOpacity>
-                </View>
+              {/* <Text style={{ fontSize: 14, color: Colors.black, letterSpacing: 0.5 }}>Fare Type *:</Text>
+              <Text style={{ fontSize: 14, color: Colors.black, letterSpacing: 0.5 }}>Number of Vehicles *:</Text> */}
 
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    paddingVertical: 10,
-                  }}>
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'flex-start',
-                      alignItems: 'flex-start',
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: Colors.black2,
-                        letterSpacing: 0.5,
-                      }}>
-                      Fare Type *:
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => sale_toggleBottomView('Fare')}
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      height: 45,
-                      justifyContent: 'space-around',
-                      alignItems: 'center',
-                      backgroundColor: Colors.white2,
-                      borderWidth: 1,
-                      borderColor: Colors.primaryColor,
-                      borderRadius: 5,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: Colors.black2,
-                        letterSpacing: 0.5,
-                        paddingHorizontal: 5,
-                      }}
-                      numberOfLines={1}>
-                      {selectFareName}
-                    </Text>
-                    <Iconviewcomponent
-                      Icontag={'Entypo'}
-                      iconname={'chevron-small-down'}
-                      icon_size={24}
-                      iconstyle={{ color: Colors.black2, marginRight: 10 }}
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                {selectFareName == 'Package Fare' ? (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 10,
-                    }}>
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: Colors.black2,
-                          letterSpacing: 0.5,
-                        }}>
-                        Package Type *:
-                      </Text>
-                    </View>
-                    <TouchableOpacity
-                      onPress={() => sale_toggleBottomView('Package')}
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        height: 45,
-                        justifyContent: 'space-around',
-                        alignItems: 'center',
-                        backgroundColor: Colors.white2,
-                        borderWidth: 1,
-                        borderColor: Colors.primaryColor,
-                        borderRadius: 5,
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: Colors.black2,
-                          letterSpacing: 0.5,
-                          paddingHorizontal: 5,
-                        }}
-                        numberOfLines={1}>
-                        {selectPackage?.package != ''
-                          ? selectPackage?.package
-                          : 'Select Package Name'}
-                      </Text>
-                      <Iconviewcomponent
-                        Icontag={'Entypo'}
-                        iconname={'chevron-small-down'}
-                        icon_size={24}
-                        iconstyle={{ color: Colors.black2, marginRight: 10 }}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ) : null}
-
-                {selectFareName == 'Intercity Fare' ? (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 10,
-                    }}>
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: Colors.black2,
-                          letterSpacing: 0.5,
-                        }}>
-                        Intercity Fare *:
-                      </Text>
-                    </View>
-                    <TouchableOpacity
-                      onPress={() => sale_toggleBottomView('Intercity')}
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        height: 45,
-                        justifyContent: 'space-around',
-                        alignItems: 'center',
-                        backgroundColor: Colors.white2,
-                        borderWidth: 1,
-                        borderColor: Colors.primaryColor,
-                        borderRadius: 5,
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: Colors.black2,
-                          letterSpacing: 0.5,
-                          paddingHorizontal: 5,
-                        }}
-                        numberOfLines={1}>
-                        {selectIntercity?.basefare != ''
-                          ? selectIntercity?.basefare
-                          : 'Select InterCity Type'}
-                      </Text>
-                      <Iconviewcomponent
-                        Icontag={'Entypo'}
-                        iconname={'chevron-small-down'}
-                        icon_size={24}
-                        iconstyle={{ color: Colors.black2, marginRight: 10 }}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ) : null}
-
-                {selectFareName == 'Night Fare' ? (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 10,
-                    }}>
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: Colors.black2,
-                          letterSpacing: 0.5,
-                        }}>
-                        Night Fare *:
-                      </Text>
-                    </View>
-                    <TouchableOpacity
-                      onPress={() => sale_toggleBottomView('Night')}
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        height: 45,
-                        justifyContent: 'space-around',
-                        alignItems: 'center',
-                        backgroundColor: Colors.white2,
-                        borderWidth: 1,
-                        borderColor: Colors.primaryColor,
-                        borderRadius: 5,
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: Colors.black2,
-                          letterSpacing: 0.5,
-                          paddingHorizontal: 5,
-                        }}
-                        numberOfLines={1}>
-                        {selectNight?.basefare != ''
-                          ? selectNight?.basefare
-                          : 'Select Night Fare'}
-                      </Text>
-                      <Iconviewcomponent
-                        Icontag={'Entypo'}
-                        iconname={'chevron-small-down'}
-                        icon_size={24}
-                        iconstyle={{ color: Colors.black2, marginRight: 10 }}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ) : null}
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    paddingVertical: 10,
-                  }}>
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'flex-start',
-                      alignItems: 'flex-start',
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: Colors.black2,
-                        letterSpacing: 0.5,
-                      }}>
-                      Number of Vehicles *:
-                    </Text>
-                  </View>
-                  {/* <TouchableOpacity onPress={() => sale_toggleBottomView("Vehicle")} style={{ flex: 1, flexDirection: 'row', height: 45, justifyContent: 'space-around', alignItems: 'center', backgroundColor: Colors.white2, borderWidth: 1, borderColor: Colors.primaryColor, borderRadius: 5 }}>
-                  <Text style={{ fontSize: 14, color: Colors.black2, letterSpacing: 0.5, paddingHorizontal: 5 }} numberOfLines={1}>Number of Vehicles</Text>
-                  <Iconviewcomponent
-                    Icontag={'Entypo'}
-                    iconname={'chevron-small-down'}
-                    icon_size={24}
-                    iconstyle={{ color: Colors.black2, marginRight: 10 }}
-                  />
-                </TouchableOpacity> */}
-                  <Dropdown
-                    style={styles.dropdown}
-                    containerStyle={styles.dropContainer}
-                    itemTextStyle={styles.dropTextStyle}
-                    placeholderStyle={styles.placeholderStyle}
-                    selectedTextStyle={styles.selectedTextStyle}
-                    iconStyle={styles.iconStyle}
-                    iconColor={Colors.white}
-                    data={vehicle}
-                    maxHeight={200}
-                    labelField="label"
-                    valueField="label"
-                    placeholder="Select item"
-                    value={noVehicles}
-                    onChange={item => {
-                      setNoVehicles(item.label);
-                    }}
-                  />
-                </View>
-                {/* <Text style={{ fontSize: 14, color: Colors.black2, letterSpacing: 0.5 }}>Fare Type *:</Text>
-              <Text style={{ fontSize: 14, color: Colors.black2, letterSpacing: 0.5 }}>Number of Vehicles *:</Text> */}
-
-                {/* <View>
+              {/* <View>
                 <Dropdown
                   style={styles.dropdown}
                   containerStyle={styles.dropContainer}
@@ -1561,29 +1646,30 @@ const Home = ({ navigation, route }) => {
                   }}
                 />
               </View> */}
-              </View>
-              <View style={styles.numberHeader}>
-                <Text style={styles.alterNumber}>Alternative Mobile Number </Text>
-                <Text style={styles.optional}>(optional)</Text>
-              </View>
-              <View style={styles.numberView}>
-                <Text style={styles.numberText}>+91</Text>
-                <TextInput
-                  style={styles.numberInput}
-                  placeholder="Alternative Mobile Number....."
-                  placeholderTextColor={Colors.black3}
-                  keyboardType="phone-pad"
-                  value={atlerNumber}
-                  onChangeText={text => setAlterNUmber(text)}
-                  maxLength={10}
-                />
-              </View>
+            </View>
+            <View style={styles.numberHeader}>
+              <Text style={styles.alterNumber}>Alternative Mobile Number </Text>
+              <Text style={styles.optional}>(optional)</Text>
+            </View>
+            <View style={styles.numberView}>
+              <Text style={styles.numberText}>+91</Text>
+              <TextInput
+                style={styles.numberInput}
+                placeholder="Alternative Mobile Number....."
+                placeholderTextColor={Colors.black3}
+                keyboardType="phone-pad"
+                value={atlerNumber}
+                onChangeText={text => setAlterNUmber(text)}
+                maxLength={10}
+              />
             </View>
           </ScrollView>
-        </View> :
+        </View>
+      ) : (
         <View style={styles.load}>
           <ActivityIndicator size="large" color={Colors.primaryColor} />
-        </View>}
+        </View>
+      )}
       <TouchableOpacity style={styles.next} onPress={() => nextButtonClick()}>
         <Text style={styles.nextText}>Next</Text>
         <Icon name="arrow-circle-right" size={25} color="#fff" />
@@ -1596,7 +1682,7 @@ const Home = ({ navigation, route }) => {
 
 export default Home;
 
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -1615,7 +1701,7 @@ const styles = StyleSheet.create({
     padding: width * 0.03,
     borderWidth: 0.2,
     borderRadius: 3,
-    borderWidthColor: Colors.black2,
+    borderWidthColor: Colors.black,
     marginHorizontal: width * 0.02,
     marginVertical: width * 0.03,
     overflow: 'hidden',
@@ -1633,7 +1719,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   vehicleNo: {
-    color: Colors.black2,
+    color: Colors.black,
     fontSize: 13,
   },
   typeView: {
@@ -1651,7 +1737,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   h3: {
-    color: Colors.black2,
+    color: Colors.black,
     fontSize: 14,
   },
   dateView: {
@@ -1662,14 +1748,14 @@ const styles = StyleSheet.create({
     gap: width * 0.18,
   },
   selectDate: {
-    backgroundColor: Colors.steel,
-    padding: width * 0.03,
-    paddingHorizontal: width * 0.03,
+    backgroundColor: Colors.lightgrey,
+    padding: 10,
+    paddingHorizontal: 10,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
-    gap: width * 0.01,
+    gap: 10,
   },
   locationView: {
     width: '95%',
@@ -1700,7 +1786,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   h2: {
-    color: Colors.black2,
+    color: Colors.black,
     fontSize: 14,
   },
   //dropdown
@@ -1720,7 +1806,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   dropContainer: {
-    color: Colors.black2,
+    color: Colors.black,
   },
   placeholderStyle: {
     color: Colors.black3,
@@ -1740,7 +1826,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     marginRight: 10,
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.black,
     borderRadius: 10,
   },
   /////
