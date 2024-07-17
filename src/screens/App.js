@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useReducer, useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import React, {useEffect, useState, useReducer, useMemo} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import Geolocation from '@react-native-community/geolocation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Provider, useSelector } from 'react-redux';
-import { store } from '../storage/store';
+import {Provider, useSelector} from 'react-redux';
+import {store} from '../storage/store';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 // Screens
@@ -27,6 +27,7 @@ import Register from './Register/Register';
 import PrivacyandConditions from './Privacy&Conditions/PrivacyandConditions';
 import Colors from '../components/Colors';
 import TermsandConditions from './Terms&Conditions/TermsandConditions';
+import {Iconviewcomponent} from '../components/Icontag';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,7 +47,7 @@ const AppNavigation = () => {
         <Stack.Screen
           name="SplashScreen"
           component={SplashScreen}
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
         />
       ) : isLoggedIn ? (
         <>
@@ -54,12 +55,12 @@ const AppNavigation = () => {
           <Stack.Screen
             name="MyBookings"
             component={MyBookings}
-            options={({ navigation, route }) => ({
+            options={({navigation, route}) => ({
               headerTitle: 'My Booking',
-              headerTitleStyle: { color: Colors.black },
-              headerStyle: { backgroundColor: Colors.white },
+              headerTitleStyle: {color: Colors.black},
+              headerStyle: {backgroundColor: Colors.white},
               headerLeft: () => (
-                <View style={{ marginHorizontal: 10 }}>
+                <View style={{marginHorizontal: 10}}>
                   <Icon
                     name="arrow-back"
                     size={30}
@@ -73,15 +74,17 @@ const AppNavigation = () => {
           <Stack.Screen
             name="Track"
             component={Track}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
-          <Stack.Screen name="Account" component={Account}
-            options={({ navigation, route }) => ({
+          <Stack.Screen
+            name="Account"
+            component={Account}
+            options={({navigation, route}) => ({
               headerTitle: 'My Profile',
-              headerTitleStyle: { color: Colors.white },
-              headerStyle: { backgroundColor: Colors.primaryColor },
+              headerTitleStyle: {color: Colors.white},
+              headerStyle: {backgroundColor: Colors.primaryColor},
               headerLeft: () => (
-                <View style={{ marginHorizontal: 10 }}>
+                <View style={{marginHorizontal: 10}}>
                   <Icon
                     name="arrow-back"
                     size={30}
@@ -90,14 +93,17 @@ const AppNavigation = () => {
                   />
                 </View>
               ),
-            })} />
-          <Drawer.Screen name="Notifications" component={Notifications}
-            options={({ navigation, route }) => ({
+            })}
+          />
+          <Drawer.Screen
+            name="Notifications"
+            component={Notifications}
+            options={({navigation, route}) => ({
               headerTitle: 'Notifications',
-              headerTitleStyle: { color: Colors.white },
-              headerStyle: { backgroundColor: Colors.primaryColor },
+              headerTitleStyle: {color: Colors.white},
+              headerStyle: {backgroundColor: Colors.primaryColor},
               headerLeft: () => (
-                <View style={{ marginHorizontal: 10 }}>
+                <View style={{marginHorizontal: 10}}>
                   <Icon
                     name="arrow-back"
                     size={30}
@@ -106,14 +112,17 @@ const AppNavigation = () => {
                   />
                 </View>
               ),
-            })} />
-          <Stack.Screen name="Chat" component={Chat}
-            options={({ navigation, route }) => ({
+            })}
+          />
+          <Stack.Screen
+            name="Chat"
+            component={Chat}
+            options={({navigation, route}) => ({
               headerTitle: 'Chat',
-              headerTitleStyle: { color: Colors.white },
-              headerStyle: { backgroundColor: Colors.primaryColor },
+              headerTitleStyle: {color: Colors.white},
+              headerStyle: {backgroundColor: Colors.primaryColor},
               headerLeft: () => (
-                <View style={{ marginHorizontal: 10 }}>
+                <View style={{marginHorizontal: 10}}>
                   <Icon
                     name="arrow-back"
                     size={30}
@@ -122,14 +131,17 @@ const AppNavigation = () => {
                   />
                 </View>
               ),
-            })} />
-          <Drawer.Screen name="Contact Us" component={ContactUs}
-            options={({ navigation, route }) => ({
+            })}
+          />
+          <Drawer.Screen
+            name="Contact Us"
+            component={ContactUs}
+            options={({navigation, route}) => ({
               headerTitle: 'Contact Us',
-              headerTitleStyle: { color: Colors.white },
-              headerStyle: { backgroundColor: Colors.primaryColor },
+              headerTitleStyle: {color: Colors.white},
+              headerStyle: {backgroundColor: Colors.primaryColor},
               headerLeft: () => (
-                <View style={{ marginHorizontal: 10 }}>
+                <View style={{marginHorizontal: 10}}>
                   <Icon
                     name="arrow-back"
                     size={30}
@@ -138,15 +150,41 @@ const AppNavigation = () => {
                   />
                 </View>
               ),
-            })} />
-          <Stack.Screen name="BookingSummary" component={BookingSummary} />
-          <Drawer.Screen name="PrivacyandConditions" component={PrivacyandConditions}
-            options={({ navigation, route }) => ({
+            })}
+          />
+          <Stack.Screen
+            name="BookingSummary"
+            component={BookingSummary}
+            options={({navigation}) => ({
+              headerTitle: () => (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{color: 'black', fontSize: 18, marginRight: 10}}>
+                    Book a Pickup
+                  </Text>
+                  <Iconviewcomponent
+                    Icontag={'FontAwesome5'}
+                    iconname={'truck'}
+                    icon_size={20}
+                    iconstyle={{color: Colors.black, marginRight: 10}}
+                  />
+                </View>
+              ),
+            })}
+          />
+          <Drawer.Screen
+            name="PrivacyandConditions"
+            component={PrivacyandConditions}
+            options={({navigation, route}) => ({
               headerTitle: 'Privacy Policy',
-              headerTitleStyle: { color: Colors.white },
-              headerStyle: { backgroundColor: Colors.primaryColor },
+              headerTitleStyle: {color: Colors.white},
+              headerStyle: {backgroundColor: Colors.primaryColor},
               headerLeft: () => (
-                <View style={{ marginHorizontal: 10 }}>
+                <View style={{marginHorizontal: 10}}>
                   <Icon
                     name="arrow-back"
                     size={30}
@@ -155,14 +193,17 @@ const AppNavigation = () => {
                   />
                 </View>
               ),
-            })} />
-          <Drawer.Screen name="TermsandConditions" component={TermsandConditions}
-            options={({ navigation, route }) => ({
+            })}
+          />
+          <Drawer.Screen
+            name="TermsandConditions"
+            component={TermsandConditions}
+            options={({navigation, route}) => ({
               headerTitle: 'Terms and Conditions',
-              headerTitleStyle: { color: Colors.white },
-              headerStyle: { backgroundColor: Colors.primaryColor },
+              headerTitleStyle: {color: Colors.white},
+              headerStyle: {backgroundColor: Colors.primaryColor},
               headerLeft: () => (
-                <View style={{ marginHorizontal: 10 }}>
+                <View style={{marginHorizontal: 10}}>
                   <Icon
                     name="arrow-back"
                     size={30}
@@ -171,11 +212,12 @@ const AppNavigation = () => {
                   />
                 </View>
               ),
-            })} />
+            })}
+          />
           <Stack.Screen
             name="Map"
             component={Map}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
         </>
       ) : (
@@ -183,22 +225,22 @@ const AppNavigation = () => {
           <Stack.Screen
             name="WelcomeScreen"
             component={WelcomeScreen}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
           <Stack.Screen
             name="Login"
             component={Login}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
           <Stack.Screen
             name="Register"
             component={Register}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
           <Stack.Screen
             name="BookaPickup"
             component={Home}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
         </>
       )}
@@ -213,7 +255,7 @@ const AppDrawer = () => (
       <Drawer.Screen
         name="Home"
         component={AppNavigation}
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
       />
     </Drawer.Navigator>
   </NavigationContainer>
@@ -271,11 +313,11 @@ const App = () => {
         } catch (e) {
           console.error(e);
         }
-        dispatch({ type: 'LOGIN', token: userToken });
+        dispatch({type: 'LOGIN', token: userToken});
       },
       signOut: () => {
         AsyncStorage.removeItem('userToken');
-        dispatch({ type: 'LOGOUT' });
+        dispatch({type: 'LOGOUT'});
       },
       signUp: async res => {
         const userToken = String(res.user.uid);
@@ -285,7 +327,7 @@ const App = () => {
         } catch (e) {
           console.error(e);
         }
-        dispatch({ type: 'REGISTER', id: userName, token: userToken });
+        dispatch({type: 'REGISTER', id: userName, token: userToken});
       },
     }),
     [],
@@ -299,7 +341,7 @@ const App = () => {
       } catch (e) {
         console.error(e);
       }
-      dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
+      dispatch({type: 'RETRIEVE_TOKEN', token: userToken});
     };
 
     fetchToken();

@@ -11,7 +11,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/FontAwesome6';
@@ -20,9 +20,9 @@ import StepIndicator from 'react-native-step-indicator';
 import Colors from '../../components/Colors';
 import BookingDetails from './components/BookingDetails';
 import StarRating from 'react-native-star-rating-widget';
-import { useSelector } from 'react-redux';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import {useSelector} from 'react-redux';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
 LogBox.ignoreAllLogs();
 
@@ -73,11 +73,11 @@ const Upcoming = ({
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.white }}>
-      {!loading ?
+    <SafeAreaView style={{flex: 1, backgroundColor: Colors.white}}>
+      {!loading ? (
         <FlatList
           data={bookingData}
-          renderItem={({ item, index }) => {
+          renderItem={({item, index}) => {
             return (
               <View key={index} style={styles.container}>
                 <View style={styles.container1}>
@@ -97,7 +97,7 @@ const Upcoming = ({
                         name="location-dot"
                         size={13}
                         color="#000"
-                        style={{ marginTop: 10 }}
+                        style={{marginTop: 10}}
                       />
                       <Text style={styles.value} numberOfLines={1}>
                         {item?.fromloc}
@@ -108,7 +108,7 @@ const Upcoming = ({
                         name="location-dot"
                         size={13}
                         color="#000"
-                        style={{ marginTop: 10 }}
+                        style={{marginTop: 10}}
                       />
                       <Text style={styles.value} numberOfLines={1}>
                         {item?.toloc}
@@ -146,12 +146,12 @@ const Upcoming = ({
                       {currentStatus == 0
                         ? 'Details'
                         : currentStatus == 1
-                          ? 'Track'
-                          : currentStatus == 2
-                            ? 'Pay'
-                            : currentStatus == 3
-                              ? 'Review'
-                              : 'Completed'}
+                        ? 'Track'
+                        : currentStatus == 2
+                        ? 'Pay'
+                        : currentStatus == 3
+                        ? 'Review'
+                        : 'Completed'}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -160,10 +160,11 @@ const Upcoming = ({
           }}
           showsVerticalScrollIndicator={false}
         />
-        :
+      ) : (
         <View style={styles.load}>
           <ActivityIndicator size="large" color={Colors.primaryColor} />
-        </View>}
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -215,11 +216,11 @@ const Completed = ({
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.white }}>
-      {!loading ?
+    <SafeAreaView style={{flex: 1, backgroundColor: Colors.white}}>
+      {!loading ? (
         <FlatList
           data={bookingData}
-          renderItem={({ item, index }) => {
+          renderItem={({item, index}) => {
             return (
               <View key={index} style={styles.container}>
                 <View style={styles.container1}>
@@ -239,7 +240,7 @@ const Completed = ({
                         name="location-dot"
                         size={13}
                         color="#000"
-                        style={{ marginTop: 10 }}
+                        style={{marginTop: 10}}
                       />
                       <Text style={styles.value} numberOfLines={1}>
                         {item?.fromloc}
@@ -250,7 +251,7 @@ const Completed = ({
                         name="location-dot"
                         size={13}
                         color="#000"
-                        style={{ marginTop: 10 }}
+                        style={{marginTop: 10}}
                       />
                       <Text style={styles.value} numberOfLines={1}>
                         {item?.toloc}
@@ -266,50 +267,20 @@ const Completed = ({
                   stepCount={4}
                   labels={labels}
                 />
-                <View style={styles.buttonView}>
-                  <TouchableOpacity onPress={() => setModel(true)}>
-                    <Text style={styles.help}>Need Help ?</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      handleButtonPress({
-                        from: {
-                          latitude: item?.fromloclat,
-                          longitude: item?.fromloclong,
-                        },
-                        to: {
-                          latitude: item?.toloclat,
-                          longitude: item?.toloclong,
-                        },
-                        item,
-                      });
-                    }}>
-                    <Text style={styles.track}>
-                      {currentStatus == 0
-                        ? 'Details'
-                        : currentStatus == 1
-                          ? 'Track'
-                          : currentStatus == 2
-                            ? 'Pay'
-                            : currentStatus == 3
-                              ? 'Review'
-                              : 'Completed'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
               </View>
             );
           }}
         />
-        :
+      ) : (
         <View style={styles.load}>
           <ActivityIndicator size="large" color={Colors.primaryColor} />
-        </View>}
+        </View>
+      )}
     </SafeAreaView>
   );
 };
 
-const MyBookings = ({ route, navigation }) => {
+const MyBookings = ({route, navigation}) => {
   const [date, setDate] = useState('');
   const token = useSelector(state => state.token);
   const mobileNumber = useSelector(state => state.mobileNumber);
@@ -332,8 +303,8 @@ const MyBookings = ({ route, navigation }) => {
 
   const [loading, setLoading] = useState(true);
   const [routes] = React.useState([
-    { key: 'upcoming', title: 'upcoming' },
-    { key: 'completed', title: 'completed' },
+    {key: 'upcoming', title: 'upcoming'},
+    {key: 'completed', title: 'completed'},
   ]);
 
   useEffect(() => {
@@ -420,7 +391,7 @@ const MyBookings = ({ route, navigation }) => {
     if (currentStatus == 0) {
       setDetailsModal(true);
     } else if (currentStatus == 1) {
-      navigation.navigate('Track', { item });
+      navigation.navigate('Track', {item});
     } else if (currentStatus == 2) {
       setPaymentView(true);
     } else if (currentStatus == 3) {
@@ -474,14 +445,14 @@ const MyBookings = ({ route, navigation }) => {
   return (
     <>
       <TabView
-        navigationState={{ index, routes }}
+        navigationState={{index, routes}}
         renderScene={renderScene}
         onIndexChange={setIndex}
-        initialLayout={{ width: layout.width }}
+        initialLayout={{width: layout.width}}
         renderTabBar={props => (
           <TabBar
             {...props}
-            style={{ backgroundColor: Colors.white, height: 60 }}
+            style={{backgroundColor: Colors.white, height: 60}}
             labelStyle={{
               color: Colors.black,
               fontSize: 18,
@@ -612,7 +583,7 @@ const MyBookings = ({ route, navigation }) => {
 
 export default MyBookings;
 
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   headerView: {
