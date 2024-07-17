@@ -30,14 +30,16 @@ const WelcomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={require("../../asset/image/welcomScreenImg.png")}/>
+      <Image style={styles.image} source={require("../../asset/image/welcomScreenImg.png")} />
       <Text style={styles.header}>Enable  Location</Text>
       <Text style={styles.text}>Please enable your location for {"\n"} using the app smoothly</Text>
-      <TouchableOpacity onPress={() => requestPermission()}>
+      <TouchableOpacity onPress={() => requestPermission()}
+        style={{ width: '80%', height: 45, backgroundColor: Colors.primaryColor, borderRadius: 5, borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
         <Text style={styles.allow}>Allow Location</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => alert("Location permission denied")}>
-      <Text style={styles.deny}>Deny</Text>
+      <TouchableOpacity onPress={() => alert("Location permission denied")}
+        style={{ width: '80%', height: 45, borderColor: Colors.primaryColor, borderRadius: 5, borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginVertical: 10 }}>
+        <Text style={styles.deny}>Deny</Text>
       </TouchableOpacity>
     </View>
   )
@@ -45,7 +47,7 @@ const WelcomeScreen = () => {
 
 export default WelcomeScreen
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -55,15 +57,15 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   image: {
-    width: width* 0.9,
-    height: height* 0.32,
+    width: width * 0.9,
+    height: height * 0.32,
     resizeMode: "contain"
   },
   header: {
     color: Colors.black,
     fontSize: 24,
     fontWeight: "800",
-    marginBottom: height* 0.015,
+    marginBottom: height * 0.015,
   },
   text: {
     color: Colors.shadow,
@@ -71,17 +73,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   allow: {
-    fontSize: 18,
+    fontSize: 16,
     color: Colors.white,
-    backgroundColor: Colors.primaryColor,
-    paddingHorizontal: width* 0.14,
-    paddingVertical: height* 0.01,
-    borderRadius: width* 0.015,
-    marginTop: height* 0.04,
   },
   deny: {
-    color: Colors.black2,
-    fontSize: 18,
-    marginVertical: height* 0.02,
+    color: Colors.primaryColor,
+    fontSize: 16,
   }
 })

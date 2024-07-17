@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -44,7 +45,7 @@ const Accounts = () => {
   const [gstNumber, setGstNumber] = useState(currentGstNumber);
   const [companyAddress, setCompanyAddress] = useState(currentCompanyAddress);
 
-  console.log(state, 'numbrrrrr', mobileNumber);
+  // console.log(state, 'numbrrrrr', mobileNumber);
 
   // useLayoutEffect(() => {
   //   navigation.setOptions({
@@ -149,14 +150,15 @@ const Accounts = () => {
         requestOptions,
       );
       const result = await response.json();
-      console.log(result);
+      // console.log(result);
 
-      Snackbar.show({
-        text: 'Updated',
-        duration: Snackbar.LENGTH_SHORT,
-        textColor: Colors.white,
-        backgroundColor: Colors.primaryColor,
-      });
+      // Snackbar.show({
+      //   text: 'Updated',
+      //   duration: Snackbar.LENGTH_SHORT,
+      //   textColor: Colors.white,
+      //   backgroundColor: Colors.primaryColor,
+      // });
+      ToastAndroid.show('Your Profile has been Updated Successfully', ToastAndroid.SHORT);
       dispatch(
         update({
           token: token,
@@ -171,6 +173,7 @@ const Accounts = () => {
           companyAddress: companyAddress,
         }),
       );
+      navigation.navigate('BookaPickup')
     }
   };
 
@@ -191,128 +194,133 @@ const Accounts = () => {
 
   return (
     <ScrollView style={styles.container} keyboardDismissMode="on-drag">
-      <View style={styles.detailsView}>
-        <Text style={styles.text}>Name:</Text>
-        <View style={styles.inputView}>
-          <Icon2 name="user" size={20} color="#000" />
-          <TextInput
-            style={styles.input}
-            placeholder="User Name..."
-            maxLength={30}
-            placeholderTextColor={Colors.black3}
-            value={name}
-            onChangeText={text => setName(text)}
-          />
-        </View>
-      </View>
-      <View style={styles.detailsView}>
-        <Text style={styles.text}>Phone no:</Text>
-        <View style={styles.inputView}>
-          <Icon name="phone" size={20} color="#000" />
-          <Text style={styles.text}>+91</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Phone Number..."
-            keyboardType="phone-pad"
-            maxLength={10}
-            value={phone}
-            placeholderTextColor={Colors.black3}
-            onChangeText={text => setPhone(text)}
-          />
-        </View>
-      </View>
-      <View style={styles.detailsView}>
-        <Text style={styles.text}>Address:</Text>
-        <View style={styles.inputView}>
-          <Icon2 name="location" size={20} color="#000" />
-          <TextInput
-            style={styles.input}
-            placeholder="Address..."
-            placeholderTextColor={Colors.black3}
-            maxLength={50}
-            value={address}
-            onChangeText={text => setAddress(text)}
-          />
-        </View>
-      </View>
-      <View style={styles.dropView}>
-        <Text style={styles.text}>City Code:</Text>
-        <Dropdown
-          style={styles.dropdown}
-          containerStyle={styles.dropContainer}
-          itemTextStyle={styles.dropTextStyle}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          iconStyle={styles.iconStyle}
-          iconColor={Colors.white}
-          data={cityCode}
-          maxHeight={200}
-          labelField="name"
-          valueField="id"
-          placeholder="Select Code"
-          value={code}
-          onChange={item => {
-            setCode(item.id);
-            console.log(item.id);
-          }}
-        />
-      </View>
-      <View style={styles.dropView}>
-        <Text style={styles.text}>Customer Type:</Text>
-        <Dropdown
-          style={styles.dropdown}
-          containerStyle={styles.dropContainer}
-          itemTextStyle={styles.dropTextStyle}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          iconStyle={styles.iconStyle}
-          iconColor={Colors.white}
-          data={customerTypes}
-          maxHeight={200}
-          labelField="label"
-          valueField="label"
-          placeholder="Select Type"
-          value={customerType}
-          onChange={item => {
-            setCustomerType(item.label);
-          }}
-        />
-      </View>
-      {customerType == 'Business' ? (
-        <View style={styles.companyContainer}>
-          <View style={styles.companyTextView}>
-            <Text style={styles.text}>Company Name:</Text>
-            <Text style={styles.text}>GST Number:</Text>
-            <Text style={styles.text}>Company Address:</Text>
-          </View>
-          <View style={styles.companyInputView}>
+      <View style={{ flex: 1, alignItems: 'center', paddingBottom: 20 }}>
+        <View style={styles.detailsView}>
+          <Text style={styles.text}>Name:</Text>
+          <View style={styles.inputView}>
+            <Icon2 name="user" size={20} color="#000" />
             <TextInput
-              style={styles.input2}
-              placeholder="Company Name..."
+              style={styles.input}
+              placeholder="User Name..."
+              maxLength={30}
               placeholderTextColor={Colors.black3}
-              onChangeText={text => setCompanyName(text)}
-              value={companyName}
-            />
-            <TextInput
-              style={styles.input2}
-              placeholder="GST Number..."
-              placeholderTextColor={Colors.black3}
-              onChangeText={text => setGstNumber(text)}
-              value={gstNumber}
-            />
-            <TextInput
-              style={styles.input2}
-              placeholder="Company Address..."
-              placeholderTextColor={Colors.black3}
-              onChangeText={text => setCompanyAddress(text)}
-              value={companyAddress}
+              value={name}
+              onChangeText={text => setName(text)}
             />
           </View>
         </View>
-      ) : null}
-      <TouchableOpacity onPress={() => handleUpdate()}>
-        <Text style={styles.save}>Update</Text>
-      </TouchableOpacity>
+        <View style={styles.detailsView}>
+          <Text style={styles.text}>Phone no:</Text>
+          <View style={styles.inputView}>
+            <Icon name="phone" size={20} color="#000" />
+            <Text style={styles.text}>+91</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Phone Number..."
+              keyboardType="phone-pad"
+              maxLength={10}
+              value={phone}
+              placeholderTextColor={Colors.black3}
+              onChangeText={text => setPhone(text)}
+            />
+          </View>
+        </View>
+        <View style={styles.detailsView}>
+          <Text style={styles.text}>Address:</Text>
+          <View style={styles.inputView}>
+            <Icon2 name="location" size={20} color="#000" />
+            <TextInput
+              style={styles.input}
+              placeholder="Address..."
+              placeholderTextColor={Colors.black3}
+              maxLength={50}
+              value={address}
+              onChangeText={text => setAddress(text)}
+            />
+          </View>
+        </View>
+        <View style={[styles.dropView, { marginVertical: 10 }]}>
+          <Text style={styles.text}>City Code:</Text>
+          <Dropdown
+            style={styles.dropdown}
+            containerStyle={styles.dropContainer}
+            itemTextStyle={styles.dropTextStyle}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            iconStyle={styles.iconStyle}
+            iconColor={Colors.white}
+            data={cityCode}
+            maxHeight={200}
+            labelField="name"
+            valueField="id"
+            placeholder="Select Code"
+            value={code}
+            onChange={item => {
+              setCode(item.id);
+              console.log(item.id);
+            }}
+          />
+        </View>
+        <View style={styles.dropView}>
+          <Text style={styles.text}>Customer Type:</Text>
+          <Dropdown
+            style={styles.dropdown}
+            containerStyle={styles.dropContainer}
+            itemTextStyle={styles.dropTextStyle}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            iconStyle={styles.iconStyle}
+            iconColor={Colors.white}
+            data={customerTypes}
+            maxHeight={200}
+            labelField="label"
+            valueField="label"
+            placeholder="Select Type"
+            value={customerType}
+            onChange={item => {
+              setCustomerType(item.label);
+            }}
+          />
+        </View>
+        {customerType == 'Business' ? (
+          <View style={styles.companyContainer}>
+            <View style={styles.companyTextView}>
+              <Text style={styles.text}>Company Name:</Text>
+              <TextInput
+                style={styles.input2}
+                placeholder="Company Name..."
+                placeholderTextColor={Colors.black3}
+                onChangeText={text => setCompanyName(text)}
+                value={companyName}
+              />
+            </View>
+            <View style={styles.companyTextView}>
+              <Text style={styles.text}>GST Number:</Text>
+              <TextInput
+                style={styles.input2}
+                placeholder="GST Number..."
+                placeholderTextColor={Colors.black3}
+                onChangeText={text => setGstNumber(text)}
+                value={gstNumber}
+              />
+            </View>
+            <View style={styles.companyTextView}>
+              <Text style={styles.text}>Company Address:</Text>
+              <TextInput
+                style={styles.input2}
+                placeholder="Company Address..."
+                placeholderTextColor={Colors.black3}
+                onChangeText={text => setCompanyAddress(text)}
+                value={companyAddress}
+              />
+            </View>
+          </View>
+        ) : null}
+        <TouchableOpacity onPress={() => handleUpdate()}
+          style={{ width: '95%', height: 50, marginVertical: 20, borderRadius: 5, backgroundColor: Colors.primaryColor, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={styles.save}>Update</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -333,6 +341,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   detailsView: {
+    width: '95%',
     marginVertical: width * 0.02,
   },
   text: {
@@ -355,19 +364,20 @@ const styles = StyleSheet.create({
     color: Colors.black2,
     fontSize: 16,
     paddingLeft: 0,
-    paddingVertical: height * 0.01,
+    paddingVertical: height * 0.012,
   },
   //dropdown
   dropView: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: height * 0.06,
+    width: '95%',
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
+    // gap: height * 0.06,
   },
   dropdown: {
     marginVertical: 10,
-    height: 40,
-    width: width * 0.5,
+    height: 50,
+    width: width * 0.86,
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 5,
@@ -397,36 +407,32 @@ const styles = StyleSheet.create({
   },
   ///
   companyContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: height * 0.03,
-    gap: width * 0.06,
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
+    // paddingVertical: height * 0.03,
+    // gap: width * 0.06,
   },
   companyTextView: {
-    gap: height * 0.03,
+    marginVertical: 10
+    // gap: height * 0.03,
   },
   companyInputView: {
-    gap: height * 0.01,
+    // gap: height * 0.01,
   },
   input2: {
-    width: width * 0.5,
+    width: width * 0.85,
     color: Colors.black2,
     fontSize: 14,
     paddingHorizontal: width * 0.04,
-    paddingVertical: width * 0.01,
+    paddingVertical: width * 0.02,
+    marginVertical: 5,
     borderWidth: 0.5,
     borderColor: Colors.black,
     borderRadius: width * 0.01,
   },
   save: {
     color: Colors.white,
-    fontSize: 20,
-    backgroundColor: Colors.primaryColor,
-    alignSelf: 'center',
-    paddingVertical: width * 0.015,
-    paddingHorizontal: width * 0.15,
-    marginTop: height * 0.08,
-    borderRadius: width * 0.01,
+    fontSize: 16,
   },
 });
