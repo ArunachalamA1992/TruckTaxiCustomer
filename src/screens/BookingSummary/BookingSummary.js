@@ -17,6 +17,7 @@ import {useSelector} from 'react-redux';
 import OTPInput from '../../components/OTPInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Enquiry from './Enquiry';
+import moment from 'moment';
 
 const {width, height} = Dimensions.get('screen');
 const BookingSummary = ({route, navigation}) => {
@@ -41,10 +42,6 @@ const BookingSummary = ({route, navigation}) => {
   const fetchCustomerDetails = async () => {
     try {
       const myHeaders = new Headers();
-      myHeaders.append(
-        'x-access-token',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1EMTIzIiwicm9sZSI6MSwiaWF0IjoxNTk3MjIxMzA1LCJleHAiOjE1OTczMDc3MDV9.Tj0B6Jh1EQySEtJvMFcxM5e4w0rNTDMKN1eqPze8sLk',
-      );
       myHeaders.append('Authorization', 'Bearer ' + token);
 
       const requestOptions = {
@@ -111,7 +108,7 @@ const BookingSummary = ({route, navigation}) => {
     fetch('https://trucktaxi.co.in/api/customer/booknow', requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log("confirm booking =================:", result);
+        console.log('confirm booking =================:', result);
         setBookingOTPVisible(true);
         setBookingData(result?.data?.[0]);
         ToastAndroid.show(result?.data?.[0]?.message, ToastAndroid.SHORT);
@@ -175,7 +172,9 @@ const BookingSummary = ({route, navigation}) => {
           <Text style={styles.type}>Drop :</Text>
         </View>
         <View style={styles.container3}>
-          <Text style={styles.value}>{data?.datetosend}</Text>
+          <Text style={styles.value}>
+            {moment(data?.datetosend).format('YYYY-MM-DD HH:mm A')}
+          </Text>
           <Text style={styles.value}>{data?.fareName}</Text>
           <Text style={styles.value}>₹ 0</Text>
           {/* <Text style={styles.value}>Rs.0</Text> */}

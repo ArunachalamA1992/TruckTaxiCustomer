@@ -20,15 +20,16 @@ import DatePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
-import { Dropdown } from 'react-native-element-dropdown';
-import { useSelector } from 'react-redux';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { selectDestination, selectOrigin } from '../../Slice/navSlice';
+import {Dropdown} from 'react-native-element-dropdown';
+import {useDispatch, useSelector} from 'react-redux';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {selectDestination, selectOrigin} from '../../Slice/navSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 
-import { BottomSheet } from 'react-native-btr';
-import { Iconviewcomponent } from '../../components/Icontag';
+import {BottomSheet} from 'react-native-btr';
+import {Iconviewcomponent} from '../../components/Icontag';
+import {login} from '../../storage/actions';
 
 let scr_height = Dimensions.get('window').height;
 
@@ -73,7 +74,7 @@ const Home = ({ navigation, route }) => {
       name: 'closed type',
     },
   ]);
-
+  const dispatch = useDispatch();
   const [selectIntercity, setSelectIntercity] = useState({});
 
   const [selectNight, setSelectNight] = useState({});
@@ -81,6 +82,7 @@ const Home = ({ navigation, route }) => {
 
   useEffect(() => {
     fetchCustomerDetails();
+    getProfile();
   }, [token]);
 
   useEffect(() => {
@@ -111,7 +113,6 @@ const Home = ({ navigation, route }) => {
   const fetchCustomerDetails = async () => {
     try {
       const myHeaders = new Headers();
-      myHeaders.append('x-access-token', 'Bearer ' + token);
       myHeaders.append('Authorization', 'Bearer ' + token);
 
       const requestOptions = {
@@ -135,6 +136,39 @@ const Home = ({ navigation, route }) => {
           );
           setCityId(result?.data?.[0]?.cityid);
           setCustomerid(result?.data?.[0]?.customerid);
+        })
+        .catch(error => console.error(error));
+    } catch (error) {
+      console.error('Error fetching customer details:', error);
+    }
+  };
+
+  const getProfile = async () => {
+    try {
+      const myHeaders = new Headers();
+      myHeaders.append('Authorization', `Bearer ${token}`);
+
+      const requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow',
+      };
+
+      fetch(
+        `https://trucktaxi.co.in/api/customer/getprofiledetails?mobileno=+91${mobileNumber}`,
+        requestOptions,
+      )
+        .then(response => response.json())
+        .then(result => {
+          var profileData = result?.data?.[0];
+          dispatch(
+            login({
+              token: token,
+              userName: profileData?.customername,
+              mobileNumber: mobileNumber,
+              cityCode: profileData?.cityid,
+            }),
+          );
         })
         .catch(error => console.error(error));
     } catch (error) {
@@ -346,8 +380,8 @@ const Home = ({ navigation, route }) => {
 
   const nextButtonClick = () => {
     try {
-      let datetosend = moment(date, 'DD/MM/YYYY hh:mm A').format('DD/MM/YYYY');
-      let timetosend = moment(date, 'DD/MM/YYYY hh:mm A').format('HH:mm');
+      let datetosend = moment(date).format('YYYY-MM-DD');
+      let timetosend = moment(date).format('HH:mm:ss');
 
       if (
         selectVehicleid != null &&

@@ -11,15 +11,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from './Colors';
-import { useDispatch, useSelector } from 'react-redux';
-import { signOut } from '../storage/actions';
-import { Manrope } from '../Global/FontFamily';
+import {useDispatch, useSelector} from 'react-redux';
+import {login, signOut} from '../storage/actions';
+import {Manrope} from '../Global/FontFamily';
 import Share from 'react-native-share';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CustomDrawer = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const token = useSelector(state => state.token);
   const mobileNumber = useSelector(state => state.mobileNumber);
   const currentName = useSelector(state => state.userName);
@@ -110,8 +110,6 @@ const CustomDrawer = () => {
   //       'Trucktaxi Customer App| A framework for building native apps using React',
   //   });
 
-
-
   //   // const shareOptions = {
   //   //   title: 'Share App',
   //   //   message: 'Check out this awesome app: Trucktaxi Customer App',
@@ -127,28 +125,34 @@ const CustomDrawer = () => {
   //   //     console.log("catch in share_options:", err);
   //   //   });
 
-
   // };
 
   const handleSignOut = () => {
-    dispatch(signOut())
-    navigation.navigate('Login')
-
-  }
+    dispatch(signOut());
+    navigation.navigate('Login');
+    AsyncStorage.clear();
+    dispatch(login({}));
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View>
-        <TouchableOpacity style={styles.profile} onPress={() => navigation.navigate("Account")}>
-          <View style={{ padding: 5 }}>
+        <TouchableOpacity
+          style={styles.profile}
+          onPress={() => navigation.navigate('Account')}>
+          <View style={{padding: 5}}>
             <Image
               style={styles.image}
               source={require('../asset/image/1_i-7Et4qMUoyQxPK1chN5lg.webp')}
             />
           </View>
           <View style={styles.profileText}>
-            <Text style={styles.ProfileName} numberOfLines={1}>{uName}</Text>
-            <Text style={styles.Phone} numberOfLines={1}>{phone}</Text>
+            <Text style={styles.ProfileName} numberOfLines={1}>
+              {currentName}
+            </Text>
+            <Text style={styles.Phone} numberOfLines={1}>
+              {mobileNumber}
+            </Text>
           </View>
           {/* <TouchableOpacity onPress={() => navigation.navigate("Account")}>
             <Icon2 name="edit" size={16} color="#000" />
@@ -161,11 +165,11 @@ const CustomDrawer = () => {
               <TouchableOpacity
                 key={item.Id}
                 onPress={() => navigation.navigate(item.navigate)}
-              // onPress={
-              //   item.name == 'Share'
-              //     ? shareClick
-              //     : () => navigation.navigate(item.navigate)
-              // }
+                // onPress={
+                //   item.name == 'Share'
+                //     ? shareClick
+                //     : () => navigation.navigate(item.navigate)
+                // }
               >
                 <View style={styles.contents}>
                   <Image style={styles.icon} source={item.image} />
@@ -177,7 +181,9 @@ const CustomDrawer = () => {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.logoutView} onPress={() => handleSignOut()}>
+      <TouchableOpacity
+        style={styles.logoutView}
+        onPress={() => handleSignOut()}>
         <Text style={styles.logout}>Logout</Text>
         <Image
           style={styles.logoutIcon}
@@ -190,7 +196,7 @@ const CustomDrawer = () => {
 
 export default CustomDrawer;
 
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -228,12 +234,17 @@ const styles = StyleSheet.create({
   ProfileName: {
     color: Colors.black2,
     fontSize: 16,
-    fontWeight: '500', fontFamily: Manrope.SemiBold, paddingVertical: 5, paddingHorizontal: 10,
+    fontWeight: '500',
+    fontFamily: Manrope.SemiBold,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     overflow: 'hidden',
   },
   Phone: {
     color: Colors.black2,
-    fontSize: 15, fontFamily: Manrope.SemiBold, paddingHorizontal: 10,
+    fontSize: 15,
+    fontFamily: Manrope.SemiBold,
+    paddingHorizontal: 10,
     fontFamily: 'Poppins-Regular',
   },
   content: {
@@ -261,7 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryColor,
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    alignItems: "center",
+    alignItems: 'center',
     padding: width * 0.02,
   },
   logout: {
@@ -272,5 +283,5 @@ const styles = StyleSheet.create({
     width: width * 0.08,
     height: height * 0.035,
     resizeMode: 'contain',
-  }
+  },
 });
