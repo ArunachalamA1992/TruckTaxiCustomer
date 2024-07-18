@@ -154,7 +154,7 @@ const Map = () => {
       });
     }
   };
-
+  console.log('pickupDescription', pickupDescription != '');
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
@@ -162,7 +162,7 @@ const Map = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}>
       <View style={[styles.container, {paddingBottom: keyboardHeight}]}>
         <MapView
-          provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+          provider={PROVIDER_GOOGLE}
           style={styles.map}
           region={newPosition}
           showsUserLocation={true}
@@ -207,7 +207,7 @@ const Map = () => {
               ref={autocompleteRef}
               styles={styles.autocomplete}
               textInputProps={{
-                placeholderTextColor: Colors.black3, // Example color
+                placeholderTextColor: Colors.black3,
               }}
               placeholder="Search......"
               predefinedPlacesAlwaysVisible={true}
@@ -216,8 +216,30 @@ const Map = () => {
                 key: 'AIzaSyAOl88J2TyN1uxEENd8sjtYNq8Xa2nW4rk',
                 language: 'en',
                 components: 'country:In',
-                location: '11.0168,76.9558', // Latitude and longitude for Coimbatore
-                radius: 800, // radius around Coimbatore
+                location: '11.0168,76.9558',
+                radius: 800,
+              }}
+              renderRightButton={() => {
+                return (
+                  <TouchableOpacity
+                    style={{
+                      marginHorizontal: 10,
+                      alignItems: 'center',
+                      bottom: 0,
+                      justifyContent: 'center',
+                    }}
+                    onPress={() => {
+                      pickupDescription == '' ? selectPickup() : selectDrop();
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: Colors.primaryColor,
+                      }}>
+                      Done
+                    </Text>
+                  </TouchableOpacity>
+                );
               }}
               onPress={(data, details) => {
                 console.log(
@@ -266,7 +288,9 @@ const Map = () => {
                   </Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={selectPickup}>
+              <View 
+              // onPress={selectPickup}
+              >
                 <Text
                   style={[
                     styles.select,
@@ -274,7 +298,7 @@ const Map = () => {
                   ]}>
                   {originSelected ? 'selected' : 'Not selected'}
                 </Text>
-              </TouchableOpacity>
+              </View>
             </View>
             <View style={styles.line} />
             <View style={styles.inputContainer2}>
@@ -301,7 +325,9 @@ const Map = () => {
                   </Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={selectDrop}>
+              <View 
+              // onPress={selectDrop}
+              >
                 <Text
                   style={[
                     styles.select,
@@ -309,7 +335,7 @@ const Map = () => {
                   ]}>
                   {destinationSelected ? 'selected' : 'Not selected'}
                 </Text>
-              </TouchableOpacity>
+              </View>
             </View>
           </View>
           <TouchableOpacity
