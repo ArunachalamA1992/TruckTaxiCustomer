@@ -11,10 +11,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
-import {useNavigation} from '@react-navigation/native';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import React, { useEffect, useRef, useState } from 'react';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import { useNavigation } from '@react-navigation/native';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import MapViewDirections from 'react-native-maps-directions';
 import Icon from 'react-native-vector-icons/FontAwesome6';
@@ -26,7 +26,7 @@ const Map = () => {
   const navigation = useNavigation();
   const autocompleteRef = useRef(null);
   const [location, setLocation] = useState();
-  const [origin, setOrigin] = useState({latitude: 11.0168, longitude: 76.9558});
+  const [origin, setOrigin] = useState({ latitude: 11.0168, longitude: 76.9558 });
   const [Destination, setDestination] = useState({
     latitude: 10.9579614,
     longitude: 76.95407449999999,
@@ -157,10 +157,10 @@ const Map = () => {
 
   return (
     <KeyboardAvoidingView
-      style={{flex: 1}}
+      style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : null}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}>
-      <View style={[styles.container, {paddingBottom: keyboardHeight}]}>
+      <View style={[styles.container, { paddingBottom: keyboardHeight }]}>
         <MapView
           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
           style={styles.map}
@@ -253,14 +253,14 @@ const Map = () => {
                   <Text
                     style={[
                       styles.locationText,
-                      originSelected && {color: Colors.Green},
+                      originSelected && { color: Colors.Green },
                     ]}>
                     Pickup Location
                   </Text>
                   <Text
                     style={[
                       styles.location,
-                      originSelected && {color: Colors.Green},
+                      originSelected && { color: Colors.Green },
                     ]}>
                     {pickupDescription}
                   </Text>
@@ -270,7 +270,7 @@ const Map = () => {
                 <Text
                   style={[
                     styles.select,
-                    originSelected && {color: Colors.Green},
+                    originSelected && { color: Colors.Green },
                   ]}>
                   {originSelected ? 'selected' : 'Not selected'}
                 </Text>
@@ -288,14 +288,14 @@ const Map = () => {
                   <Text
                     style={[
                       styles.locationText,
-                      destinationSelected && {color: Colors.Green},
+                      destinationSelected && { color: Colors.Green },
                     ]}>
                     Drop Location
                   </Text>
                   <Text
                     style={[
                       styles.location,
-                      destinationSelected && {color: Colors.Green},
+                      destinationSelected && { color: Colors.Green },
                     ]}>
                     {dropDescription}
                   </Text>
@@ -305,7 +305,7 @@ const Map = () => {
                 <Text
                   style={[
                     styles.select,
-                    destinationSelected && {color: Colors.Green},
+                    destinationSelected && { color: Colors.Green },
                   ]}>
                   {destinationSelected ? 'selected' : 'Not selected'}
                 </Text>
@@ -317,8 +317,8 @@ const Map = () => {
             onPress={() =>
               navigation.navigate('BookaPickup', {
                 locations: {
-                  pickup: {position: origin, Description: pickupDescription},
-                  drop: {position: Destination, Description: dropDescription},
+                  pickup: { position: origin, Description: pickupDescription },
+                  drop: { position: Destination, Description: dropDescription },
                   distance: distance,
                 },
               })
@@ -335,7 +335,7 @@ const Map = () => {
 
 export default Map;
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -373,13 +373,17 @@ const styles = StyleSheet.create({
       backgroundColor: Colors.white,
       borderWidth: 1,
       borderColor: 'black',
-      borderRadius: 6,
+      borderRadius: 6, color: Colors.black,
     },
     textInput: {
       height: 38,
       color: Colors.black,
       fontSize: 16,
       backgroundColor: Colors.white,
+    },
+    description: {
+      fontWeight: 'bold',
+      color: Colors.black, // Change this to your desired color
     },
     predefinedPlacesDescription: {
       color: Colors.black,

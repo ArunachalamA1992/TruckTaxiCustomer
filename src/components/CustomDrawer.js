@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from './Colors';
@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signOut } from '../storage/actions';
 import { Manrope } from '../Global/FontFamily';
 import Share from 'react-native-share';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CustomDrawer = () => {
   const navigation = useNavigation();
@@ -22,6 +23,35 @@ const CustomDrawer = () => {
   const token = useSelector(state => state.token);
   const mobileNumber = useSelector(state => state.mobileNumber);
   const currentName = useSelector(state => state.userName);
+  // console.log(",dmbfgjkbfdgbdfbkl  ", currentName);
+
+  const [uName, setUName] = useState('')
+  const [phone, setPhone] = useState('')
+
+  useEffect(() => {
+    try {
+      getProfileDetails()
+    } catch (error) {
+      console.log("catch in getProfile_Details : ", error);
+    }
+  }, [])
+
+  const getProfileDetails = async () => {
+    const formattedNo = "+91" + mobileNumber
+    const response = await fetch(
+      `https://trucktaxi.co.in/api/customer/getprofiledetails?mobileno=${formattedNo}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const result = await response.json();
+    setUName(result?.data?.[0].customername)
+    setPhone(result?.data?.[0].mobileno)
+    // console.log("RESULT =============", result?.data?.[0].customername)
+  };
 
   Contents = [
     {
@@ -102,6 +132,8 @@ const CustomDrawer = () => {
 
   const handleSignOut = () => {
     dispatch(signOut())
+    navigation.navigate('Login')
+
   }
 
   return (
@@ -115,8 +147,8 @@ const CustomDrawer = () => {
             />
           </View>
           <View style={styles.profileText}>
-            <Text style={styles.ProfileName} numberOfLines={1}>{currentName}</Text>
-            <Text style={styles.Phone} numberOfLines={1}>{mobileNumber}</Text>
+            <Text style={styles.ProfileName} numberOfLines={1}>{uName}</Text>
+            <Text style={styles.Phone} numberOfLines={1}>{phone}</Text>
           </View>
           {/* <TouchableOpacity onPress={() => navigation.navigate("Account")}>
             <Icon2 name="edit" size={16} color="#000" />
