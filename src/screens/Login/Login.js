@@ -13,6 +13,7 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 import Colors from '../../components/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import OTPTextInput from 'react-native-otp-textinput';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
@@ -20,6 +21,7 @@ import Snackbar from 'react-native-snackbar';
 import {getHash, startOtpListener, useOtpVerify} from 'react-native-otp-verify';
 import {login} from '../../storage/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Manrope } from '../../Global/FontFamily';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -162,7 +164,7 @@ const Login = () => {
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modal}>
           <View style={styles.modalView}>
-            <Icon name="lock" size={100} color={Colors.primaryColor} />
+            <Fontisto name="unlocked" size={80} color={Colors.primaryColor} />
             <Text style={styles.verifyHeader}>Verification Code</Text>
             <Text style={styles.verifyText}>Please enter OTP</Text>
             <Text style={styles.verifyText}>sent to {mobileNumber}</Text>
@@ -171,7 +173,7 @@ const Login = () => {
               autoFocus={true}
               ref={e => (otpInput = e)}
               handleTextChange={text => setOTP(text)}></OTPTextInput>
-            <TouchableOpacity onPress={() => verifyOTP()}>
+            <TouchableOpacity onPress={() => verifyOTP()} style={{ width: '80%', height: 45, backgroundColor: Colors.primaryColor, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
               <Text style={styles.verify}>Verify</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleLogin}>
@@ -207,23 +209,24 @@ const styles = StyleSheet.create({
   },
   header: {
     color: Colors.primaryColor,
-    fontSize: 20,
+    fontSize: 20, fontFamily: Manrope.Bold, letterSpacing: 0.5
   },
   text: {
     color: Colors.black,
-    fontSize: 14,
+    fontSize: 14, fontFamily: Manrope.SemiBold, letterSpacing: 0.5, paddingVertical: 5
   },
   inputView: {
     width: width * 0.85,
     gap: height * 0.02,
   },
   input: {
+    fontSize: 16,
     color: Colors.black,
     borderWidth: 1,
     borderWidthColor: Colors.black,
     borderRadius: width * 0.01,
     paddingHorizontal: width * 0.04,
-    paddingVertical: height * 0.01,
+    paddingVertical: height * 0.014,
   },
   button: {
     flexDirection: 'row',
@@ -232,7 +235,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.06,
     paddingVertical: height * 0.015,
     borderRadius: width * 0.01,
-    gap: width * 0.04,
+    gap: width * 0.04, marginVertical: 10
   },
   buttontxt: {
     color: Colors.white,
@@ -260,24 +263,20 @@ const styles = StyleSheet.create({
   },
   verifyHeader: {
     color: Colors.primaryColor,
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 20, fontFamily: Manrope.Bold,
+    fontWeight: '800', marginTop: 20
   },
   verifyText: {
-    color: Colors.black2,
-    fontSize: 14,
+    color: Colors.black2, paddingVertical: 2,
+    fontSize: 14, fontFamily: Manrope.SemiBold,
   },
   verify: {
-    backgroundColor: Colors.primaryColor,
     color: Colors.white,
-    fontSize: 18,
-    fontWeight: '500',
-    paddingHorizontal: width * 0.08,
-    paddingVertical: height * 0.01,
-    marginVertical: height * 0.025,
+    fontSize: 18, fontFamily: Manrope.Bold,
   },
   resendOTP: {
-    color: Colors.primaryColor,
+    fontSize: 16,
+    color: Colors.primaryColor, fontFamily: Manrope.Bold,
   },
   load: {
     flex: 1,
