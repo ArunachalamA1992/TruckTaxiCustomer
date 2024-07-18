@@ -380,8 +380,8 @@ const Home = ({navigation, route}) => {
 
   const nextButtonClick = () => {
     try {
-      let datetosend = moment(date, 'DD/MM/YYYY hh:mm A').format('DD/MM/YYYY');
-      let timetosend = moment(date, 'DD/MM/YYYY hh:mm A').format('HH:mm');
+      let datetosend = moment(date).format('YYYY-MM-DD');
+      let timetosend = moment(date).format('HH:mm:ss');
 
       if (
         selectVehicleid != null &&

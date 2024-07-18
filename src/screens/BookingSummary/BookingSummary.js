@@ -17,6 +17,7 @@ import {useSelector} from 'react-redux';
 import OTPInput from '../../components/OTPInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Enquiry from './Enquiry';
+import moment from 'moment';
 
 const {width, height} = Dimensions.get('screen');
 const BookingSummary = ({route, navigation}) => {
@@ -171,7 +172,9 @@ const BookingSummary = ({route, navigation}) => {
           <Text style={styles.type}>Drop :</Text>
         </View>
         <View style={styles.container3}>
-          <Text style={styles.value}>{data?.datetosend}</Text>
+          <Text style={styles.value}>
+            {moment(data?.datetosend).format('YYYY-MM-DD HH:mm A')}
+          </Text>
           <Text style={styles.value}>{data?.fareName}</Text>
           <Text style={styles.value}>₹ 0</Text>
           {/* <Text style={styles.value}>Rs.0</Text> */}

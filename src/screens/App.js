@@ -33,6 +33,7 @@ const Stack = createNativeStackNavigator();
 
 const AppNavigation = () => {
   const isLoggedIn = useSelector(state => state.isLoggedIn);
+  console.log('isLoggedIn', isLoggedIn);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -217,6 +218,16 @@ const AppNavigation = () => {
           <Stack.Screen
             name="Map"
             component={Map}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Register"
+            component={Register}
             options={{headerShown: false}}
           />
         </>

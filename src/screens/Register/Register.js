@@ -167,6 +167,7 @@ const Register = () => {
             'userdata',
             JSON.stringify(result?.data?.[0]),
           );
+          navigation.navigate('BookaPickup');
         })
         .catch(error => console.error(error));
     });
