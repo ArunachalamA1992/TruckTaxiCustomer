@@ -41,10 +41,6 @@ const BookingSummary = ({route, navigation}) => {
   const fetchCustomerDetails = async () => {
     try {
       const myHeaders = new Headers();
-      myHeaders.append(
-        'x-access-token',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1EMTIzIiwicm9sZSI6MSwiaWF0IjoxNTk3MjIxMzA1LCJleHAiOjE1OTczMDc3MDV9.Tj0B6Jh1EQySEtJvMFcxM5e4w0rNTDMKN1eqPze8sLk',
-      );
       myHeaders.append('Authorization', 'Bearer ' + token);
 
       const requestOptions = {
@@ -95,7 +91,7 @@ const BookingSummary = ({route, navigation}) => {
       customerid: customerid,
       noofbookings: data?.noVehicles,
     };
-
+    console.log('confirmData', confirmData);
     if (coupon != '') {
       confirmData.offercode = coupon;
     }
@@ -111,7 +107,7 @@ const BookingSummary = ({route, navigation}) => {
     fetch('https://trucktaxi.co.in/api/customer/booknow', requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log("confirm booking =================:", result);
+        console.log('confirm booking =================:', result);
         setBookingOTPVisible(true);
         setBookingData(result?.data?.[0]);
         ToastAndroid.show(result?.data?.[0]?.message, ToastAndroid.SHORT);

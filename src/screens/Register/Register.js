@@ -9,22 +9,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Entypo';
-import { Dropdown } from 'react-native-element-dropdown';
+import {Dropdown} from 'react-native-element-dropdown';
 import Colors from '../../components/Colors';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Snackbar from 'react-native-snackbar';
-import { login } from '../../storage/actions';
+import {login} from '../../storage/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Register = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { mobileNumber, token } = route.params;
-  console.log(token, mobileNumber)
+  const {mobileNumber, token} = route.params;
+  console.log(token, mobileNumber);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState(mobileNumber);
   const [address, setAddress] = useState('');
@@ -43,8 +43,8 @@ const Register = () => {
   }, []);
 
   const customerTypes = [
-    { label: 'General', value: '1' },
-    { label: 'Business', value: '2' },
+    {label: 'General', value: '1'},
+    {label: 'Business', value: '2'},
   ];
 
   const getCityCode = async () => {
@@ -71,13 +71,8 @@ const Register = () => {
   };
 
   const handleUpdate = async () => {
-    console.log(code)
-    if (
-      name == '' ||
-      phone == '' ||
-      address == '' ||
-      customerType == ''
-    ) {
+    console.log(code);
+    if (name == '' || phone == '' || address == '' || customerType == '') {
       Snackbar.show({
         text: 'Fill all the Fields',
         duration: Snackbar.LENGTH_SHORT,
@@ -110,23 +105,22 @@ const Register = () => {
         redirect: 'follow',
       };
 
-      fetch("https://trucktaxi.co.in/api/customer/addprofile", requestOptions)
+      fetch('https://trucktaxi.co.in/api/customer/addprofile', requestOptions)
         .then(response => response.json())
         .then(result => {
           if (result.status == 200) {
-            console.log("Success ========== :", result);
-            ToastAndroid.show("Profile Updated, Reloading App", ToastAndroid.SHORT);
-            var status = 'Old'
-            AsyncStorage.setItem("newuser", status);
-            refreshdata()
-
-
+            console.log('Success ========== :', result);
+            ToastAndroid.show(
+              'Profile Updated, Reloading App',
+              ToastAndroid.SHORT,
+            );
+            var status = 'Old';
+            AsyncStorage.setItem('newuser', status);
+            refreshdata();
           } else {
-
           }
         })
         .catch(error => console.log('error', error));
-
 
       Snackbar.show({
         text: 'Logged In',
@@ -154,24 +148,29 @@ const Register = () => {
   const refreshdata = () => {
     AsyncStorage.getItem('userToken').then(data => {
       const myHeaders = new Headers();
-      myHeaders.append("x-access-token", JSON.parse(data));
-      myHeaders.append("Authorization", `Bearer ${JSON.parse(data)}`);
+      myHeaders.append('Authorization', `Bearer ${JSON.parse(data)}`);
 
       const requestOptions = {
-        method: "GET",
+        method: 'GET',
         headers: myHeaders,
-        redirect: "follow"
+        redirect: 'follow',
       };
       console.log(requestOptions);
-      fetch("https://trucktaxi.co.in/api/customer/getprofiledetails?mobileno=+91" + mobileNumber, requestOptions)
-        .then((response) => response.json())
-        .then(async (result) => {
-          await AsyncStorage.setItem("userdata", JSON.stringify(result?.data?.[0]))
+      fetch(
+        'https://trucktaxi.co.in/api/customer/getprofiledetails?mobileno=+91' +
+          mobileNumber,
+        requestOptions,
+      )
+        .then(response => response.json())
+        .then(async result => {
+          await AsyncStorage.setItem(
+            'userdata',
+            JSON.stringify(result?.data?.[0]),
+          );
         })
-        .catch((error) => console.error(error));
-
-    })
-  }
+        .catch(error => console.error(error));
+    });
+  };
 
   return (
     <ScrollView style={styles.container} keyboardDismissMode="on-drag">
@@ -286,7 +285,9 @@ const Register = () => {
           </View>
         </View>
       ) : null}
-      <TouchableOpacity onPress={() => handleUpdate()} style={{ paddingVertical: 15 }}>
+      <TouchableOpacity
+        onPress={() => handleUpdate()}
+        style={{paddingVertical: 15}}>
         <Text style={styles.save}>Login</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -295,7 +296,7 @@ const Register = () => {
 
 export default Register;
 
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -406,4 +407,3 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.01,
   },
 });
-

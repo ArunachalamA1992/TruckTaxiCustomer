@@ -315,10 +315,6 @@ const MyBookings = ({route, navigation}) => {
     try {
       setLoading(true);
       const myHeaders = new Headers();
-      myHeaders.append(
-        'x-access-token',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1EMTIzIiwicm9sZSI6MSwiaWF0IjoxNTk3MjIxMzA1LCJleHAiOjE1OTczMDc3MDV9.Tj0B6Jh1EQySEtJvMFcxM5e4w0rNTDMKN1eqPze8sLk',
-      );
       myHeaders.append('Authorization', 'Bearer ' + token);
 
       const requestOptions = {
