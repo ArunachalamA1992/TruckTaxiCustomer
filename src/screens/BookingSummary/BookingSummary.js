@@ -92,7 +92,7 @@ const BookingSummary = ({route, navigation}) => {
       customerid: customerid,
       noofbookings: data?.noVehicles,
     };
-    console.log('confirmData', confirmData);
+
     if (coupon != '') {
       confirmData.offercode = coupon;
     }
