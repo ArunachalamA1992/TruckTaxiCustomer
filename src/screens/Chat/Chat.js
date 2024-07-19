@@ -1,95 +1,122 @@
-import { Dimensions, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useLayoutEffect } from 'react'
-import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
-import Icon3 from 'react-native-vector-icons/FontAwesome5';
-import Sms from 'react-native-vector-icons/MaterialIcons';
-import Colors from '../../components/Colors';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import socketIO from 'socket.io-client';
 
-const Chat = () => {
 
-  const navigation = useNavigation();
+const Chat = ({ navigation }) => {
+  const [messages, setMessages] = useState([]);
 
-  // useLayoutEffect(() => {
+
+  // useEffect(() => {
   //   navigation.setOptions({
-  //     headerLeft: () => (
-  //       <TouchableOpacity
-  //         style={{marginLeft: width * 0.04}}
-  //         onPress={() => navigation.toggleDrawer()}>
-  //         <Icon name="reorder" size={25} color="#000" />
-  //       </TouchableOpacity>
-  //     ),
-  //     headerTitle: () => (
-  //       <View
-  //         style={{
-  //           flexDirection: 'row',
-  //           justifyContent: 'center',
-  //           alignItems: 'center',
-  //           gap: 5,
-  //         }}>
-  //         <Text style={{color: 'black', fontSize: 18}}>Chat Support</Text>
-  //         <Sms name="sms" size={25} color="#000" />
-  //       </View>
+  //     title: (
+  //       <Text>
+  //         Chat Support
+  //       </Text>
   //     ),
   //     headerRight: () => (
-  //       <TouchableOpacity
-  //         style={{marginRight: width * 0.04}}
-  //         onPress={() => navigation.navigate('Book a Pickup')}>
-  //         <Icon2 name="home" size={25} color={Colors.primaryColor} />
+  //       <TouchableOpacity onPress={() => navigation.navigate("")}
+  //         style={{ flexDirection: 'row' }}>
+
+  //         <FontAwesome style={{ padding: 10 }} name="home" size={25} backgroundColor="white"
+  //           color="#85388d" />
+
   //       </TouchableOpacity>
   //     ),
   //   });
-  // }, []);
+  // });
+
+
+  useEffect(() => {
+
+    const socket = socketIO('https://trucktaxi.co.in', {
+      path: "/socket/socket.io",
+      transports: ['websocket'], jsonp: false
+    });
+    socket.connect();
+    socket.on('connect', () => {
+      console.log('Connected to socket server');
+    });
+
+
+
+  }, []);
+
+
+  const onSend = useCallback((messages = []) => {
+    setMessages(previousMessages =>
+      GiftedChat.append(previousMessages, messages),
+      console.log("dklngkldnlgnklfdngkl  ", messages)
+    );
+  }, []);
+
+  const renderSend = props => {
+    return (
+      <Send {...props}>
+        <View>
+          <MaterialCommunityIcons
+            name="send-circle"
+            style={{ marginBottom: 5, marginRight: 5 }}
+            size={32}
+            color="#2e64e5"
+          />
+        </View>
+      </Send>
+    );
+  };
+
+  const renderBubble = props => {
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: '#2e64e5',
+          },
+        }}
+        textStyle={{
+          right: {
+            color: '#fff',
+          },
+        }}
+      />
+    );
+  };
+
+  const scrollToBottomComponent = () => {
+    return <FontAwesome name="angle-double-down" size={22} color="#333" />;
+  };
+
 
   return (
-    <View style={styles.container}>
-      <ImageBackground style={styles.sms} resizeMode="center">
+    <GiftedChat
+      messages={messages}
+      onSend={messages => onSend(messages)}
+      user={{
+        _id: 1,
+      }}
+      renderBubble={renderBubble}
+      alwaysShowSend
+      renderSend={renderSend}
+      textInputStyle={styles.text}
+      scrollToBottom
+      scrollToBottomComponent={scrollToBottomComponent}
+    />
+  );
+};
 
-        <Text>ggg</Text>
-      </ImageBackground>
-      <View style={styles.inputContainer}>
-        <View style={styles.inputContainer2}>
-          <Icon3 name="images" size={20} color={Colors.black2} />
-          <TextInput style={styles.input} />
-        </View>
-        <TouchableOpacity>
-          <Icon name="arrow-circle-right" size={30} color="#fff" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  )
-}
-
-export default Chat
-
-const { width, height } = Dimensions.get('screen');
+export default Chat;
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "flex-end"
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-  sms: {
-    height: height * 0.8
-  },
-  inputContainer: {
-    backgroundColor: Colors.primaryColor,
-    padding: width * 0.04,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  inputContainer2: {
-    backgroundColor: Colors.white,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: width * 0.04,
-    borderRadius: width * 0.01,
-    gap: width * 0.04,
-  },
-  input: {
-    width: width * 0.64,
-    color: Colors.black
+  text: {
+    color: '#000'
   }
-})
+});

@@ -8,19 +8,19 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
 import Snackbar from 'react-native-snackbar';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import OTPInput from '../../components/OTPInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Enquiry from './Enquiry';
 import moment from 'moment';
 
-const {width, height} = Dimensions.get('screen');
-const BookingSummary = ({route, navigation}) => {
+const { width, height } = Dimensions.get('screen');
+const BookingSummary = ({ route, navigation }) => {
   const [data] = useState(route.params);
   const token = useSelector(state => state.token);
   const mobileNumber = useSelector(state => state.mobileNumber);
@@ -184,8 +184,8 @@ const BookingSummary = ({route, navigation}) => {
               {data?.fare == 2
                 ? data?.Packagevalue?.basefare
                 : data?.fare == 3
-                ? data?.intercitytype?.basefare
-                : data?.nighttype?.basefare}
+                  ? data?.intercitytype?.basefare
+                  : data?.nighttype?.basefare}
             </Text>
           )}
           <Text style={styles.value}>{data?.pickup}</Text>
@@ -246,7 +246,7 @@ const BookingSummary = ({route, navigation}) => {
             flex: 1,
             backgroundColor: '#00000050',
           }}>
-          <View style={{flex: 1}} />
+          <View style={{ flex: 1 }} />
           <View
             style={{
               backgroundColor: '#fff',
@@ -268,10 +268,8 @@ const BookingSummary = ({route, navigation}) => {
                 setVerifyOTP();
               }}
               style={{
-                width: '45%',
+                width: '80%', height: 45, justifyContent: 'center', alignItems: 'center',
                 backgroundColor: Colors.primaryColor,
-                paddingHorizontal: 10,
-                paddingVertical: 10,
                 borderRadius: 10,
               }}>
               <Text style={styles.confirm}>Submit</Text>
@@ -363,7 +361,7 @@ const styles = StyleSheet.create({
   },
   confirm: {
     color: Colors.white,
-    fontSize: 14,
+    fontSize: 16,
     textAlign: 'center',
   },
 });

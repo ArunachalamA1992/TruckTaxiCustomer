@@ -10,16 +10,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Colors from '../../components/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import OTPTextInput from 'react-native-otp-textinput';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
 import Snackbar from 'react-native-snackbar';
-import {getHash, startOtpListener, useOtpVerify} from 'react-native-otp-verify';
-import {login} from '../../storage/actions';
+import { getHash, startOtpListener, useOtpVerify } from 'react-native-otp-verify';
+import { login } from '../../storage/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Manrope } from '../../Global/FontFamily';
 
@@ -41,8 +41,8 @@ const Login = () => {
 
       const requestOptions = {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({mobileno: formattedNo}),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mobileno: formattedNo }),
         redirect: 'follow',
       };
 
@@ -101,7 +101,7 @@ const Login = () => {
             token: result.token,
           });
         } else {
-          navigation.navigate('BookaPickup', {locations: {}});
+          navigation.navigate('BookaPickup', { locations: {} });
         }
         dispatch(
           login({
@@ -188,7 +188,7 @@ const Login = () => {
 
 export default Login;
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   buttontxt: {
     color: Colors.white,
     alignSelf: 'center',
-    fontWeight: '800',
+    fontWeight: '800', textTransform: 'uppercase'
   },
   error: {
     color: Colors.red,

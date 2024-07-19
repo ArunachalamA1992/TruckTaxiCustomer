@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -21,6 +22,7 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Colors from './Colors';
 import Snackbar from 'react-native-snackbar';
+import { Manrope } from '../Global/FontFamily';
 
 const Map = () => {
   const navigation = useNavigation();
@@ -154,7 +156,26 @@ const Map = () => {
       });
     }
   };
-  console.log('pickupDescription', pickupDescription != '');
+  // console.log('pickupDescription', pickupDescription != '');
+
+  function confirmLocation() {
+    try {
+      if (pickupDescription != "" && dropDescription != "") {
+        navigation.navigate('BookaPickup', {
+          locations: {
+            pickup: { position: origin, Description: pickupDescription },
+            drop: { position: Destination, Description: dropDescription },
+            distance: distance,
+          },
+        })
+      } else {
+        ToastAndroid.show('Please Select Pick and Drop Location is Mandatory', ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log("catch in confirm_Location : ", error);
+    }
+  }
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -173,12 +194,14 @@ const Map = () => {
             coordinate={origin}
             title={'I am here'}
             description={'This is my current location'}
+            pinColor={Colors.primaryColor}
           />
           <Marker
             draggable
             coordinate={Destination}
             title={'I am here'}
             description={'This is my current location'}
+            pinColor={Colors.primaryColor}
           />
           {destinationSelected && (
             <MapViewDirections
@@ -233,8 +256,8 @@ const Map = () => {
                     }}>
                     <Text
                       style={{
-                        fontSize: 14,
-                        color: Colors.primaryColor,
+                        fontSize: 16,
+                        color: Colors.primaryColor, fontFamily: Manrope.Bold
                       }}>
                       Done
                     </Text>
@@ -288,15 +311,15 @@ const Map = () => {
                   </Text>
                 </View>
               </View>
-              <View 
+              <View
               // onPress={selectPickup}
               >
                 <Text
                   style={[
                     styles.select,
-                    originSelected && { color: Colors.Green },
+                    originSelected && { fontSize: 12, color: Colors.Green },
                   ]}>
-                  {originSelected ? 'selected' : 'Not selected'}
+                  {originSelected ? 'Selected' : 'Not selected'}
                 </Text>
               </View>
             </View>
@@ -325,7 +348,7 @@ const Map = () => {
                   </Text>
                 </View>
               </View>
-              <View 
+              <View
               // onPress={selectDrop}
               >
                 <Text
@@ -341,13 +364,7 @@ const Map = () => {
           <TouchableOpacity
             style={styles.next}
             onPress={() =>
-              navigation.navigate('BookaPickup', {
-                locations: {
-                  pickup: { position: origin, Description: pickupDescription },
-                  drop: { position: Destination, Description: dropDescription },
-                  distance: distance,
-                },
-              })
+              confirmLocation()
             }>
             {/* // onPress={() => navigation.goBack()}> */}
             <Text style={styles.nextText}>Confirm Location</Text>
@@ -464,7 +481,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   select: {
-    fontSize: 11,
+    fontSize: 12,
     color: Colors.red,
     fontWeight: 'bold',
   },
