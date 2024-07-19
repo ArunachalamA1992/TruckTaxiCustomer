@@ -145,7 +145,7 @@ const BookingSummary = ({ route, navigation }) => {
           if (result?.status == 200) {
             ToastAndroid.show(result?.message, ToastAndroid.SHORT);
             setBookingOTPVisible(false);
-            navigation.replace('MyBookings');
+            navigation.replace('BookaPickup');
           } else {
             ToastAndroid.show(result?.message, ToastAndroid.SHORT);
           }
