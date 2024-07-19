@@ -48,9 +48,16 @@ const Home = ({navigation, route}) => {
   const [nightList, setNightList] = useState([]);
   const [goodsName, setGoodsName] = useState(null);
   const [FareType, setFareType] = useState(null);
-  const [noVehicles, setNoVehicles] = useState(null);
   const [atlerNumber, setAlterNUmber] = useState(null);
-  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [selectedVehicle, setSelectedVehicle] = useState({
+    addkmcharge: '20',
+    addminutecharge: '3',
+    feet: '7.5 feet',
+    id: 1,
+    loadcapacity: '1000 kgs',
+    url: 'https://trucktaxi.co.in/api/images/tataace.png',
+    vehicletype: 'TataAce',
+  });
   const [selectVehicleid, setselectVehicleId] = useState('');
   const [salebottomSheetVisible, setSaleBottomSheetVisible] = useState(false);
   const [bottomData, setBottomData] = useState('');
@@ -63,7 +70,6 @@ const Home = ({navigation, route}) => {
   const [loading, setLoading] = useState(false);
   const [selectPackage, setSelectPackage] = useState({});
   const [selectVehicle, setSelectVehicle] = useState({});
-  const [vehicleTypeVisible, setVehicleTypeVisible] = useState(false);
   const [vehicleType, setVehicleType] = useState([
     {
       id: 1,
@@ -74,6 +80,15 @@ const Home = ({navigation, route}) => {
       name: 'closed type',
     },
   ]);
+  const vehicle = [
+    {label: '1', value: '1'},
+    {label: '2', value: '2'},
+    {label: '3', value: '3'},
+    {label: '4', value: '4'},
+    {label: '5', value: '5'},
+  ];
+  const [noVehicles, setNoVehicles] = useState(vehicle?.[0]);
+  const [vehicleTypeVisible, setVehicleTypeVisible] = useState(false);
   const dispatch = useDispatch();
   const [selectIntercity, setSelectIntercity] = useState({});
 
@@ -349,14 +364,6 @@ const Home = ({navigation, route}) => {
     // console.log("Fare id ======== : ", result.data);
     setFareList(result.data);
   };
-
-  const vehicle = [
-    {label: '1', value: '1'},
-    {label: '2', value: '2'},
-    {label: '3', value: '3'},
-    {label: '4', value: '4'},
-    {label: '5', value: '5'},
-  ];
 
   const options = {
     year: 'numeric',
