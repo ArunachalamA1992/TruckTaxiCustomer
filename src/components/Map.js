@@ -22,7 +22,8 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Colors from './Colors';
 import Snackbar from 'react-native-snackbar';
-import { Manrope } from '../Global/FontFamily';
+import {Manrope} from '../Global/FontFamily';
+import {Iconviewcomponent} from './Icontag';
 
 const Map = () => {
   const navigation = useNavigation();
@@ -44,6 +45,7 @@ const Map = () => {
   const [destinationSelected, setDestinationSelected] = useState(false);
   const [description, setDescription] = useState('');
   const [pickupDescription, setPickupDescription] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
   const [dropDescription, setDropDescription] = useState('');
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState('');
@@ -161,7 +163,7 @@ const Map = () => {
     const parts = description.split(', ');
     return parts.slice(-4, -1).join(', ');
   };
-
+  console.log('selectedLocation', selectedLocation);
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
@@ -204,11 +206,48 @@ const Map = () => {
           )}
         </MapView>
         <View style={styles.inputContainer}>
-          <Text style={styles.headerText}>Pickup & drop Location</Text>
+          <Text style={styles.headerText}>
+            {(pickupDescription == '' && selectedLocation == 'pickup') ||
+            selectedLocation == ''
+              ? 'Enter Pickup Location'
+              : 'Enter Drop Location'}
+          </Text>
           <View style={styles.autocompleteView}>
             <GooglePlacesAutocomplete
               ref={autocompleteRef}
-              styles={styles.autocomplete}
+              styles={{
+                container: {
+                  flex: 1,
+                },
+                textInputContainer: {
+                  backgroundColor: Colors.white,
+                  borderWidth: 1,
+                  borderColor:
+                    selectedLocation != '' ? Colors.Green : 'black',
+                  borderRadius: 6,
+                },
+                textInput: {
+                  height: 38,
+                  color: Colors.black,
+                  fontSize: 16,
+                  backgroundColor: Colors.white,
+                },
+                description: {
+                  fontWeight: 'bold',
+                  color: Colors.black,
+                },
+                predefinedPlacesDescription: {
+                  color: Colors.black,
+                },
+                poweredContainer: {
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  borderBottomRightRadius: 5,
+                  borderBottomLeftRadius: 5,
+                  borderColor: Colors.Green,
+                  borderTopWidth: 0.5,
+                },
+              }}
               textInputProps={{
                 placeholderTextColor: Colors.black3,
               }}
@@ -226,18 +265,23 @@ const Map = () => {
                 return (
                   <TouchableOpacity
                     style={{
-                      marginHorizontal: 10,
-                      alignItems: 'center',
-                      bottom: 0,
-                      justifyContent: 'center',
+                      backgroundColor: Colors.primaryColor,
+                      borderRadius: 5,
+                      padding: 10,
+                      marginLeft: 10,
                     }}
                     onPress={() => {
-                      pickupDescription == '' ? selectPickup() : selectDrop();
+                      (pickupDescription == '' &&
+                        selectedLocation == 'pickup') ||
+                      selectedLocation == ''
+                        ? selectPickup()
+                        : selectDrop();
                     }}>
                     <Text
                       style={{
                         fontSize: 16,
-                        color: Colors.primaryColor, fontFamily: Manrope.Bold
+                        color: Colors.white,
+                        fontFamily: Manrope.Bold,
                       }}>
                       Done
                     </Text>
@@ -261,7 +305,11 @@ const Map = () => {
             </Text>
           </View>
           <View style={styles.inputContainer1}>
-            <View style={styles.inputContainer2}>
+            <TouchableOpacity
+              style={styles.inputContainer2}
+              onPress={() => {
+                setSelectedLocation('pickup');
+              }}>
               <View style={styles.inputContainer3}>
                 <Icon
                   name="location-dot"
@@ -285,20 +333,28 @@ const Map = () => {
                   </Text>
                 </View>
               </View>
-              <View
-              // onPress={selectPickup}
-              >
-                <Text
-                  style={[
-                    styles.select,
-                    originSelected && {color: Colors.Green},
-                  ]}>
-                  {originSelected ? 'Selected' : 'Not selected'}
-                </Text>
-              </View>
-            </View>
+              {originSelected ? (
+                <Iconviewcomponent
+                  Icontag={'Ionicons'}
+                  iconname={'checkmark-circle'}
+                  icon_size={20}
+                  icon_color={Colors.primaryColor}
+                />
+              ) : (
+                <Iconviewcomponent
+                  Icontag={'Entypo'}
+                  iconname={'cross'}
+                  icon_size={20}
+                  icon_color={Colors.red}
+                />
+              )}
+            </TouchableOpacity>
             <View style={styles.line} />
-            <View style={styles.inputContainer2}>
+            <TouchableOpacity
+              style={styles.inputContainer2}
+              onPress={() => {
+                setSelectedLocation('drop');
+              }}>
               <View style={styles.inputContainer3}>
                 <Icon
                   name="location-arrow"
@@ -322,26 +378,36 @@ const Map = () => {
                   </Text>
                 </View>
               </View>
-              <View
-              // onPress={selectDrop}
-              >
-                <Text
-                  style={[
-                    styles.select,
-                    destinationSelected && {color: Colors.Green},
-                  ]}>
-                  {destinationSelected ? 'selected' : 'Not selected'}
-                </Text>
-              </View>
-            </View>
+              {destinationSelected ? (
+                <Iconviewcomponent
+                  Icontag={'Ionicons'}
+                  iconname={'checkmark-circle'}
+                  icon_size={20}
+                  icon_color={Colors.primaryColor}
+                />
+              ) : (
+                <Iconviewcomponent
+                  Icontag={'Entypo'}
+                  iconname={'cross'}
+                  icon_size={20}
+                  icon_color={Colors.red}
+                />
+              )}
+            </TouchableOpacity>
           </View>
           <TouchableOpacity
             style={styles.next}
             onPress={() =>
               navigation.navigate('BookaPickup', {
                 locations: {
-                  pickup: {position: origin, Description: extractLocationDetails(pickupDescription)},
-                  drop: {position: Destination, Description: extractLocationDetails(dropDescription)},
+                  pickup: {
+                    position: origin,
+                    Description: extractLocationDetails(pickupDescription),
+                  },
+                  drop: {
+                    position: Destination,
+                    Description: extractLocationDetails(dropDescription),
+                  },
                   distance: distance,
                 },
               })
@@ -391,37 +457,7 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     zIndex: 99,
   },
-  autocomplete: {
-    textInputContainer: {
-      backgroundColor: Colors.white,
-      borderWidth: 1,
-      borderColor: 'black',
-      borderRadius: 6,
-      color: Colors.black,
-    },
-    textInput: {
-      height: 38,
-      color: Colors.black,
-      fontSize: 16,
-      backgroundColor: Colors.white,
-    },
-    description: {
-      fontWeight: 'bold',
-      color: Colors.black, // Change this to your desired color
-    },
-    predefinedPlacesDescription: {
-      color: Colors.black,
-    },
-    poweredContainer: {
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-      borderBottomRightRadius: 5,
-      borderBottomLeftRadius: 5,
-      borderColor: Colors.Green,
-      borderTopWidth: 0.5,
-    },
-  },
-  /////////
+  ///////////
   DDView: {
     marginTop: height * 0.03,
     flexDirection: 'row',
