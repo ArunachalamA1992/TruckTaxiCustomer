@@ -11,10 +11,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
-import { useNavigation } from '@react-navigation/native';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import React, {useEffect, useRef, useState} from 'react';
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import {useNavigation} from '@react-navigation/native';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import MapViewDirections from 'react-native-maps-directions';
 import Icon from 'react-native-vector-icons/FontAwesome6';
@@ -26,7 +26,7 @@ const Map = () => {
   const navigation = useNavigation();
   const autocompleteRef = useRef(null);
   const [location, setLocation] = useState();
-  const [origin, setOrigin] = useState({ latitude: 11.0168, longitude: 76.9558 });
+  const [origin, setOrigin] = useState({latitude: 11.0168, longitude: 76.9558});
   const [Destination, setDestination] = useState({
     latitude: 10.9579614,
     longitude: 76.95407449999999,
@@ -104,7 +104,7 @@ const Map = () => {
       });
     });
   };
-
+  console.log('location', location, description);
   const selectPickup = () => {
     if (location) {
       setOrigin(location);
@@ -154,13 +154,18 @@ const Map = () => {
       });
     }
   };
-  console.log('pickupDescription', pickupDescription != '');
+
+  const extractLocationDetails = description => {
+    const parts = description.split(', ');
+    return parts.slice(-4, -1).join(', ');
+  };
+
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : null}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}>
-      <View style={[styles.container, { paddingBottom: keyboardHeight }]}>
+      <View style={[styles.container, {paddingBottom: keyboardHeight}]}>
         <MapView
           provider={PROVIDER_GOOGLE}
           style={styles.map}
@@ -190,12 +195,6 @@ const Map = () => {
               onReady={result => {
                 setDistance(result.distance);
                 setDuration(result.duration);
-                console.log(
-                  'distance:',
-                  result.distance,
-                  'duration:',
-                  Math.ceil(result.duration),
-                );
               }}
             />
           )}
@@ -242,12 +241,6 @@ const Map = () => {
                 );
               }}
               onPress={(data, details) => {
-                console.log(
-                  data.description,
-                  details.geometry.location,
-                  '===========',
-                  details.formatted_address,
-                );
                 const newLoc = {
                   latitude: details.geometry.location.lat,
                   longitude: details.geometry.location.lng,
@@ -275,26 +268,26 @@ const Map = () => {
                   <Text
                     style={[
                       styles.locationText,
-                      originSelected && { color: Colors.Green },
+                      originSelected && {color: Colors.Green},
                     ]}>
                     Pickup Location
                   </Text>
                   <Text
                     style={[
                       styles.location,
-                      originSelected && { color: Colors.Green },
+                      originSelected && {color: Colors.Green},
                     ]}>
                     {pickupDescription}
                   </Text>
                 </View>
               </View>
-              <View 
+              <View
               // onPress={selectPickup}
               >
                 <Text
                   style={[
                     styles.select,
-                    originSelected && { color: Colors.Green },
+                    originSelected && {color: Colors.Green},
                   ]}>
                   {originSelected ? 'selected' : 'Not selected'}
                 </Text>
@@ -312,26 +305,26 @@ const Map = () => {
                   <Text
                     style={[
                       styles.locationText,
-                      destinationSelected && { color: Colors.Green },
+                      destinationSelected && {color: Colors.Green},
                     ]}>
                     Drop Location
                   </Text>
                   <Text
                     style={[
                       styles.location,
-                      destinationSelected && { color: Colors.Green },
+                      destinationSelected && {color: Colors.Green},
                     ]}>
                     {dropDescription}
                   </Text>
                 </View>
               </View>
-              <View 
+              <View
               // onPress={selectDrop}
               >
                 <Text
                   style={[
                     styles.select,
-                    destinationSelected && { color: Colors.Green },
+                    destinationSelected && {color: Colors.Green},
                   ]}>
                   {destinationSelected ? 'selected' : 'Not selected'}
                 </Text>
@@ -343,8 +336,8 @@ const Map = () => {
             onPress={() =>
               navigation.navigate('BookaPickup', {
                 locations: {
-                  pickup: { position: origin, Description: pickupDescription },
-                  drop: { position: Destination, Description: dropDescription },
+                  pickup: {position: origin, Description: extractLocationDetails(pickupDescription)},
+                  drop: {position: Destination, Description: extractLocationDetails(dropDescription)},
                   distance: distance,
                 },
               })
@@ -361,7 +354,7 @@ const Map = () => {
 
 export default Map;
 
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -399,7 +392,8 @@ const styles = StyleSheet.create({
       backgroundColor: Colors.white,
       borderWidth: 1,
       borderColor: 'black',
-      borderRadius: 6, color: Colors.black,
+      borderRadius: 6,
+      color: Colors.black,
     },
     textInput: {
       height: 38,

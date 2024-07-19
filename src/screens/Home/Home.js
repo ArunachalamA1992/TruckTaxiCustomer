@@ -13,8 +13,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useLayoutEffect, useState, version } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React, {useEffect, useLayoutEffect, useState, version} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import DatePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -33,7 +33,7 @@ import {login} from '../../storage/actions';
 
 let scr_height = Dimensions.get('window').height;
 
-const Home = ({ navigation, route }) => {
+const Home = ({navigation, route}) => {
   const locations = route?.params?.locations;
   const token = useSelector(state => state.token);
   const mobileNumber = useSelector(state => state.mobileNumber);
@@ -94,15 +94,14 @@ const Home = ({ navigation, route }) => {
         headers: myHeaders,
         redirect: 'follow',
       };
-      setLoading(true);
       fetch(
         'https://trucktaxi.co.in/api/customer/getnotifications?customerid=' +
-        customerid,
+          customerid,
         requestOptions,
       )
         .then(response => response.json())
         .then(result => {
-          setNotifyDataLength(result?.data?.length), setLoading(false);
+          setNotifyDataLength(result?.data?.length);
         })
         .catch(error => console.error(error));
     } catch (error) {
@@ -250,20 +249,20 @@ const Home = ({ navigation, route }) => {
             alignItems: 'center',
             gap: 10,
           }}>
-          <Text style={{ color: 'black', fontSize: 18, paddingLeft: 10 }}>
+          <Text style={{color: 'black', fontSize: 18, paddingLeft: 10}}>
             Book a Pickup
           </Text>
           <Iconviewcomponent
             Icontag={'FontAwesome5'}
             iconname={'truck'}
             icon_size={20}
-            iconstyle={{ color: Colors.black, marginRight: 10 }}
+            iconstyle={{color: Colors.black, marginRight: 10}}
           />
         </View>
       ),
       headerRight: () => (
         <TouchableOpacity
-          style={{ marginRight: 10 }}
+          style={{marginRight: 10}}
           onPress={() => navigation.navigate('Notifications')}>
           <Text
             style={{
@@ -352,11 +351,11 @@ const Home = ({ navigation, route }) => {
   };
 
   const vehicle = [
-    { label: '1', value: '1' },
-    { label: '2', value: '2' },
-    { label: '3', value: '3' },
-    { label: '4', value: '4' },
-    { label: '5', value: '5' },
+    {label: '1', value: '1'},
+    {label: '2', value: '2'},
+    {label: '3', value: '3'},
+    {label: '4', value: '4'},
+    {label: '5', value: '5'},
   ];
 
   const options = {
@@ -505,7 +504,7 @@ const Home = ({ navigation, route }) => {
                     Icontag={'AntDesign'}
                     iconname={'closecircleo'}
                     icon_size={24}
-                    iconstyle={{ color: Colors.primaryColor, marginRight: 10 }}
+                    iconstyle={{color: Colors.primaryColor, marginRight: 10}}
                   />
                 </TouchableOpacity>
               </View>
@@ -521,9 +520,9 @@ const Home = ({ navigation, route }) => {
                   <FlatList
                     data={goods}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
-                        <View style={{ width: '100%' }}>
+                        <View style={{width: '100%'}}>
                           <TouchableOpacity
                             onPress={() => selectedGoods(item, index)}
                             style={{
@@ -559,7 +558,7 @@ const Home = ({ navigation, route }) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                   />
                 ) : null}
 
@@ -567,9 +566,9 @@ const Home = ({ navigation, route }) => {
                   <FlatList
                     data={fareList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
-                        <View style={{ width: '100%' }}>
+                        <View style={{width: '100%'}}>
                           <TouchableOpacity
                             onPress={() => selectFareItem(item, index)}
                             style={{
@@ -605,7 +604,7 @@ const Home = ({ navigation, route }) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                   />
                 ) : null}
 
@@ -613,9 +612,9 @@ const Home = ({ navigation, route }) => {
                   <FlatList
                     data={packageList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
-                        <View style={{ width: '100%' }}>
+                        <View style={{width: '100%'}}>
                           <TouchableOpacity
                             onPress={() => selectPackageItem(item, index)}
                             style={{
@@ -718,7 +717,7 @@ const Home = ({ navigation, route }) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                   />
                 ) : null}
 
@@ -726,9 +725,9 @@ const Home = ({ navigation, route }) => {
                   <FlatList
                     data={interCityList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
-                        <View style={{ width: '100%' }}>
+                        <View style={{width: '100%'}}>
                           <TouchableOpacity
                             onPress={() => selectIntercityItem(item, index)}
                             style={{
@@ -831,7 +830,7 @@ const Home = ({ navigation, route }) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                   />
                 ) : null}
 
@@ -839,9 +838,9 @@ const Home = ({ navigation, route }) => {
                   <FlatList
                     data={nightList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
-                        <View style={{ width: '100%' }}>
+                        <View style={{width: '100%'}}>
                           <TouchableOpacity
                             onPress={() => selectNightFareItem(item, index)}
                             style={{
@@ -917,7 +916,7 @@ const Home = ({ navigation, route }) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                   />
                 ) : null}
               </View>
@@ -989,9 +988,9 @@ const Home = ({ navigation, route }) => {
 
         fetch(
           'https://trucktaxi.co.in/api/customer/getpackages?vehicleid=' +
-          item.id +
-          '&cityid=' +
-          cityid,
+            item.id +
+            '&cityid=' +
+            cityid,
           requestOptions,
         )
           .then(response => response.json())
@@ -1005,9 +1004,9 @@ const Home = ({ navigation, route }) => {
 
         fetch(
           'https://trucktaxi.co.in/api/customer/getintercitylist?vehicleid=' +
-          item.id +
-          '&cityid=' +
-          cityid,
+            item.id +
+            '&cityid=' +
+            cityid,
           requestOptions,
         )
           .then(response => response.json())
@@ -1060,7 +1059,7 @@ const Home = ({ navigation, route }) => {
             padding: 10,
           }}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{ width: '100%', marginTop: 10 }}>
+            <View style={{width: '100%', marginTop: 10}}>
               <Text
                 style={{
                   fontSize: 16,
@@ -1080,7 +1079,7 @@ const Home = ({ navigation, route }) => {
                 data={VehicleData}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                renderItem={({ item, index }) => {
+                renderItem={({item, index}) => {
                   const isFocused = selectedVehicle
                     ? item.vehicletype == selectedVehicle.vehicletype
                     : false;
@@ -1102,7 +1101,7 @@ const Home = ({ navigation, route }) => {
                       onPress={() => selectVehicleType(item)}>
                       <Image
                         style={styles.vehicleImg}
-                        source={{ uri: item.url }}
+                        source={{uri: item.url}}
                       />
                       <Text style={styles.vehicleName}>{item.vehicletype}</Text>
                       <Text style={styles.vehicleName}>
@@ -1125,7 +1124,8 @@ const Home = ({ navigation, route }) => {
                 <TouchableOpacity
                   onPress={() => {
                     setVehicleTypeVisible(true);
-                  }} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  }}
+                  style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Text
                     style={{
                       fontSize: 14,
@@ -1142,7 +1142,7 @@ const Home = ({ navigation, route }) => {
                     Icontag={'Ionicons'}
                     iconname={'chevron-down'}
                     icon_size={20}
-                    iconstyle={{ color: Colors.black2, marginRight: 10 }}
+                    iconstyle={{color: Colors.black2, marginRight: 10}}
                   />
                 </TouchableOpacity>
                 <Modal
@@ -1298,13 +1298,22 @@ const Home = ({ navigation, route }) => {
                   </View>
                 </View>
               ) : (
-                <TouchableOpacity onPress={() => navigation.navigate('Map')} style={{ width: '50%', height: 45, backgroundColor: Colors.primaryColor, borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Map')}
+                  style={{
+                    width: '50%',
+                    height: 45,
+                    backgroundColor: Colors.primaryColor,
+                    borderRadius: 5,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
                   <Text style={styles.location}>Choose Location</Text>
                 </TouchableOpacity>
               )}
             </View>
             <View style={styles.line} />
-            <View style={{ width: '95%' }}>
+            <View style={{width: '95%'}}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -1350,7 +1359,7 @@ const Home = ({ navigation, route }) => {
                     Icontag={'Ionicons'}
                     iconname={'chevron-down-circle'}
                     icon_size={24}
-                    iconstyle={{ color: Colors.black, marginRight: 10 }}
+                    iconstyle={{color: Colors.black, marginRight: 10}}
                   />
                 </TouchableOpacity>
               </View>
@@ -1401,7 +1410,7 @@ const Home = ({ navigation, route }) => {
                     Icontag={'Ionicons'}
                     iconname={'chevron-down-circle'}
                     icon_size={24}
-                    iconstyle={{ color: Colors.black, marginRight: 10 }}
+                    iconstyle={{color: Colors.black, marginRight: 10}}
                   />
                 </TouchableOpacity>
               </View>
@@ -1457,7 +1466,7 @@ const Home = ({ navigation, route }) => {
                       Icontag={'Ionicons'}
                       iconname={'chevron-down-circle'}
                       icon_size={24}
-                      iconstyle={{ color: Colors.black, marginRight: 10 }}
+                      iconstyle={{color: Colors.black, marginRight: 10}}
                     />
                   </TouchableOpacity>
                 </View>
@@ -1513,7 +1522,7 @@ const Home = ({ navigation, route }) => {
                       Icontag={'Ionicons'}
                       iconname={'chevron-down-circle'}
                       icon_size={24}
-                      iconstyle={{ color: Colors.black, marginRight: 10 }}
+                      iconstyle={{color: Colors.black, marginRight: 10}}
                     />
                   </TouchableOpacity>
                 </View>
@@ -1570,7 +1579,7 @@ const Home = ({ navigation, route }) => {
                       Icontag={'Ionicons'}
                       iconname={'chevron-down-circle'}
                       icon_size={24}
-                      iconstyle={{ color: Colors.black, marginRight: 10 }}
+                      iconstyle={{color: Colors.black, marginRight: 10}}
                     />
                   </TouchableOpacity>
                 </View>
@@ -1722,7 +1731,7 @@ const Home = ({ navigation, route }) => {
 
 export default Home;
 
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
