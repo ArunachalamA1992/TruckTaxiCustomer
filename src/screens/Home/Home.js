@@ -36,6 +36,7 @@ let scr_height = Dimensions.get('window').height;
 const Home = ({navigation, route}) => {
   const locations = route?.params?.locations;
   const token = useSelector(state => state.token);
+  console.log('token', token)
   const mobileNumber = useSelector(state => state.mobileNumber);
   const [date, setDate] = useState(new Date());
   const [dateSelected, setDateSelected] = useState(false);
@@ -249,58 +250,11 @@ const Home = ({navigation, route}) => {
     });
   }, []);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <TouchableOpacity style={{}} onPress={() => navigation.toggleDrawer()}>
-          <Icon name="reorder" size={25} color="#000" />
-        </TouchableOpacity>
-      ),
-      headerTitle: () => (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 10,
-          }}>
-          <Text style={{color: 'black', fontSize: 18, paddingLeft: 10}}>
-            Book a Pickup
-          </Text>
-          <Iconviewcomponent
-            Icontag={'FontAwesome5'}
-            iconname={'truck'}
-            icon_size={20}
-            iconstyle={{color: Colors.black, marginRight: 10}}
-          />
-        </View>
-      ),
-      headerRight: () => (
-        <TouchableOpacity
-          style={{marginRight: 10}}
-          onPress={() => navigation.navigate('Notifications')}>
-          <Text
-            style={{
-              position: 'absolute',
-              zIndex: 1,
-              top: -5,
-              right: 10,
-              backgroundColor: Colors.red,
-              borderRadius: 100,
-              padding: 2,
-              color: Colors.white,
-              fontSize: 12,
-            }}>
-            {notifyDataLength}
-          </Text>
-          <Icon name="bell" size={24} color={Colors.primaryColor} />
-        </TouchableOpacity>
-      ),
-    });
+  useEffect(() => {
+    getVehicleData()
   }, []);
 
   useEffect(() => {
-    getVehicleData();
     getGoodsTypes();
     getFareList();
   }, [token]);

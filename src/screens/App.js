@@ -52,7 +52,59 @@ const AppNavigation = () => {
         />
       ) : isLoggedIn ? (
         <>
-          <Stack.Screen name="BookaPickup" component={Home} />
+          <Stack.Screen
+            name="BookaPickup"
+            component={Home}
+            options={({navigation, route}) => ({
+              headerLeft: () => (
+                <TouchableOpacity
+                  style={{}}
+                  onPress={() => navigation.toggleDrawer()}>
+                  <Icon name="reorder" size={25} color="#000" />
+                </TouchableOpacity>
+              ),
+              headerTitle: () => (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: 10,
+                  }}>
+                  <Text style={{color: 'black', fontSize: 18, paddingLeft: 10}}>
+                    Book a Pickup
+                  </Text>
+                  <Iconviewcomponent
+                    Icontag={'FontAwesome5'}
+                    iconname={'truck'}
+                    icon_size={20}
+                    iconstyle={{color: Colors.black, marginRight: 10}}
+                  />
+                </View>
+              ),
+              headerRight: () => (
+                <TouchableOpacity
+                  style={{marginRight: 10}}
+                  onPress={() => navigation.navigate('Notifications')}>
+                  <Text
+                    style={{
+                      position: 'absolute',
+                      zIndex: 1,
+                      top: -5,
+                      right: 10,
+                      backgroundColor: Colors.red,
+                      borderRadius: 100,
+                      padding: 2,
+                      color: Colors.white,
+                      fontSize: 12,
+                    }}>
+                    {notifyDataLength}
+                  </Text>
+                  <Icon name="bell" size={24} color={Colors.primaryColor} />
+                </TouchableOpacity>
+              ),
+            })}
+          />
           <Stack.Screen
             name="MyBookings"
             component={MyBookings}
