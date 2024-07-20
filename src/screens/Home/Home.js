@@ -36,7 +36,6 @@ let scr_height = Dimensions.get('window').height;
 const Home = ({navigation, route}) => {
   const locations = route?.params?.locations;
   const token = useSelector(state => state.token);
-  console.log('token', token)
   const mobileNumber = useSelector(state => state.mobileNumber);
   const [date, setDate] = useState(new Date());
   const [dateSelected, setDateSelected] = useState(false);
@@ -88,7 +87,7 @@ const Home = ({navigation, route}) => {
     {label: '4', value: '4'},
     {label: '5', value: '5'},
   ];
-  const [noVehicles, setNoVehicles] = useState(vehicle?.[0]);
+  const [noVehicles, setNoVehicles] = useState('1');
   const [vehicleTypeVisible, setVehicleTypeVisible] = useState(false);
   const dispatch = useDispatch();
   const [selectIntercity, setSelectIntercity] = useState({});
@@ -251,7 +250,7 @@ const Home = ({navigation, route}) => {
   }, []);
 
   useEffect(() => {
-    getVehicleData()
+    getVehicleData();
   }, []);
 
   useEffect(() => {
@@ -1012,6 +1011,47 @@ const Home = ({navigation, route}) => {
         backgroundColor={Colors.primaryColor}
         barStyle={'light-content'}
       />
+      <View style={{flexDirection: 'row', alignItems: 'center', padding: 10}}>
+        <TouchableOpacity style={{}} onPress={() => navigation.toggleDrawer()}>
+          <Icon name="reorder" size={25} color="#000" />
+        </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 10,
+            flex: 1,
+          }}>
+          <Text style={{color: 'black', fontSize: 18, paddingLeft: 10}}>
+            Book a Pickup
+          </Text>
+          <Iconviewcomponent
+            Icontag={'FontAwesome5'}
+            iconname={'truck'}
+            icon_size={20}
+            iconstyle={{color: Colors.black, marginRight: 10}}
+          />
+        </View>
+        <TouchableOpacity
+          style={{marginRight: 10}}
+          onPress={() => navigation.navigate('Notifications')}>
+          <Text
+            style={{
+              position: 'absolute',
+              zIndex: 1,
+              top: -5,
+              right: 10,
+              backgroundColor: Colors.red,
+              borderRadius: 100,
+              padding: 2,
+              color: Colors.white,
+              fontSize: 12,
+            }}>
+            {notifyDataLength}
+          </Text>
+          <Icon name="bell" size={24} color={Colors.primaryColor} />
+        </TouchableOpacity>
+      </View>
       {!loading ? (
         <View
           style={{

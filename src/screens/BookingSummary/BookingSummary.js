@@ -1,6 +1,7 @@
 import {
   Dimensions,
   Modal,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -30,6 +31,7 @@ const BookingSummary = ({route, navigation}) => {
   const [isPinReady, setIsPinReady] = useState(false);
   const [bookingOTPVisible, setBookingOTPVisible] = useState(false);
   const [bookingData, setBookingData] = useState({});
+  console.log('bookingData', bookingData);
   const [coupon, setCoupon] = useState('');
   const [customerid, setCustomerID] = useState('');
   const [enquiryVisible, setEnquiryVisible] = useState(false);
@@ -91,12 +93,13 @@ const BookingSummary = ({route, navigation}) => {
       goodstype: data?.goodValue,
       fromaddress: data?.pickup,
       toaddress: data?.drop,
-      triptype: data?.fareName,
-      triptypeid: data?.fare,
+      // triptype: data?.fareName,
+      // triptypeid: data?.fare,
+      triptype: data?.fare,
       customerid: customerid,
       noofbookings: data?.noVehicles,
     };
-
+    console.log('confirmData', confirmData);
     if (coupon != '') {
       confirmData.offercode = coupon;
     }
@@ -202,7 +205,7 @@ const BookingSummary = ({route, navigation}) => {
           <Text style={styles.type}>Regular Charges :</Text>
           {/* <Text style={styles.type}>Peak Time Fare :</Text> */}
           <Text style={styles.type}>Approximate Fees :</Text>
-          <Text style={styles.type}>Base Fees :</Text>
+          {data?.fare == 1 && <Text style={styles.type}>Base Fees :</Text>}
           <Text style={styles.type}>Pickup :</Text>
           <Text style={styles.type}>Drop :</Text>
         </View>
@@ -223,7 +226,7 @@ const BookingSummary = ({route, navigation}) => {
                 : data?.nighttype?.basefare
               : approximateFee}
           </Text>
-          <Text style={styles.value}>₹ {baseFare}</Text>
+          {data?.fare == 1 && <Text style={styles.value}>₹ {baseFare}</Text>}
           <Text style={styles.value}>{data?.pickup}</Text>
           <Text style={styles.value}>{data?.drop}</Text>
         </View>
@@ -277,10 +280,13 @@ const BookingSummary = ({route, navigation}) => {
         visible={bookingOTPVisible}
         transparent={true}
         animationType="slide">
-        <View
+        <Pressable
           style={{
             flex: 1,
             backgroundColor: '#00000050',
+          }}
+          onPress={() => {
+            setBookingOTPVisible(false);
           }}>
           <View style={{flex: 1}} />
           <View
@@ -314,7 +320,7 @@ const BookingSummary = ({route, navigation}) => {
               <Text style={styles.confirm}>Submit</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Pressable>
       </Modal>
       <Enquiry
         visible={enquiryVisible}
