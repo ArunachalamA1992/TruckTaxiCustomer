@@ -412,6 +412,7 @@ const Home = ({navigation, route}) => {
           pickup: locations.pickup.Description,
           drop: locations.drop.Description,
           noVehicles: noVehicles,
+          distance: locations?.distance,
         };
         navigation.navigate('BookingSummary', data);
       } else {

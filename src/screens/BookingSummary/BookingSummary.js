@@ -8,19 +8,19 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
 import Snackbar from 'react-native-snackbar';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import OTPInput from '../../components/OTPInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Enquiry from './Enquiry';
 import moment from 'moment';
 
-const { width, height } = Dimensions.get('screen');
-const BookingSummary = ({ route, navigation }) => {
+const {width, height} = Dimensions.get('screen');
+const BookingSummary = ({route, navigation}) => {
   const [data] = useState(route.params);
   const token = useSelector(state => state.token);
   const mobileNumber = useSelector(state => state.mobileNumber);
@@ -33,10 +33,13 @@ const BookingSummary = ({ route, navigation }) => {
   const [coupon, setCoupon] = useState('');
   const [customerid, setCustomerID] = useState('');
   const [enquiryVisible, setEnquiryVisible] = useState(false);
+  const [approximateFee, setApproximateFee] = useState('');
+  const [baseFare, setBaseFare] = useState('');
   const inputRef = useRef(null);
 
   useEffect(() => {
     fetchCustomerDetails();
+    getApproximateFee();
   }, [token]);
 
   const fetchCustomerDetails = async () => {
@@ -88,7 +91,8 @@ const BookingSummary = ({ route, navigation }) => {
       goodstype: data?.goodValue,
       fromaddress: data?.pickup,
       toaddress: data?.drop,
-      triptype: data?.fare,
+      triptype: data?.fareName,
+      triptypeid: data?.fare,
       customerid: customerid,
       noofbookings: data?.noVehicles,
     };
@@ -114,6 +118,37 @@ const BookingSummary = ({ route, navigation }) => {
         ToastAndroid.show(result?.data?.[0]?.message, ToastAndroid.SHORT);
       })
       .catch(error => console.error(error));
+  };
+
+  const getApproximateFee = async () => {
+    try {
+      const myHeaders = new Headers();
+      myHeaders.append('Authorization', 'Bearer ' + token);
+
+      const requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow',
+      };
+
+      let url;
+      if (data?.fare == 1) {
+        url = `https://trucktaxi.co.in/api/customer/getmeterfare?distance=${data?.distance}&cityid=${cityCode}&vehicleid=${data?.selectedvehcilelist?.id}`;
+      } else {
+        url = `https://trucktaxi.co.in/api/customer/getfareforpackage?distance=${data?.distance}&basefare=${data?.Packagevalue?.basefare}&basekm=${data?.Packagevalue?.basekm}&addkmcharge=18`;
+      }
+
+      const response = await fetch(url, requestOptions);
+      const result = await response.json();
+
+      console.log('response', result);
+
+      const responseData = result.data?.[0];
+      setApproximateFee(responseData?.approximatefare);
+      setBaseFare(responseData?.basefare);
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   const setVerifyOTP = async () => {
@@ -168,6 +203,7 @@ const BookingSummary = ({ route, navigation }) => {
           {data?.fare != 1 && (
             <Text style={styles.type}>Approximate Fees :</Text>
           )}
+          <Text style={styles.type}>Base Fees :</Text>
           <Text style={styles.type}>Pickup :</Text>
           <Text style={styles.type}>Drop :</Text>
         </View>
@@ -179,15 +215,17 @@ const BookingSummary = ({ route, navigation }) => {
           <Text style={styles.value}>₹ 0</Text>
           {/* <Text style={styles.value}>Rs.0</Text> */}
           {data?.fare != 1 && (
-            <Text style={styles.value}>
-              ₹{' '}
-              {data?.fare == 2
-                ? data?.Packagevalue?.basefare
-                : data?.fare == 3
-                  ? data?.intercitytype?.basefare
-                  : data?.nighttype?.basefare}
-            </Text>
+            // <Text style={styles.value}>
+            //   ₹{' '}
+            //   {data?.fare == 2
+            //     ? data?.Packagevalue?.basefare
+            //     : data?.fare == 3
+            //     ? data?.intercitytype?.basefare
+            //     : data?.nighttype?.basefare}
+            // </Text>
+            <Text style={styles.value}>₹ {approximateFee}</Text>
           )}
+          <Text style={styles.value}>₹ {baseFare}</Text>
           <Text style={styles.value}>{data?.pickup}</Text>
           <Text style={styles.value}>{data?.drop}</Text>
         </View>
@@ -246,7 +284,7 @@ const BookingSummary = ({ route, navigation }) => {
             flex: 1,
             backgroundColor: '#00000050',
           }}>
-          <View style={{ flex: 1 }} />
+          <View style={{flex: 1}} />
           <View
             style={{
               backgroundColor: '#fff',
@@ -268,7 +306,10 @@ const BookingSummary = ({ route, navigation }) => {
                 setVerifyOTP();
               }}
               style={{
-                width: '80%', height: 45, justifyContent: 'center', alignItems: 'center',
+                width: '80%',
+                height: 45,
+                justifyContent: 'center',
+                alignItems: 'center',
                 backgroundColor: Colors.primaryColor,
                 borderRadius: 10,
               }}>
