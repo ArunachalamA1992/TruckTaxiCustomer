@@ -134,9 +134,10 @@ const BookingSummary = ({route, navigation}) => {
       let url;
       if (data?.fare == 1) {
         url = `https://trucktaxi.co.in/api/customer/getmeterfare?distance=${data?.distance}&cityid=${cityCode}&vehicleid=${data?.selectedvehcilelist?.id}`;
-      } else {
-        url = `https://trucktaxi.co.in/api/customer/getfareforpackage?distance=${data?.distance}&basefare=${data?.Packagevalue?.basefare}&basekm=${data?.Packagevalue?.basekm}&addkmcharge=18`;
       }
+      // else {
+      //   url = `https://trucktaxi.co.in/api/customer/getfareforpackage?distance=${data?.distance}&basefare=${data?.Packagevalue?.basefare}&basekm=${data?.Packagevalue?.basekm}&addkmcharge=18`;
+      // }
 
       const response = await fetch(url, requestOptions);
       const result = await response.json();
@@ -200,9 +201,7 @@ const BookingSummary = ({route, navigation}) => {
           <Text style={styles.type}>Trip Type :</Text>
           <Text style={styles.type}>Regular Charges :</Text>
           {/* <Text style={styles.type}>Peak Time Fare :</Text> */}
-          {data?.fare != 1 && (
-            <Text style={styles.type}>Approximate Fees :</Text>
-          )}
+          <Text style={styles.type}>Approximate Fees :</Text>
           <Text style={styles.type}>Base Fees :</Text>
           <Text style={styles.type}>Pickup :</Text>
           <Text style={styles.type}>Drop :</Text>
@@ -214,17 +213,16 @@ const BookingSummary = ({route, navigation}) => {
           <Text style={styles.value}>{data?.fareName}</Text>
           <Text style={styles.value}>₹ 0</Text>
           {/* <Text style={styles.value}>Rs.0</Text> */}
-          {data?.fare != 1 && (
-            // <Text style={styles.value}>
-            //   ₹{' '}
-            //   {data?.fare == 2
-            //     ? data?.Packagevalue?.basefare
-            //     : data?.fare == 3
-            //     ? data?.intercitytype?.basefare
-            //     : data?.nighttype?.basefare}
-            // </Text>
-            <Text style={styles.value}>₹ {approximateFee}</Text>
-          )}
+          <Text style={styles.value}>
+            ₹{' '}
+            {data?.fare != 1
+              ? data?.fare == 2
+                ? data?.Packagevalue?.basefare
+                : data?.fare == 3
+                ? data?.intercitytype?.basefare
+                : data?.nighttype?.basefare
+              : approximateFee}
+          </Text>
           <Text style={styles.value}>₹ {baseFare}</Text>
           <Text style={styles.value}>{data?.pickup}</Text>
           <Text style={styles.value}>{data?.drop}</Text>
