@@ -10,18 +10,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Colors from '../../components/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import OTPTextInput from 'react-native-otp-textinput';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
 import Snackbar from 'react-native-snackbar';
-import { getHash, startOtpListener, useOtpVerify } from 'react-native-otp-verify';
-import { login } from '../../storage/actions';
+import {getHash, startOtpListener, useOtpVerify} from 'react-native-otp-verify';
+import {login} from '../../storage/actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Manrope } from '../../Global/FontFamily';
+import {Manrope} from '../../Global/FontFamily';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -41,8 +41,8 @@ const Login = () => {
 
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobileno: formattedNo }),
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({mobileno: formattedNo}),
         redirect: 'follow',
       };
 
@@ -100,8 +100,10 @@ const Login = () => {
             mobileNumber: mobileNumber,
             token: result.token,
           });
+          setModalVisible(false);
         } else {
-          navigation.navigate('BookaPickup', { locations: {} });
+          navigation.navigate('BookaPickup', {locations: {}});
+          setModalVisible(false);
         }
         dispatch(
           login({
@@ -173,7 +175,17 @@ const Login = () => {
               autoFocus={true}
               ref={e => (otpInput = e)}
               handleTextChange={text => setOTP(text)}></OTPTextInput>
-            <TouchableOpacity onPress={() => verifyOTP()} style={{ width: '80%', height: 45, backgroundColor: Colors.primaryColor, borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
+            <TouchableOpacity
+              onPress={() => verifyOTP()}
+              style={{
+                width: '80%',
+                height: 45,
+                backgroundColor: Colors.primaryColor,
+                borderRadius: 5,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginVertical: 20,
+              }}>
               <Text style={styles.verify}>Verify</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleLogin}>
@@ -188,7 +200,7 @@ const Login = () => {
 
 export default Login;
 
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -209,11 +221,16 @@ const styles = StyleSheet.create({
   },
   header: {
     color: Colors.primaryColor,
-    fontSize: 20, fontFamily: Manrope.Bold, letterSpacing: 0.5
+    fontSize: 20,
+    fontFamily: Manrope.Bold,
+    letterSpacing: 0.5,
   },
   text: {
     color: Colors.black,
-    fontSize: 14, fontFamily: Manrope.SemiBold, letterSpacing: 0.5, paddingVertical: 5
+    fontSize: 14,
+    fontFamily: Manrope.SemiBold,
+    letterSpacing: 0.5,
+    paddingVertical: 5,
   },
   inputView: {
     width: width * 0.85,
@@ -235,12 +252,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.06,
     paddingVertical: height * 0.015,
     borderRadius: width * 0.01,
-    gap: width * 0.04, marginVertical: 10
+    gap: width * 0.04,
+    marginVertical: 10,
   },
   buttontxt: {
     color: Colors.white,
     alignSelf: 'center',
-    fontWeight: '800', textTransform: 'uppercase'
+    fontWeight: '800',
+    textTransform: 'uppercase',
   },
   error: {
     color: Colors.red,
@@ -263,20 +282,26 @@ const styles = StyleSheet.create({
   },
   verifyHeader: {
     color: Colors.primaryColor,
-    fontSize: 20, fontFamily: Manrope.Bold,
-    fontWeight: '800', marginTop: 20
+    fontSize: 20,
+    fontFamily: Manrope.Bold,
+    fontWeight: '800',
+    marginTop: 20,
   },
   verifyText: {
-    color: Colors.black2, paddingVertical: 2,
-    fontSize: 14, fontFamily: Manrope.SemiBold,
+    color: Colors.black2,
+    paddingVertical: 2,
+    fontSize: 14,
+    fontFamily: Manrope.SemiBold,
   },
   verify: {
     color: Colors.white,
-    fontSize: 18, fontFamily: Manrope.Bold,
+    fontSize: 18,
+    fontFamily: Manrope.Bold,
   },
   resendOTP: {
     fontSize: 16,
-    color: Colors.primaryColor, fontFamily: Manrope.Bold,
+    color: Colors.primaryColor,
+    fontFamily: Manrope.Bold,
   },
   load: {
     flex: 1,
