@@ -12,24 +12,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
-import {useNavigation} from '@react-navigation/native';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import React, { useEffect, useRef, useState } from 'react';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import { useNavigation } from '@react-navigation/native';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import MapViewDirections from 'react-native-maps-directions';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Colors from './Colors';
 import Snackbar from 'react-native-snackbar';
-import {Manrope} from '../Global/FontFamily';
-import {Iconviewcomponent} from './Icontag';
+import { Manrope } from '../Global/FontFamily';
+import { Iconviewcomponent } from './Icontag';
 
 const Map = () => {
   const navigation = useNavigation();
   const autocompleteRef = useRef(null);
   const [location, setLocation] = useState();
-  const [origin, setOrigin] = useState({latitude: 11.0168, longitude: 76.9558});
+  const [origin, setOrigin] = useState({ latitude: 11.0168, longitude: 76.9558 });
   const [Destination, setDestination] = useState({
     latitude: 10.9579614,
     longitude: 76.95407449999999,
@@ -163,13 +163,38 @@ const Map = () => {
     const parts = description.split(', ');
     return parts.slice(-4, -1).join(', ');
   };
-  console.log('selectedLocation', selectedLocation);
+  // console.log('selectedLocation', selectedLocation);
+  function confirmLocation() {
+    try {
+      if (pickupDescription != '' && dropDescription != '') {
+        navigation.navigate('BookaPickup', {
+          locations: {
+            pickup: {
+              position: origin,
+              Description: extractLocationDetails(pickupDescription),
+            },
+            drop: {
+              position: Destination,
+              Description: extractLocationDetails(dropDescription),
+            },
+            distance: distance,
+          },
+        })
+
+      } else {
+        ToastAndroid.show('Pleas Enter Pick and Drop Location is Mandatory', ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log('catch in confirm_Location :', error);
+    }
+  }
+
   return (
     <KeyboardAvoidingView
-      style={{flex: 1}}
+      style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : null}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}>
-      <View style={[styles.container, {paddingBottom: keyboardHeight}]}>
+      <View style={[styles.container, { paddingBottom: keyboardHeight }]}>
         <MapView
           provider={PROVIDER_GOOGLE}
           style={styles.map}
@@ -208,7 +233,7 @@ const Map = () => {
         <View style={styles.inputContainer}>
           <Text style={styles.headerText}>
             {(pickupDescription == '' && selectedLocation == 'pickup') ||
-            selectedLocation == ''
+              selectedLocation == ''
               ? 'Enter Pickup Location'
               : 'Enter Drop Location'}
           </Text>
@@ -221,13 +246,13 @@ const Map = () => {
                 },
                 textInputContainer: {
                   backgroundColor: Colors.white,
-                  borderWidth: 1,
+                  borderWidth: selectedLocation != '' ? 2 : 1,
                   borderColor:
                     selectedLocation != '' ? Colors.Green : 'black',
                   borderRadius: 6,
                 },
                 textInput: {
-                  height: 38,
+                  height: 40,
                   color: Colors.black,
                   fontSize: 16,
                   backgroundColor: Colors.white,
@@ -267,13 +292,13 @@ const Map = () => {
                     style={{
                       backgroundColor: Colors.primaryColor,
                       borderRadius: 5,
-                      padding: 10,
+                      padding: 10, paddingHorizontal: 20,
                       marginLeft: 10,
                     }}
                     onPress={() => {
                       (pickupDescription == '' &&
                         selectedLocation == 'pickup') ||
-                      selectedLocation == ''
+                        selectedLocation == ''
                         ? selectPickup()
                         : selectDrop();
                     }}>
@@ -320,14 +345,14 @@ const Map = () => {
                   <Text
                     style={[
                       styles.locationText,
-                      originSelected && {color: Colors.Green},
+                      originSelected && { color: Colors.Green },
                     ]}>
                     Pickup Location
                   </Text>
                   <Text
                     style={[
                       styles.location,
-                      originSelected && {color: Colors.Green},
+                      originSelected && { color: Colors.Green },
                     ]}>
                     {pickupDescription}
                   </Text>
@@ -342,10 +367,10 @@ const Map = () => {
                 />
               ) : (
                 <Iconviewcomponent
-                  Icontag={'Entypo'}
-                  iconname={'cross'}
+                  Icontag={'AntDesign'}
+                  iconname={'search1'}
                   icon_size={20}
-                  icon_color={Colors.red}
+                  icon_color={Colors.cloudyGrey}
                 />
               )}
             </TouchableOpacity>
@@ -365,14 +390,14 @@ const Map = () => {
                   <Text
                     style={[
                       styles.locationText,
-                      destinationSelected && {color: Colors.Green},
+                      destinationSelected && { color: Colors.Green },
                     ]}>
                     Drop Location
                   </Text>
                   <Text
                     style={[
                       styles.location,
-                      destinationSelected && {color: Colors.Green},
+                      destinationSelected && { color: Colors.Green },
                     ]}>
                     {dropDescription}
                   </Text>
@@ -387,31 +412,17 @@ const Map = () => {
                 />
               ) : (
                 <Iconviewcomponent
-                  Icontag={'Entypo'}
-                  iconname={'cross'}
+                  Icontag={'AntDesign'}
+                  iconname={'search1'}
                   icon_size={20}
-                  icon_color={Colors.red}
+                  icon_color={Colors.cloudyGrey}
                 />
               )}
             </TouchableOpacity>
           </View>
           <TouchableOpacity
             style={styles.next}
-            onPress={() =>
-              navigation.navigate('BookaPickup', {
-                locations: {
-                  pickup: {
-                    position: origin,
-                    Description: extractLocationDetails(pickupDescription),
-                  },
-                  drop: {
-                    position: Destination,
-                    Description: extractLocationDetails(dropDescription),
-                  },
-                  distance: distance,
-                },
-              })
-            }>
+            onPress={() => confirmLocation()}>
             {/* // onPress={() => navigation.goBack()}> */}
             <Text style={styles.nextText}>Confirm Location</Text>
             <Icon2 name="arrow-circle-right" size={20} color="#fff" />
@@ -424,7 +435,7 @@ const Map = () => {
 
 export default Map;
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -514,7 +525,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 10,
-    gap: 5,
+    gap: 5, height: 50,
     marginVertical: 10,
     borderRadius: 5,
   },

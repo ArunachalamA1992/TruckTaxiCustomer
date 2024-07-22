@@ -13,27 +13,28 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useLayoutEffect, useState, version} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import React, { useEffect, useLayoutEffect, useState, version } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import DatePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
-import {Dropdown} from 'react-native-element-dropdown';
-import {useDispatch, useSelector} from 'react-redux';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {selectDestination, selectOrigin} from '../../Slice/navSlice';
+import { Dropdown } from 'react-native-element-dropdown';
+import { useDispatch, useSelector } from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { selectDestination, selectOrigin } from '../../Slice/navSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 
-import {BottomSheet} from 'react-native-btr';
-import {Iconviewcomponent} from '../../components/Icontag';
-import {login} from '../../storage/actions';
+import { BottomSheet } from 'react-native-btr';
+import { Iconviewcomponent } from '../../components/Icontag';
+import { login } from '../../storage/actions';
+import { Manrope } from '../../Global/FontFamily';
 
 let scr_height = Dimensions.get('window').height;
 
-const Home = ({navigation, route}) => {
+const Home = ({ navigation, route }) => {
   const locations = route?.params?.locations;
   const token = useSelector(state => state.token);
   const mobileNumber = useSelector(state => state.mobileNumber);
@@ -81,11 +82,11 @@ const Home = ({navigation, route}) => {
     },
   ]);
   const vehicle = [
-    {label: '1', value: '1'},
-    {label: '2', value: '2'},
-    {label: '3', value: '3'},
-    {label: '4', value: '4'},
-    {label: '5', value: '5'},
+    { label: '1', value: '1' },
+    { label: '2', value: '2' },
+    { label: '3', value: '3' },
+    { label: '4', value: '4' },
+    { label: '5', value: '5' },
   ];
   const [noVehicles, setNoVehicles] = useState('1');
   const [vehicleTypeVisible, setVehicleTypeVisible] = useState(false);
@@ -111,7 +112,7 @@ const Home = ({navigation, route}) => {
       };
       fetch(
         'https://trucktaxi.co.in/api/customer/getnotifications?customerid=' +
-          customerid,
+        customerid,
         requestOptions,
       )
         .then(response => response.json())
@@ -276,6 +277,7 @@ const Home = ({navigation, route}) => {
       );
       const result = await response.json();
       const data = result.data;
+      console.log("VehicleData res =========== :", result);
       setVehicleData(data);
       setLoading(false);
     } catch (error) {
@@ -449,6 +451,16 @@ const Home = ({navigation, route}) => {
                     Select Vehicle Type
                   </Text>
                 ) : null}
+                {bottomData == 'Intercity' ? (
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: Colors.black,
+                    }}>
+                    Select Intercity Fare Type
+                  </Text>
+                ) : null}
+
                 {bottomData == 'Night' ? (
                   <Text
                     style={{
@@ -465,7 +477,7 @@ const Home = ({navigation, route}) => {
                     Icontag={'AntDesign'}
                     iconname={'closecircleo'}
                     icon_size={24}
-                    iconstyle={{color: Colors.primaryColor, marginRight: 10}}
+                    iconstyle={{ color: Colors.primaryColor, marginRight: 10 }}
                   />
                 </TouchableOpacity>
               </View>
@@ -481,9 +493,9 @@ const Home = ({navigation, route}) => {
                   <FlatList
                     data={goods}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       return (
-                        <View style={{width: '100%'}}>
+                        <View style={{ width: '100%' }}>
                           <TouchableOpacity
                             onPress={() => selectedGoods(item, index)}
                             style={{
@@ -519,7 +531,7 @@ const Home = ({navigation, route}) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{width: '100%'}}
+                    style={{ width: '100%' }}
                   />
                 ) : null}
 
@@ -527,9 +539,9 @@ const Home = ({navigation, route}) => {
                   <FlatList
                     data={fareList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       return (
-                        <View style={{width: '100%'}}>
+                        <View style={{ width: '100%' }}>
                           <TouchableOpacity
                             onPress={() => selectFareItem(item, index)}
                             style={{
@@ -565,7 +577,7 @@ const Home = ({navigation, route}) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{width: '100%'}}
+                    style={{ width: '100%' }}
                   />
                 ) : null}
 
@@ -573,9 +585,9 @@ const Home = ({navigation, route}) => {
                   <FlatList
                     data={packageList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       return (
-                        <View style={{width: '100%'}}>
+                        <View style={{ width: '100%' }}>
                           <TouchableOpacity
                             onPress={() => selectPackageItem(item, index)}
                             style={{
@@ -678,7 +690,7 @@ const Home = ({navigation, route}) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{width: '100%'}}
+                    style={{ width: '100%' }}
                   />
                 ) : null}
 
@@ -686,9 +698,9 @@ const Home = ({navigation, route}) => {
                   <FlatList
                     data={interCityList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       return (
-                        <View style={{width: '100%'}}>
+                        <View style={{ width: '100%' }}>
                           <TouchableOpacity
                             onPress={() => selectIntercityItem(item, index)}
                             style={{
@@ -791,7 +803,7 @@ const Home = ({navigation, route}) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{width: '100%'}}
+                    style={{ width: '100%' }}
                   />
                 ) : null}
 
@@ -799,9 +811,9 @@ const Home = ({navigation, route}) => {
                   <FlatList
                     data={nightList}
                     keyExtractor={(item, index) => String(index)}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       return (
-                        <View style={{width: '100%'}}>
+                        <View style={{ width: '100%' }}>
                           <TouchableOpacity
                             onPress={() => selectNightFareItem(item, index)}
                             style={{
@@ -877,7 +889,7 @@ const Home = ({navigation, route}) => {
                       );
                     }}
                     showsVerticalScrollIndicator={false}
-                    style={{width: '100%'}}
+                    style={{ width: '100%' }}
                   />
                 ) : null}
               </View>
@@ -949,9 +961,9 @@ const Home = ({navigation, route}) => {
 
         fetch(
           'https://trucktaxi.co.in/api/customer/getpackages?vehicleid=' +
-            item.id +
-            '&cityid=' +
-            cityid,
+          item.id +
+          '&cityid=' +
+          cityid,
           requestOptions,
         )
           .then(response => response.json())
@@ -965,9 +977,9 @@ const Home = ({navigation, route}) => {
 
         fetch(
           'https://trucktaxi.co.in/api/customer/getintercitylist?vehicleid=' +
-            item.id +
-            '&cityid=' +
-            cityid,
+          item.id +
+          '&cityid=' +
+          cityid,
           requestOptions,
         )
           .then(response => response.json())
@@ -1005,13 +1017,15 @@ const Home = ({navigation, route}) => {
     }
   }
 
+  console.log("VehicleData ============= :", VehicleData);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar
         backgroundColor={Colors.primaryColor}
         barStyle={'light-content'}
       />
-      <View style={{flexDirection: 'row', alignItems: 'center', padding: 10}}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
         <TouchableOpacity style={{}} onPress={() => navigation.toggleDrawer()}>
           <Icon name="reorder" size={25} color="#000" />
         </TouchableOpacity>
@@ -1022,28 +1036,28 @@ const Home = ({navigation, route}) => {
             gap: 10,
             flex: 1,
           }}>
-          <Text style={{color: 'black', fontSize: 18, paddingLeft: 10}}>
+          <Text style={{ color: 'black', fontSize: 18, paddingLeft: 10 }}>
             Book a Pickup
           </Text>
           <Iconviewcomponent
             Icontag={'FontAwesome5'}
             iconname={'truck'}
             icon_size={20}
-            iconstyle={{color: Colors.black, marginRight: 10}}
+            iconstyle={{ color: Colors.black, marginRight: 10 }}
           />
         </View>
         <TouchableOpacity
-          style={{marginRight: 10}}
+          style={{ marginRight: 10 }}
           onPress={() => navigation.navigate('Notifications')}>
           <Text
             style={{
               position: 'absolute',
               zIndex: 1,
               top: -5,
-              right: 10,
+              right: 0,
               backgroundColor: Colors.red,
               borderRadius: 100,
-              padding: 2,
+              padding: 2, paddingHorizontal: 5,
               color: Colors.white,
               fontSize: 12,
             }}>
@@ -1061,7 +1075,7 @@ const Home = ({navigation, route}) => {
             padding: 10,
           }}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{width: '100%', marginTop: 10}}>
+            <View style={{ width: '100%', marginTop: 10 }}>
               <Text
                 style={{
                   fontSize: 16,
@@ -1081,7 +1095,7 @@ const Home = ({navigation, route}) => {
                 data={VehicleData}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                renderItem={({item, index}) => {
+                renderItem={({ item, index }) => {
                   const isFocused = selectedVehicle
                     ? item.vehicletype == selectedVehicle.vehicletype
                     : false;
@@ -1103,7 +1117,7 @@ const Home = ({navigation, route}) => {
                       onPress={() => selectVehicleType(item)}>
                       <Image
                         style={styles.vehicleImg}
-                        source={{uri: item.url}}
+                        source={{ uri: item.url }}
                       />
                       <Text style={styles.vehicleName}>{item.vehicletype}</Text>
                       <Text style={styles.vehicleName}>
@@ -1119,7 +1133,7 @@ const Home = ({navigation, route}) => {
                 <Text
                   style={{
                     fontSize: 14,
-                    color: Colors.black,
+                    color: Colors.black, fontFamily: Manrope.Bold
                   }}>
                   Vehicle Type:{' '}
                 </Text>
@@ -1127,7 +1141,7 @@ const Home = ({navigation, route}) => {
                   onPress={() => {
                     setVehicleTypeVisible(true);
                   }}
-                  style={{flexDirection: 'row', alignItems: 'center'}}>
+                  style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text
                     style={{
                       fontSize: 14,
@@ -1144,7 +1158,7 @@ const Home = ({navigation, route}) => {
                     Icontag={'Ionicons'}
                     iconname={'chevron-down'}
                     icon_size={20}
-                    iconstyle={{color: Colors.black2, marginRight: 10}}
+                    iconstyle={{ color: Colors.black2, marginRight: 10 }}
                   />
                 </TouchableOpacity>
                 <Modal
@@ -1216,7 +1230,7 @@ const Home = ({navigation, route}) => {
                 style={{
                   fontSize: 14,
                   color: Colors.black,
-                  letterSpacing: 0.5,
+                  letterSpacing: 0.5, fontFamily: Manrope.Bold
                 }}>
                 Date & Time *:
               </Text>
@@ -1251,14 +1265,14 @@ const Home = ({navigation, route}) => {
                 <Text
                   style={{
                     fontSize: 14,
-                    color: Colors.black,
+                    color: Colors.black, fontFamily: Manrope.Bold
                   }}>
                   Pickup Location *:
                 </Text>
                 <Text
                   style={{
                     fontSize: 14,
-                    color: Colors.black,
+                    color: Colors.black, fontFamily: Manrope.Bold
                   }}>
                   Drop Location *:
                 </Text>
@@ -1315,7 +1329,7 @@ const Home = ({navigation, route}) => {
               )}
             </View>
             <View style={styles.line} />
-            <View style={{width: '95%'}}>
+            <View style={{ width: '95%' }}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -1331,9 +1345,9 @@ const Home = ({navigation, route}) => {
                   <Text
                     style={{
                       fontSize: 14,
-                      color: Colors.black,
+                      color: Colors.black, fontFamily: Manrope.Bold
                     }}>
-                    Goods Name *:
+                    Goods Type *:
                   </Text>
                 </View>
                 <TouchableOpacity
@@ -1361,7 +1375,7 @@ const Home = ({navigation, route}) => {
                     Icontag={'Ionicons'}
                     iconname={'chevron-down-circle'}
                     icon_size={24}
-                    iconstyle={{color: Colors.black, marginRight: 10}}
+                    iconstyle={{ color: Colors.black, marginRight: 10 }}
                   />
                 </TouchableOpacity>
               </View>
@@ -1382,7 +1396,7 @@ const Home = ({navigation, route}) => {
                     style={{
                       fontSize: 14,
                       color: Colors.black,
-                      letterSpacing: 0.5,
+                      letterSpacing: 0.5, fontFamily: Manrope.Bold
                     }}>
                     Fare Type *:
                   </Text>
@@ -1412,7 +1426,7 @@ const Home = ({navigation, route}) => {
                     Icontag={'Ionicons'}
                     iconname={'chevron-down-circle'}
                     icon_size={24}
-                    iconstyle={{color: Colors.black, marginRight: 10}}
+                    iconstyle={{ color: Colors.black, marginRight: 10 }}
                   />
                 </TouchableOpacity>
               </View>
@@ -1434,7 +1448,7 @@ const Home = ({navigation, route}) => {
                       style={{
                         fontSize: 14,
                         color: Colors.black,
-                        letterSpacing: 0.5,
+                        letterSpacing: 0.5, fontFamily: Manrope.Bold
                       }}>
                       Package Type *:
                     </Text>
@@ -1468,7 +1482,7 @@ const Home = ({navigation, route}) => {
                       Icontag={'Ionicons'}
                       iconname={'chevron-down-circle'}
                       icon_size={24}
-                      iconstyle={{color: Colors.black, marginRight: 10}}
+                      iconstyle={{ color: Colors.black, marginRight: 10 }}
                     />
                   </TouchableOpacity>
                 </View>
@@ -1491,7 +1505,7 @@ const Home = ({navigation, route}) => {
                       style={{
                         fontSize: 14,
                         color: Colors.black,
-                        letterSpacing: 0.5,
+                        letterSpacing: 0.5, fontFamily: Manrope.Bold
                       }}>
                       Intercity Fare *:
                     </Text>
@@ -1524,7 +1538,7 @@ const Home = ({navigation, route}) => {
                       Icontag={'Ionicons'}
                       iconname={'chevron-down-circle'}
                       icon_size={24}
-                      iconstyle={{color: Colors.black, marginRight: 10}}
+                      iconstyle={{ color: Colors.black, marginRight: 10 }}
                     />
                   </TouchableOpacity>
                 </View>
@@ -1547,7 +1561,7 @@ const Home = ({navigation, route}) => {
                       style={{
                         fontSize: 14,
                         color: Colors.black,
-                        letterSpacing: 0.5,
+                        letterSpacing: 0.5, fontFamily: Manrope.Bold
                       }}>
                       Night Fare *:
                     </Text>
@@ -1581,7 +1595,7 @@ const Home = ({navigation, route}) => {
                       Icontag={'Ionicons'}
                       iconname={'chevron-down-circle'}
                       icon_size={24}
-                      iconstyle={{color: Colors.black, marginRight: 10}}
+                      iconstyle={{ color: Colors.black, marginRight: 10 }}
                     />
                   </TouchableOpacity>
                 </View>
@@ -1591,7 +1605,7 @@ const Home = ({navigation, route}) => {
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  paddingVertical: 10,
+                  paddingVertical: 5,
                 }}>
                 <View
                   style={{
@@ -1603,20 +1617,11 @@ const Home = ({navigation, route}) => {
                     style={{
                       fontSize: 14,
                       color: Colors.black,
-                      letterSpacing: 0.5,
+                      letterSpacing: 0.5, fontFamily: Manrope.Bold
                     }}>
                     No.of Vehicles *:
                   </Text>
                 </View>
-                {/* <TouchableOpacity onPress={() => sale_toggleBottomView("Vehicle")} style={{ flex: 1, flexDirection: 'row', height: 45, justifyContent: 'space-around', alignItems: 'center', backgroundColor: Colors.white2, borderWidth: 1, borderColor: Colors.black, borderRadius: 5 }}>
-                  <Text style={{ fontSize: 14, color: Colors.black, letterSpacing: 0.5, paddingHorizontal: 5 }} numberOfLines={1}>Number of Vehicles</Text>
-                  <Iconviewcomponent
-                        Icontag={'Ionicons'}
-                        iconname={'chevron-down-circle'}
-                    icon_size={24}
-                    iconstyle={{ color: Colors.black, marginRight: 10 }}
-                  />
-                </TouchableOpacity> */}
                 <Dropdown
                   style={styles.dropdown}
                   containerStyle={styles.dropContainer}
@@ -1733,7 +1738,7 @@ const Home = ({navigation, route}) => {
 
 export default Home;
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -1886,7 +1891,7 @@ const styles = StyleSheet.create({
     gap: width * 0.01,
   },
   alterNumber: {
-    color: Colors.black,
+    color: Colors.black, fontFamily: Manrope.Bold,
     fontSize: 15,
   },
   optional: {

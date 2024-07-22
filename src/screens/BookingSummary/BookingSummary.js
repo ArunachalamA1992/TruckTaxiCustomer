@@ -9,19 +9,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Colors from '../../components/Colors';
 import Snackbar from 'react-native-snackbar';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import OTPInput from '../../components/OTPInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Enquiry from './Enquiry';
 import moment from 'moment';
+import { Manrope } from '../../Global/FontFamily';
 
-const {width, height} = Dimensions.get('screen');
-const BookingSummary = ({route, navigation}) => {
+const { width, height } = Dimensions.get('screen');
+const BookingSummary = ({ route, navigation }) => {
   const [data] = useState(route.params);
   const token = useSelector(state => state.token);
   const mobileNumber = useSelector(state => state.mobileNumber);
@@ -202,7 +203,7 @@ const BookingSummary = ({route, navigation}) => {
         <View style={styles.container3}>
           <Text style={styles.type}>Pickup Time :</Text>
           <Text style={styles.type}>Trip Type :</Text>
-          <Text style={styles.type}>Regular Charges :</Text>
+          {/* <Text style={styles.type}>Regular Charges :</Text> */}
           {/* <Text style={styles.type}>Peak Time Fare :</Text> */}
           <Text style={styles.type}>Approximate Fees :</Text>
           {data?.fare == 1 && <Text style={styles.type}>Base Fees :</Text>}
@@ -211,10 +212,11 @@ const BookingSummary = ({route, navigation}) => {
         </View>
         <View style={styles.container3}>
           <Text style={styles.value}>
-            {moment(data?.datetosend).format('YYYY-MM-DD HH:mm A')}
+            {/* {moment(data?.datetosend).format('YYYY-MM-DD HH:mm A')} */}
+            {moment(data?.datetosend + ' ' + data.time).format('DD-MM-YYYY hh:mm a')}
           </Text>
           <Text style={styles.value}>{data?.fareName}</Text>
-          <Text style={styles.value}>₹ 0</Text>
+          {/* <Text style={styles.value}>₹ 0</Text> */}
           {/* <Text style={styles.value}>Rs.0</Text> */}
           <Text style={styles.value}>
             ₹{' '}
@@ -222,8 +224,8 @@ const BookingSummary = ({route, navigation}) => {
               ? data?.fare == 2
                 ? data?.Packagevalue?.basefare
                 : data?.fare == 3
-                ? data?.intercitytype?.basefare
-                : data?.nighttype?.basefare
+                  ? data?.intercitytype?.basefare
+                  : data?.nighttype?.basefare
               : approximateFee}
           </Text>
           {data?.fare == 1 && <Text style={styles.value}>₹ {baseFare}</Text>}
@@ -251,30 +253,34 @@ const BookingSummary = ({route, navigation}) => {
           <Text style={styles.applyButton}>Apply</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.confirmView}>
-        <TouchableOpacity
-          onPress={() => {
-            setEnquiryVisible(true);
-          }}
-          style={{
-            width: '48%',
-            borderWidth: 1,
-            borderColor: Colors.cloudyGrey,
-            borderRadius: 10,
-            padding: 10,
-          }}>
-          <Text style={styles.enquiry}>Enquiry</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            width: '48%',
-            backgroundColor: Colors.primaryColor,
-            borderRadius: 10,
-            padding: 10,
-          }}
-          onPress={() => confirmBooking()}>
-          <Text style={styles.confirm}>Confirm Booking</Text>
-        </TouchableOpacity>
+
+      <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', bottom: 10 }}>
+        <View style={styles.confirmView}>
+          <TouchableOpacity
+            onPress={() => {
+              setEnquiryVisible(true);
+            }}
+            style={{
+              width: '48%', height: 50,
+              borderWidth: 1, justifyContent: 'center', alignItems: 'center',
+              borderColor: Colors.cloudyGrey,
+              borderRadius: 5,
+              padding: 5,
+            }}>
+            <Text style={styles.enquiry}>Enquiry</Text>
+          </TouchableOpacity>
+          <View style={{ width: 5, height: '100%', backgroundColor: Colors.white }}></View>
+          <TouchableOpacity
+            style={{
+              width: '48%', height: 50,
+              backgroundColor: Colors.primaryColor,
+              borderRadius: 5, justifyContent: 'center', alignItems: 'center',
+              padding: 5,
+            }}
+            onPress={() => confirmBooking()}>
+            <Text style={styles.confirm}>Confirm Booking</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <Modal
         visible={bookingOTPVisible}
@@ -288,7 +294,7 @@ const BookingSummary = ({route, navigation}) => {
           onPress={() => {
             setBookingOTPVisible(false);
           }}>
-          <View style={{flex: 1}} />
+          <View style={{ flex: 1 }} />
           <View
             style={{
               backgroundColor: '#fff',
@@ -363,17 +369,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   type: {
-    color: Colors.shadow,
+    color: Colors.shadow, fontFamily: Manrope.Bold,
     fontSize: 14,
-    marginTop: 10,
+    marginTop: 10, paddingVertical: 5
   },
   value: {
     flex: 1,
-    color: Colors.black2,
-    fontSize: 14,
+    color: Colors.black, fontFamily: Manrope.Bold,
+    fontSize: 15,
     fontWeight: '500',
     textAlign: 'right',
-    marginTop: 10,
+    marginTop: 10, paddingVertical: 5
   },
   inputView: {
     flexDirection: 'row',

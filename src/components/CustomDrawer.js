@@ -128,10 +128,10 @@ const CustomDrawer = () => {
   // };
 
   const handleSignOut = () => {
-    dispatch(signOut());
     navigation.navigate('Login');
     AsyncStorage.clear();
     dispatch(login({}));
+    dispatch(signOut());
   };
 
   return (
