@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "186038219454",
+    "project_id": "trucktaxi-notification",
+    "storage_bucket": "trucktaxi-notification.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186038219454:android:d02d9765dbef261bcde4ef",
+        "android_client_info": {
+          "package_name": "com.trucktaxi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "186038219454-ff18qijvtu2npakjefm2i74o9bbnanfi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOfQ8xrKMBKtHdSB3l17YTgGhKn1scoMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "186038219454-ff18qijvtu2npakjefm2i74o9bbnanfi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
