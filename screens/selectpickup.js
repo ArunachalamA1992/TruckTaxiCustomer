@@ -13,6 +13,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ToastAndroid,
+  PermissionsAndroid,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
@@ -51,15 +52,112 @@ const PickupPointScreen = ({navigation}) => {
   const [selectedLocation, setSelectedLocation] = useState('pickup');
   const [placeHolder, setPlaceHolder] = useState('Search Pickup Location');
 
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     fetchInitialLocation();
+  //   }, 1000);
+
+  //   const fetchInitialLocation = async () => {
+  //     try {
+  //       Geolocation.getCurrentPosition(
+  //         async position => {
+  //           clearTimeout(timeoutId);
+  //           const {latitude, longitude} = position.coords;
+
+  //           const response = await Geocoder.from({latitude, longitude});
+  //           const address = response.results[0].formatted_address;
+
+  //           setDetectedAddress(address);
+  //           setRegion({
+  //             latitude,
+  //             longitude,
+  //             latitudeDelta: 0.0143,
+  //             longitudeDelta: 0.0134,
+  //           });
+
+  //           dispatch(
+  //             setOrigin({
+  //               location: {
+  //                 lat: latitude,
+  //                 lng: longitude,
+  //               },
+  //               description: address,
+  //             }),
+  //           );
+  //         },
+  //         error => {
+  //           console.error('Error fetching location:', error.message);
+  //         },
+  //         {
+  //           timeout: 10000,
+  //           enableHighAccuracy: true,
+  //           maximumAge: 1000,
+  //         },
+  //       );
+  //     } catch (error) {
+  //       console.error('Unexpected error:', error);
+  //     }
+  //   };
+  // }, []);
+
   useEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
+    getCurrentLocationAndAddress();
+  }, []);
+
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } else {
+      return true;
+    }
+  };
+
+  const getCurrentLocation = async () => {
+    const hasPermission = await requestLocationPermission();
+    if (!hasPermission) {
+      console.log('Location permission denied');
+      return;
+    }
 
     Geolocation.getCurrentPosition(
-      async ({coords: {latitude, longitude}}) => {
-        const response = await Geocoder.from({latitude, longitude});
-        setDetectedAddress(response.results[0].formatted_address);
+      position => {
+        const {latitude, longitude} = position.coords;
+        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+        // You can now use these coordinates to get the address
+      },
+      error => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+
+  const getAddressFromCoordinates = async (latitude, longitude) => {
+    const apiKey = 'AIzaSyAOl88J2TyN1uxEENd8sjtYNq8Xa2nW4rk';
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`,
+    );
+    const data = await response.json();
+    if (data.results.length > 0) {
+      return data.results[0].formatted_address;
+    } else {
+      return 'Address not found';
+    }
+  };
+
+  const getCurrentLocationAndAddress = async () => {
+    const hasPermission = await requestLocationPermission();
+
+    if (!hasPermission) return;
+
+    Geolocation.getCurrentPosition(
+      async position => {
+        const {latitude, longitude} = position.coords;
+        const address = await getAddressFromCoordinates(latitude, longitude);
+        setDetectedAddress(address);
         setRegion({
           latitude,
           longitude,
@@ -73,18 +171,16 @@ const PickupPointScreen = ({navigation}) => {
               lat: latitude,
               lng: longitude,
             },
-            description: response.results[0].formatted_address,
+            description: address,
           }),
         );
       },
-      () => {},
-      {
-        timeout: 2000,
-        enableHighAccuracy: true,
-        maximumAge: 1000,
+      error => {
+        console.error(error);
       },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
-  }, []);
+  };
 
   useEffect(() => {
     if (!origin) {
@@ -249,8 +345,10 @@ const PickupPointScreen = ({navigation}) => {
 
   const handleMapPress = async event => {
     const {latitude, longitude} = event.nativeEvent.coordinate;
-    const response = await Geocoder.from({latitude, longitude});
-    const address = response.results[0].formatted_address;
+    const address = await getAddressFromCoordinates(latitude, longitude);
+
+    // const response = await Geocoder.from({latitude, longitude});
+    // const address = response.results[0].formatted_address;
     const parts = address.split(', ');
     if (selectedLocation == 'pickup' || selectedLocation == '') {
       dispatch(

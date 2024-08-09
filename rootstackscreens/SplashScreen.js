@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,24 +11,19 @@ import {
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation, useTheme } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
-import { setDestination, setOrigin } from '../slices/navSlice';
+import {useNavigation, useTheme} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {setDestination, setOrigin} from '../slices/navSlice';
 
 const SplashScreen = () => {
-  const navigation = useNavigation()
-  const { colors } = useTheme();
-  const dispatch = useDispatch()
+  const navigation = useNavigation();
+  const {colors} = useTheme();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(
-      setOrigin(null),
-    );
-    dispatch(
-      setDestination(null),
-    );
-
-  }, [])
+    dispatch(setOrigin(null));
+    dispatch(setDestination(null));
+  }, [dispatch]);
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#fff" barStyle="dark-content" />
@@ -42,15 +37,9 @@ const SplashScreen = () => {
           resizeMode="stretch"
         />
       </View>
-      <Animatable.View
-        style={[
-          styles.footer,
-        ]}
-        animation="fadeInUpBig">
+      <Animatable.View style={[styles.footer]} animation="fadeInUpBig">
         <View style={styles.button}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('SignInScreen')}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate('SignInScreen')}>
             <LinearGradient
               colors={['#85388d', '#85388d']}
               style={styles.signIn}>
@@ -66,7 +55,7 @@ const SplashScreen = () => {
 
 export default SplashScreen;
 
-const { height } = Dimensions.get('screen');
+const {height} = Dimensions.get('screen');
 const height_logo = height * 0.3;
 
 const styles = StyleSheet.create({
