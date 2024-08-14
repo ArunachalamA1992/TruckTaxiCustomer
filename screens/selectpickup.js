@@ -37,6 +37,7 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Autocomplete from 'react-native-autocomplete-input';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapViewDirections from 'react-native-maps-directions';
 Geocoder.init('AIzaSyAOl88J2TyN1uxEENd8sjtYNq8Xa2nW4rk');
 
 const PickupPointScreen = ({navigation}) => {
@@ -51,6 +52,8 @@ const PickupPointScreen = ({navigation}) => {
   const [locationData, setlocationData] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('pickup');
   const [placeHolder, setPlaceHolder] = useState('Search Pickup Location');
+  const [distance, setDistance] = useState('');
+  const [duration, setDuration] = useState('');
 
   // useEffect(() => {
   //   const timeoutId = setTimeout(() => {
@@ -269,6 +272,7 @@ const PickupPointScreen = ({navigation}) => {
           }),
         );
         setSelectedLocation('drop');
+        setlocationData([]);
       } else {
         dispatch(
           setDestination({
@@ -277,6 +281,7 @@ const PickupPointScreen = ({navigation}) => {
               lng: parseFloat(item.Longitude),
             },
             description: item.PlaceName,
+            distance: distance,
           }),
         );
       }
@@ -308,6 +313,7 @@ const PickupPointScreen = ({navigation}) => {
                   lng: result.result.geometry.location.lng,
                 },
                 description: item.PlaceName,
+                distance: distance,
               }),
             );
           }
@@ -329,6 +335,7 @@ const PickupPointScreen = ({navigation}) => {
             drop: {
               position: destination,
               description: destination.description,
+              distance: distance,
             },
           },
         });
@@ -369,6 +376,7 @@ const PickupPointScreen = ({navigation}) => {
             lng: longitude,
           },
           description: parts.slice(-4, -1).join(', '),
+          distance: distance,
         }),
       );
     }
@@ -422,6 +430,31 @@ const PickupPointScreen = ({navigation}) => {
               description={destination.description}
             />
           )}
+          {destination && (
+            <MapViewDirections
+              origin={{
+                latitude: origin?.location?.lat,
+                longitude: origin?.location?.lng,
+              }}
+              destination={{
+                latitude: destination?.location?.lat,
+                longitude: destination?.location?.lng,
+              }}
+              apikey={'AIzaSyAOl88J2TyN1uxEENd8sjtYNq8Xa2nW4rk'}
+              strokeWidth={10}
+              strokeColor={Color.primary}
+              onReady={result => {
+                setDistance(result.distance);
+                setDuration(result.duration);
+                console.log(
+                  'distance:',
+                  result.distance,
+                  'duration:',
+                  Math.ceil(result.duration),
+                );
+              }}
+            />
+          )}
         </MapView>
 
         <View style={styles.markerFixed}>
@@ -455,7 +488,9 @@ const PickupPointScreen = ({navigation}) => {
                   data={locationData}
                   inputContainerStyle={styles.inputContainer}
                   listContainerStyle={styles.listcontainer}
-                  onChangeText={text => searchLocation(text)}
+                  onChangeText={text => {
+                    searchLocation(text);
+                  }}
                   placeholder={
                     selectedLocation == 'pickup' || selectedLocation == ''
                       ? 'Search Pickup Location'
@@ -474,6 +509,12 @@ const PickupPointScreen = ({navigation}) => {
                     ),
                   }}
                 />
+              </View>
+              <View style={styles.DDView}>
+                <Text style={styles.DDText}>Distance: {distance}</Text>
+                <Text style={styles.DDText}>
+                  Duration: {Math.ceil(duration)} mts
+                </Text>
               </View>
               <View style={[styles.inputContainer1, {marginTop: 65}]}>
                 <TouchableOpacity
@@ -756,5 +797,15 @@ const styles = StyleSheet.create({
   infoText: {
     textAlign: 'center',
     fontSize: 16,
+  },
+  DDView: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  DDText: {
+    fontSize: 14,
+    color: Color.black,
   },
 });

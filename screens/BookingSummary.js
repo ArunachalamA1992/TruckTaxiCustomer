@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   Modal,
@@ -13,18 +13,17 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 import Snackbar from 'react-native-snackbar';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import Color from '../Global/Color';
 import OTPInput from '../components/OTPInput';
 import Enquiry from '../components/Enquiry';
-import { Manrope } from '../Global/FontFamily';
-import { selectDestination, selectOrigin } from '../slices/navSlice';
+import {Manrope} from '../Global/FontFamily';
+import {selectDestination, selectOrigin} from '../slices/navSlice';
 
-const { width, height } = Dimensions.get('screen');
-const BookingSummary = ({ route, navigation }) => {
-
+const {width, height} = Dimensions.get('screen');
+const BookingSummary = ({route, navigation}) => {
   const dispatch = useDispatch();
 
   const [data] = useState(route.params);
@@ -59,31 +58,27 @@ const BookingSummary = ({ route, navigation }) => {
   const [pickadd, setpickadd] = useState('');
   const [pickdrop, setpickdrop] = useState('');
 
-
-
   useEffect(() => {
     reload();
   }, [origin, destination]);
 
-
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      reload()
+    const unsubscribe = navigation.addListener('focus', () => {
+      reload();
     });
     return unsubscribe;
   }, [navigation]);
 
-
   const reload = () => {
     if (destination != null) {
-      console.log('Regular Call')
-      setpickadd(origin)
-      setpickdrop(destination)
+      console.log('Regular Call');
+      setpickadd(origin);
+      setpickdrop(destination);
 
       setinitorigin({
         latitude: origin.location.lat,
         longitude: origin.location.lng,
-      })
+      });
       setregion({
         latitude: origin.location.lat,
         longitude: origin.location.lng,
@@ -93,12 +88,10 @@ const BookingSummary = ({ route, navigation }) => {
       setinitdrop({
         latitude: destination.location.lat,
         longitude: destination.location.lng,
-      })
+      });
       setLoading(false);
     }
-
-
-  }
+  };
 
   useEffect(() => {
     // fetchCustomerDetails();
@@ -164,7 +157,6 @@ const BookingSummary = ({ route, navigation }) => {
     });
   }, []);
 
-
   // const fetchCustomerDetails = async () => {
   //   try {
   //     const myHeaders = new Headers();
@@ -196,67 +188,76 @@ const BookingSummary = ({ route, navigation }) => {
   // };
 
   const confirmBooking = () => {
-    setLoading(true)
+    setLoading(true);
     AsyncStorage.getItem('user').then(mobile => {
       AsyncStorage.getItem('userToken').then(value => {
         var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", "Bearer " + value);
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('Authorization', 'Bearer ' + value);
         var requestOptions = {
           method: 'GET',
           headers: myHeaders,
-          redirect: 'follow'
+          redirect: 'follow',
         };
-        console.log("requestOptions resp ============= : ", requestOptions);
-        fetch("https://trucktaxi.co.in/api/customer/getprofiledetails?mobileno=" + mobile, requestOptions)
+        console.log('requestOptions resp ============= : ', requestOptions);
+        fetch(
+          'https://trucktaxi.co.in/api/customer/getprofiledetails?mobileno=' +
+            mobile,
+          requestOptions,
+        )
           .then(response => response.json())
           .then(result => {
-
-            var id = result.data[0].customerid
-            var cityid = result.data[0].cityid
-            var mobilenumber = result.data[0].mobileno
-            var customername = result.data[0].customername
+            var id = result.data[0].customerid;
+            var cityid = result.data[0].cityid;
+            var mobilenumber = result.data[0].mobileno;
+            var customername = result.data[0].customername;
 
             var raw = JSON.stringify({
-              "cityid": cityid,
-              "mobileno": mobilenumber,
-              "name": customername,
-              "fromaddress": data?.pickup,
-              "fromloc": data?.pickup,
-              "fromloclat": data?.address?.pickup?.position?.latitude,
-              "fromloclong": data?.address?.pickup?.position?.longitude,
-              "toaddress": data?.drop,
-              "toloc": data?.drop,
-              "toloclat": data?.address?.drop?.position?.latitude,
-              "toloclong": data?.address?.drop?.position?.longitude,
-              "tripdate": data?.datetosend,
-              "triptime": data?.time,
-              "triptype": data?.fare,
-              "vechicletype": data?.selectedvehcilelist?.id,
-              "goodstype": data?.goodValue,
-              "customerid": id,
+              cityid: cityid,
+              mobileno: mobilenumber,
+              name: customername,
+              fromaddress: data?.pickup,
+              fromloc: data?.pickup,
+              fromloclat: data?.address?.pickup?.position?.latitude,
+              fromloclong: data?.address?.pickup?.position?.longitude,
+              toaddress: data?.drop,
+              toloc: data?.drop,
+              toloclat: data?.address?.drop?.position?.latitude,
+              toloclong: data?.address?.drop?.position?.longitude,
+              tripdate: data?.datetosend,
+              triptime: data?.time,
+              triptype: data?.fare,
+              vechicletype: data?.selectedvehcilelist?.id,
+              goodstype: data?.goodValue,
+              customerid: id,
               // "offercode": "FIRST50",
-              "noofbookings": data?.noVehicles
+              noofbookings: data?.noVehicles,
             });
 
             const requestOptions = {
-              method: "POST",
+              method: 'POST',
               headers: myHeaders,
               body: raw,
-              redirect: "follow"
+              redirect: 'follow',
             };
 
-            console.log("Body ============= : ", requestOptions);
+            console.log('Body ============= : ', requestOptions);
 
-            fetch('https://trucktaxi.co.in/api/customer/booknow', requestOptions)
+            fetch(
+              'https://trucktaxi.co.in/api/customer/booknow',
+              requestOptions,
+            )
               .then(response => response.json())
               .then(result => {
                 console.log('confirm booking =================:', result);
                 setBookingOTPVisible(true);
                 setBookingData(result?.data?.[0]);
-                ToastAndroid.show(result?.data?.[0]?.message, ToastAndroid.SHORT);
+                ToastAndroid.show(
+                  result?.data?.[0]?.message,
+                  ToastAndroid.SHORT,
+                );
               })
-              .catch(error => console.error("catch in booknow_api:", error));
+              .catch(error => console.error('catch in booknow_api:', error));
 
             // const raw = JSON.stringify({
             //   "cityid": cityidid,
@@ -296,10 +297,9 @@ const BookingSummary = ({ route, navigation }) => {
             //     ToastAndroid.show(result?.data?.[0]?.message, ToastAndroid.SHORT);
             //   })
             //   .catch(error => console.error("catch in booknow_api:", error));
-          })
-      })
-    })
-
+          });
+      });
+    });
   };
 
   const getApproximateFee = async () => {
@@ -365,35 +365,32 @@ const BookingSummary = ({ route, navigation }) => {
       //   })
       //   .catch(error => console.error("catch in verifyTrip_OTP :", error));
 
-
-
-
-
       const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Iis5MTk2Nzc3MDkzMjEiLCJvdHAiOiIzMjcwIiwiaWF0IjoxNjQ0Mjk2NDI3fQ.xEErWisz_FKDAO4SBfqU2K6t3Q_EMtYpWTeUxEOc5_E");
+      myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append(
+        'Authorization',
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Iis5MTk2Nzc3MDkzMjEiLCJvdHAiOiIzMjcwIiwiaWF0IjoxNjQ0Mjk2NDI3fQ.xEErWisz_FKDAO4SBfqU2K6t3Q_EMtYpWTeUxEOc5_E',
+      );
 
       const raw = JSON.stringify({
-        "bookid": bookingData?.bookid,
-        "OTP": code
+        bookid: bookingData?.bookid,
+        OTP: code,
       });
 
       const requestOptions = {
-        method: "POST",
+        method: 'POST',
         headers: myHeaders,
         body: raw,
-        redirect: "follow"
+        redirect: 'follow',
       };
 
-      fetch("https://trucktaxi.co.in/api/customer/verifyTripOTP", requestOptions)
-        .then((response) => response.text())
-        .then((result) => console.log("VERIFY OTP =============:", result))
-        .catch((error) => console.error(error));
-
-
-
-
-
+      fetch(
+        'https://trucktaxi.co.in/api/customer/verifyTripOTP',
+        requestOptions,
+      )
+        .then(response => response.text())
+        .then(result => console.log('VERIFY OTP =============:', result))
+        .catch(error => console.error(error));
     } catch (error) {
       console.log('error', error);
     }
@@ -416,7 +413,9 @@ const BookingSummary = ({ route, navigation }) => {
         <View style={styles.container3}>
           <Text style={styles.value}>
             {/* {moment(data?.datetosend).format('YYYY-MM-DD HH:mm A')} */}
-            {moment(data?.datetosend + ' ' + data.time).format('DD-MM-YYYY hh:mm a')}
+            {moment(data?.datetosend + ' ' + data.time).format(
+              'DD-MM-YYYY hh:mm a',
+            )}
           </Text>
           <Text style={styles.value}>{data?.fareName}</Text>
           {/* <Text style={styles.value}>₹ 0</Text> */}
@@ -427,8 +426,8 @@ const BookingSummary = ({ route, navigation }) => {
               ? data?.fare == 2
                 ? data?.Packagevalue?.basefare
                 : data?.fare == 3
-                  ? data?.intercitytype?.basefare
-                  : data?.nighttype?.basefare
+                ? data?.intercitytype?.basefare
+                : data?.nighttype?.basefare
               : approximateFee}
           </Text>
           {data?.fare == 1 && <Text style={styles.value}>₹ {baseFare}</Text>}
@@ -457,27 +456,44 @@ const BookingSummary = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', bottom: 10 }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          bottom: 10,
+        }}>
         <View style={styles.confirmView}>
           <TouchableOpacity
             onPress={() => {
               setEnquiryVisible(true);
             }}
             style={{
-              width: '48%', height: 50,
-              borderWidth: 1, justifyContent: 'center', alignItems: 'center',
+              width: '48%',
+              height: 50,
+              borderWidth: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
               borderColor: Color.cloudyGrey,
               borderRadius: 5,
               padding: 5,
             }}>
             <Text style={styles.enquiry}>Enquiry</Text>
           </TouchableOpacity>
-          <View style={{ width: 5, height: '100%', backgroundColor: Color.white }}></View>
+          <View
+            style={{
+              width: 5,
+              height: '100%',
+              backgroundColor: Color.white,
+            }}></View>
           <TouchableOpacity
             style={{
-              width: '48%', height: 50,
+              width: '48%',
+              height: 50,
               backgroundColor: Color.primary,
-              borderRadius: 5, justifyContent: 'center', alignItems: 'center',
+              borderRadius: 5,
+              justifyContent: 'center',
+              alignItems: 'center',
               padding: 5,
             }}
             onPress={() => confirmBooking()}>
@@ -497,7 +513,7 @@ const BookingSummary = ({ route, navigation }) => {
           onPress={() => {
             setBookingOTPVisible(false);
           }}>
-          <View style={{ flex: 1 }} />
+          <View style={{flex: 1}} />
           <View
             style={{
               backgroundColor: '#fff',
@@ -572,17 +588,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   type: {
-    color: Color.shadow, fontFamily: Manrope.Bold,
+    color: Color.shadow,
+    fontFamily: Manrope.Bold,
     fontSize: 14,
-    marginTop: 10, paddingVertical: 5
+    marginTop: 10,
+    paddingVertical: 5,
   },
   value: {
     flex: 1,
-    color: Color.black, fontFamily: Manrope.Bold,
+    color: Color.black,
+    fontFamily: Manrope.Bold,
     fontSize: 15,
     fontWeight: '500',
     textAlign: 'right',
-    marginTop: 10, paddingVertical: 5
+    marginTop: 10,
+    paddingVertical: 5,
   },
   inputView: {
     flexDirection: 'row',

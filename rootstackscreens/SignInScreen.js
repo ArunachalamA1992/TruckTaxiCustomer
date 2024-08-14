@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -14,13 +14,14 @@ import {
   Platform,
   Alert,
   LogBox,
+  ToastAndroid,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation, useTheme } from '@react-navigation/native';
-import { AuthContext } from '../context/context';
-import { P, H5, H4, H2, H6, H3 } from '../components/typography';
+import {useNavigation, useTheme} from '@react-navigation/native';
+import {AuthContext} from '../context/context';
+import {P, H5, H4, H2, H6, H3} from '../components/typography';
 
 LogBox.ignoreAllLogs();
 
@@ -31,8 +32,8 @@ const SignInScreen = () => {
   const [valid, setValid] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
   const phoneInput = useRef();
-  const { signIn } = React.useContext(AuthContext);
-  const { colors } = useTheme();
+  const {signIn} = React.useContext(AuthContext);
+  const {colors} = useTheme();
   const [avatarVisible, setAvatarVisible] = useState();
   const [load, setload] = useState(false);
 
@@ -51,34 +52,32 @@ const SignInScreen = () => {
   async function loginHandle(formattedValue) {
     setload(true);
     var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append('Content-Type', 'application/json');
 
     var raw = JSON.stringify({
-      "mobileno": formattedValue
+      mobileno: formattedValue,
     });
 
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: raw,
-      redirect: 'follow'
+      redirect: 'follow',
     };
 
-    fetch("https://trucktaxi.co.in/api/customer/signup", requestOptions)
+    fetch('https://trucktaxi.co.in/api/customer/signup', requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result)
+        console.log(result);
 
         setload(false);
         if (result.status == 200) {
           navigation.navigate('verifyOtp', {
-            phnumber: formattedValue
-          })
+            phnumber: formattedValue,
+          });
+        } else {
+          alert('Unable To Send OTP');
         }
-        else {
-          alert('Unable To Send OTP')
-        }
-
       })
       .catch(error => console.log('error', error));
   }
@@ -87,7 +86,6 @@ const SignInScreen = () => {
     setload(true);
 
     if (user != null || user != undefined) {
-
     }
   }
 
@@ -122,7 +120,7 @@ const SignInScreen = () => {
   async function confirmCode() {
     try {
       await confirm.confirm(code);
-    } catch (error) { }
+    } catch (error) {}
   }
 
   const handleValidUser = val => {
@@ -139,13 +137,11 @@ const SignInScreen = () => {
 
   if (load) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
   }
-
-
 
   if (!confirm) {
     return (
@@ -159,27 +155,14 @@ const SignInScreen = () => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text
-            style={[
-              styles.title]}>
-            Verification
-          </Text>
-          <Text
-            style={[
-              styles.subititle]}>
-            We Will Send You One Time Code {"\n"} To Your Number
+          <Text style={[styles.title]}>Verification</Text>
+          <Text style={[styles.subititle]}>
+            We Will Send You One Time Code {'\n'} To Your Number
           </Text>
         </View>
 
-        <Animatable.View
-          style={[
-            styles.footer
-          ]}
-          animation="fadeInUpBig">
-
-
-          <View style={{ flex: 1, flexDirection: 'row', marginLeft: 24 }}>
-
+        <Animatable.View style={[styles.footer]} animation="fadeInUpBig">
+          <View style={{flex: 1, flexDirection: 'row', marginLeft: 24}}>
             <View style={styles.action}>
               <TextInput
                 placeholder="Phone Number"
@@ -199,7 +182,12 @@ const SignInScreen = () => {
               onPress={() => {
                 const checkValid = phoneInput.current?.isValidNumber(value);
                 setValid(checkValid ? checkValid : false);
-                loginHandle(formattedValue);
+                formattedValue?.length == 13
+                  ? loginHandle(formattedValue)
+                  : ToastAndroid.show(
+                      'Please Enter 10 Digit Phone Number',
+                      ToastAndroid.SHORT,
+                    );
                 //proceed
               }}>
               <LinearGradient
@@ -217,7 +205,7 @@ const SignInScreen = () => {
 
   if (load) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -239,7 +227,7 @@ const SignInScreen = () => {
           <P>OTP sent to {formattedValue}</P>
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'row', marginLeft: 24 }}>
+        <View style={{flex: 1, flexDirection: 'row', marginLeft: 24}}>
           <View style={styles.action}>
             <TextInput
               placeholder="Enter OTP"
@@ -261,10 +249,10 @@ const SignInScreen = () => {
             marginRight: 24,
           }}>
           <View>
-            <P style={{ fontSize: 9, color: '#039A6A' }}></P>
+            <P style={{fontSize: 9, color: '#039A6A'}}></P>
           </View>
           <View>
-            <P style={{ fontSize: 9, color: '#F6C731' }}>Resend OTP</P>
+            <P style={{fontSize: 9, color: '#F6C731'}}>Resend OTP</P>
           </View>
         </View>
         <View style={styles.button}>
@@ -283,7 +271,7 @@ const SignInScreen = () => {
 
 export default SignInScreen;
 
-const { height } = Dimensions.get('screen');
+const {height} = Dimensions.get('screen');
 const height_logo = height * 0.28;
 const height_logot = height * 0.18;
 

@@ -2434,6 +2434,13 @@
   resolved "https://registry.npmjs.org/@react-native-community/geolocation/-/geolocation-3.3.0.tgz"
   integrity sha512-7DFeuotH7m7ImoXffN3TmlGSFn1XjvsaphPort0XZKipssYbdHiKhVVWG+jzisvDhcXikUc6nbUJgddVBL6RDg==
 
+"@react-native-community/push-notification-ios@^1.11.0":
+  version "1.11.0"
+  resolved "https://registry.npmjs.org/@react-native-community/push-notification-ios/-/push-notification-ios-1.11.0.tgz"
+  integrity sha512-nfkUs8P2FeydOCR4r7BNmtGxAxI22YuGP6RmqWt6c8EEMUpqvIhNKWkRSFF3pHjkgJk2tpRb9wQhbezsqTyBvA==
+  dependencies:
+    invariant "^2.2.4"
+
 "@react-native-firebase/app@^20.3.0":
   version "20.3.0"
   resolved "https://registry.npmjs.org/@react-native-firebase/app/-/app-20.3.0.tgz"
@@ -2442,10 +2449,10 @@
     firebase "10.12.2"
     superstruct "^0.6.2"
 
-"@react-native-firebase/messaging@^20.3.0":
-  version "20.3.0"
-  resolved "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-20.3.0.tgz"
-  integrity sha512-jkAQq4gMGjrOcodFLP4YJGpaXaqcqikxlGMa7AzldTPyzNPdMIUhhWxiH1xjcCcepb4aIXz3ysqtJ3LvBWdyyw==
+"@react-native-firebase/messaging@^20.4.0":
+  version "20.4.0"
+  resolved "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-20.4.0.tgz"
+  integrity sha512-Ju0rQLoJIzur+QQSQ3O2q/7aBnJa9dyT7kY1tt52vRJ38Bm3/W1NKcYPbbfqMV+N6Nelonlxs1/kaQmo/p+/AA==
 
 "@react-native-masked-view/masked-view@^0.3.1":
   version "0.3.1"
@@ -8408,6 +8415,11 @@ react-native-phone-call@^1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/react-native-phone-call/-/react-native-phone-call-1.2.0.tgz"
   integrity sha512-M1CiocX8w7YNsh3Cwcnwc3eUkIJOPaBIQji3P9Uv/ZWAwb6XGI2NtV2UBSAa4Prvn6ooXeFPZs/YXmeTHmVHKg==
+
+react-native-push-notification@^8.1.1:
+  version "8.1.1"
+  resolved "https://registry.npmjs.org/react-native-push-notification/-/react-native-push-notification-8.1.1.tgz"
+  integrity sha512-XpBtG/w+a6WXTxu6l1dNYyTiHnbgnvjoc3KxPTxYkaIABRmvuJZkFxqruyGvfCw7ELAlZEAJO+dthdTabCe1XA==
 
 react-native-radio-buttons-group@^3.0.5:
   version "3.1.0"
